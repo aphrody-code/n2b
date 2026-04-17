@@ -13,7 +13,6 @@ mod rules;
 mod run;
 mod scanners;
 mod types;
-mod ui_cmd;
 mod util;
 mod wasm_cmd;
 mod win32_cmd;
@@ -150,21 +149,6 @@ enum Cmd {
         /// Format du rapport.
         #[arg(long, value_enum, default_value = "text")]
         report: ReportArg,
-    },
-
-    /// Scaffolde une app Next.js avec un design system UI moderne :
-    /// shadcn/ui (Radix+Tailwind v4), MUI (Material UI), Material Web
-    /// Components (M3 vanilla), ou Material Tailwind.
-    ///
-    ///   n2b ui init <name> --flavor shadcn|mui|material-web|material-tailwind|md3-ui
-    ///   n2b ui doctor
-    ///
-    /// `md3-ui` : registry shadcn personnalisé qui porte Material Web Components
-    /// vers shadcn+Tailwind avec composants mobile-native-web (FAB, Bottom Sheet,
-    /// Segmented Control, Navigation Bar) et build pipeline Bun + Rust.
-    Ui {
-        #[command(subcommand)]
-        sub: UiSub,
     },
 
     /// Scaffolde des apps Bun : CLI, TUI (Ink React), GUI (Electrobun),
@@ -443,25 +427,6 @@ fn parse_app_flavor(s: &str) -> Result<app_cmd::AppFlavor, String> {
         .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : cli, tui, gui, exe)"))
 }
 
-fn parse_ui_flavor(s: &str) -> Result<ui_cmd::UiFlavor, String> {
-    ui_cmd::UiFlavor::parse(s)
-        .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : shadcn, mui, material-web, material-tailwind, md3-ui)"))
-}
-
-#[derive(Subcommand, Debug)]
-enum UiSub {
-    Init {
-        name: String,
-        #[arg(long, default_value = "shadcn", value_parser = parse_ui_flavor)]
-        flavor: ui_cmd::UiFlavor,
-        #[arg(long)]
-        dir: Option<PathBuf>,
-        #[arg(long)]
-        force: bool,
-    },
-    Doctor,
-}
-
 #[derive(Subcommand, Debug)]
 enum Win32Sub {
     /// Projet complet : FFI + CC + PowerShell dans un même repo.
@@ -647,16 +612,6 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
-        }
-        Some(Cmd::Ui { sub }) => {
-            let cmd = match sub {
-                UiSub::Init { name, flavor, dir, force } => ui_cmd::UiCmd::Init {
-                    name, flavor, dir, force,
-                },
-                UiSub::Doctor => ui_cmd::UiCmd::Doctor,
-            };
-            ui_cmd::run(cmd, cli.quiet)?;
-            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::App { sub }) => {
             let cmd = match sub {
