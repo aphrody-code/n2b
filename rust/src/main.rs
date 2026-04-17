@@ -6,6 +6,7 @@ mod bin_cmd;
 mod bunpp_cmd;
 mod github;
 mod linux_cmd;
+mod llmstxt;
 mod patch;
 mod report;
 mod rules;
@@ -285,6 +286,68 @@ enum Cmd {
     Bunpp {
         #[command(subcommand)]
         sub: BunppSub,
+    },
+
+    /// Génère llms.txt + llms-full.txt depuis une URL (orchestrateur siteone-crawler).
+    ///
+    ///   n2b llmstxt https://m3.material.io/ --out ./m3-llms
+    ///
+    /// Spec : https://llmstxt.org/. Nécessite `siteone-crawler` dans PATH.
+    Llmstxt {
+        /// URL racine à crawler.
+        url: String,
+
+        /// Dossier de sortie.
+        #[arg(long, short, default_value = "./llmstxt-out")]
+        out: PathBuf,
+
+        /// Profondeur max de crawl (0 = illimité).
+        #[arg(long, default_value_t = 0)]
+        max_depth: usize,
+
+        /// Limite du nombre de pages crawlées (0 = illimité).
+        #[arg(long, default_value_t = 0)]
+        max_pages: usize,
+
+        /// Requêtes/s (respect du serveur).
+        #[arg(long, default_value_t = 4)]
+        rps: u32,
+
+        /// Workers concurrents.
+        #[arg(long, default_value_t = 8)]
+        concurrency: u32,
+
+        /// User-Agent custom.
+        #[arg(long)]
+        user_agent: Option<String>,
+
+        /// Regex d'inclusion (PCRE, cumulable).
+        #[arg(long = "include")]
+        include: Vec<String>,
+
+        /// Regex d'exclusion (PCRE, cumulable).
+        #[arg(long = "exclude")]
+        exclude: Vec<String>,
+
+        /// Générer aussi llms-full.txt.
+        #[arg(long, default_value_t = true)]
+        full: bool,
+
+        /// Résumer les descriptions via Claude (ANTHROPIC_API_KEY requis).
+        #[arg(long)]
+        summarize: bool,
+
+        /// Modèle Claude si --summarize.
+        #[arg(long, default_value = "claude-haiku-4-5")]
+        model: String,
+
+        /// Garde l'export intermédiaire siteone (debug).
+        #[arg(long)]
+        keep_intermediate: bool,
+
+        /// Skip siteone — réutilise un export existant dans --out.
+        #[arg(long)]
+        skip_crawl: bool,
     },
 
     /// Scan + audit + crosslink ML (embeddings) sur un ou plusieurs repos.
@@ -649,6 +712,41 @@ fn real_main() -> Result<ExitCode> {
                 WasmSub::Size { path, top } => wasm_cmd::WasmCmd::Size { path, top },
             };
             wasm_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
+        }
+        Some(Cmd::Llmstxt {
+            url,
+            out,
+            max_depth,
+            max_pages,
+            rps,
+            concurrency,
+            user_agent,
+            include,
+            exclude,
+            full,
+            summarize,
+            model,
+            keep_intermediate,
+            skip_crawl,
+        }) => {
+            llmstxt::run(&llmstxt::LlmstxtOpts {
+                url,
+                out,
+                max_depth,
+                max_pages,
+                rps,
+                concurrency,
+                user_agent,
+                include,
+                exclude,
+                full,
+                summarize,
+                model,
+                keep_intermediate,
+                skip_crawl,
+                quiet: cli.quiet,
+            })?;
             return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Bunpp { sub }) => {

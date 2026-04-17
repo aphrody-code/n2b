@@ -32,4 +32,9 @@ oxc_parser = "0.126"
 oxc_ast = "0.126"
 oxc_ast_visit = "0.126"
 oxc_span = "0.126"
+# Sous-commande `n2b llmstxt` (migré depuis le crate llmstxt-rs).
+url = "2"
+walkdir = "2"
+which = "6"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "blocking"] }
 
