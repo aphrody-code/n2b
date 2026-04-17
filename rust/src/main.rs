@@ -3,6 +3,7 @@ mod analyze;
 mod app_cmd;
 mod audit;
 mod bin_cmd;
+mod bunpp_cmd;
 mod github;
 mod linux_cmd;
 mod patch;
@@ -274,6 +275,18 @@ enum Cmd {
         ignore: Vec<String>,
     },
 
+    /// Automatise la couverture bun++ des gaps Node.js (canary 1.3.13).
+    ///
+    ///   n2b bunpp scaffold <module>     # génère @bun++/node-<module>
+    ///   n2b bunpp scaffold-all          # scaffolde tous les gaps canary
+    ///   n2b bunpp status                # % coverage vs gaps canary
+    ///   n2b bunpp sync                  # pull issues oven-sh/bun → SYNC_REPORT.md
+    ///   n2b bunpp doctor                # vérifie gh/bun/jq
+    Bunpp {
+        #[command(subcommand)]
+        sub: BunppSub,
+    },
+
     /// Scan + audit + crosslink ML (embeddings) sur un ou plusieurs repos.
     Analyze {
         /// Chemins à analyser (défaut: discord.js/discordx/nextjs détectés dans cwd).
@@ -453,6 +466,42 @@ enum LinuxSub {
 }
 
 #[derive(Subcommand, Debug)]
+enum BunppSub {
+    /// Scaffolde un seul polyfill `@bun++/node-<module>` (ou `@bun++/<pkg>`).
+    Scaffold {
+        /// Nom du module (`node:sqlite`, `sqlite`, `node-util-ext`…).
+        module: String,
+        /// Racine bun++ (contient `packages/`).
+        #[arg(long, default_value = "./bun++")]
+        root: PathBuf,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffolde tous les polyfills canary manquants (liste figée).
+    ScaffoldAll {
+        #[arg(long, default_value = "./bun++")]
+        root: PathBuf,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Rapporte la couverture bun++ vs gaps canary.
+    Status {
+        #[arg(long, default_value = "./bun++")]
+        root: PathBuf,
+    },
+    /// Pull les issues oven-sh/bun liées aux gaps connus (nécessite `gh`).
+    Sync {
+        #[arg(long, default_value = "./bun++")]
+        root: PathBuf,
+        /// Affiche le rapport sur stdout au lieu d'écrire `SYNC_REPORT.md`.
+        #[arg(long)]
+        dry_run: bool,
+    },
+    /// Vérifie que gh / bun / jq sont installés.
+    Doctor,
+}
+
+#[derive(Subcommand, Debug)]
 enum WasmSub {
     /// Scaffold un nouveau projet Rust→WASM.
     Init {
@@ -600,6 +649,21 @@ fn real_main() -> Result<ExitCode> {
                 WasmSub::Size { path, top } => wasm_cmd::WasmCmd::Size { path, top },
             };
             wasm_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
+        }
+        Some(Cmd::Bunpp { sub }) => {
+            let cmd = match sub {
+                BunppSub::Scaffold { module, root, force } => bunpp_cmd::BunppCmd::Scaffold {
+                    module, root, force,
+                },
+                BunppSub::ScaffoldAll { root, force } => bunpp_cmd::BunppCmd::ScaffoldAll {
+                    root, force,
+                },
+                BunppSub::Status { root } => bunpp_cmd::BunppCmd::Status { root },
+                BunppSub::Sync { root, dry_run } => bunpp_cmd::BunppCmd::Sync { root, dry_run },
+                BunppSub::Doctor => bunpp_cmd::BunppCmd::Doctor,
+            };
+            bunpp_cmd::run(cmd, cli.quiet)?;
             return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Bin { name, flavor, dir, force }) => {
