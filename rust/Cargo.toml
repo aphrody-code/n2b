@@ -1,0 +1,39 @@
+[package]
+name = "n2b"
+version = "0.2.0"
+edition = "2021"
+
+[[bin]]
+name = "n2b"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive", "color"] }
+anyhow = "1"
+colored = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+regex = "1"
+once_cell = "1"
+ignore = "0.4"
+globset = "0.4"
+rayon = "1"
+memchr = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+octocrab = "0.49"
+futures = "0.3"
+fastembed = "5"
+# AST parser JS/TS (remplacement de la regex IMPORT_RE pour node-imports).
+# oxc publie des versions cohérentes ensemble — pas de version hell.
+oxc_allocator = "0.126"
+oxc_parser = "0.126"
+oxc_ast = "0.126"
+oxc_ast_visit = "0.126"
+oxc_span = "0.126"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = 3
