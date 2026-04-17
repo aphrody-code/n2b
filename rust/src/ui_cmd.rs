@@ -306,17 +306,21 @@ fn scaffold_md3_ui_framework(dir: &Path, name: &str, quiet: bool) -> Result<()> 
     write(dir.join("packages/lint-plugin/src/rules/no-raw-color.ts"), MD3_LINT_NO_RAW_COLOR, quiet)?;
     write(dir.join("packages/lint-plugin/src/rules/use-m3-tokens.ts"), MD3_LINT_USE_TOKENS, quiet)?;
 
-    // --- packages/md3-docs (Next 16 showcase + Material 3 Expressive content) ---
+    // --- packages/md3-docs — Bun.serve natif (zéro Next.js, zéro Webpack) ---
+    // Pattern : routes{} + HTML imports + HMR + cookies + HTMLRewriter.
+    // Production : `bun build --compile` → binaire standalone ~30 MB.
     write(dir.join("packages/md3-docs/package.json"), MD3_DOCS_PACKAGE_JSON, quiet)?;
-    write(dir.join("packages/md3-docs/next.config.ts"), NEXT_CONFIG_TS, quiet)?;
-    write(dir.join("packages/md3-docs/postcss.config.mjs"), POSTCSS_TAILWIND_CONFIG, quiet)?;
-    write(dir.join("packages/md3-docs/src/app/layout.tsx"), &render_md3_docs_layout(name), quiet)?;
-    write(dir.join("packages/md3-docs/src/app/page.tsx"), M3_PAGE_TSX, quiet)?;
-    write(dir.join("packages/md3-docs/src/app/globals.css"), MD3_DOCS_GLOBALS, quiet)?;
-    write(dir.join("packages/md3-docs/src/app/expressive/page.tsx"), MD3_EXPRESSIVE_PAGE_TSX, quiet)?;
-    write(dir.join("packages/md3-docs/src/app/motion/page.tsx"), MD3_MOTION_PAGE_TSX, quiet)?;
-    write(dir.join("packages/md3-docs/src/app/tokens/page.tsx"), MD3_TOKENS_PAGE_TSX, quiet)?;
-    write(dir.join("packages/md3-docs/src/components/Nav.tsx"), MD3_DOCS_NAV_TSX, quiet)?;
+    write(dir.join("packages/md3-docs/server.ts"), MD3_SERVE_TS, quiet)?;
+    write(dir.join("packages/md3-docs/index.html"), MD3_DOCS_INDEX_HTML, quiet)?;
+    write(dir.join("packages/md3-docs/expressive.html"), MD3_DOCS_EXPRESSIVE_HTML, quiet)?;
+    write(dir.join("packages/md3-docs/motion.html"), MD3_DOCS_MOTION_HTML, quiet)?;
+    write(dir.join("packages/md3-docs/tokens.html"), MD3_DOCS_TOKENS_HTML, quiet)?;
+    write(dir.join("packages/md3-docs/client.tsx"), MD3_DOCS_CLIENT_TSX, quiet)?;
+    write(dir.join("packages/md3-docs/App.tsx"), M3_PAGE_TSX, quiet)?;
+    write(dir.join("packages/md3-docs/styles.css"), MD3_DOCS_STYLES_CSS, quiet)?;
+    write(dir.join("packages/md3-docs/pages/expressive.tsx"), MD3_DOCS_PAGE_EXPRESSIVE_TSX, quiet)?;
+    write(dir.join("packages/md3-docs/pages/motion.tsx"), MD3_DOCS_PAGE_MOTION_TSX, quiet)?;
+    write(dir.join("packages/md3-docs/pages/tokens.tsx"), MD3_DOCS_PAGE_TOKENS_TSX, quiet)?;
     write(dir.join("packages/md3-docs/tsconfig.json"), MD3_DOCS_TSCONFIG, quiet)?;
 
     // --- crates/md3-compiler ---
@@ -331,13 +335,14 @@ fn scaffold_md3_ui_framework(dir: &Path, name: &str, quiet: bool) -> Result<()> 
     write(dir.join("crates/md3-wasm-plugin/Cargo.toml"), MD3_WASM_PLUGIN_CARGO, quiet)?;
     write(dir.join("crates/md3-wasm-plugin/src/lib.rs"), MD3_WASM_PLUGIN_RS, quiet)?;
 
-    // --- examples/next-app ---
-    write(dir.join("examples/next-app/package.json"), &render_md3_example_pkg(name), quiet)?;
-    write(dir.join("examples/next-app/next.config.ts"), NEXT_CONFIG_TS, quiet)?;
-    write(dir.join("examples/next-app/tsconfig.json"), MD3_DOCS_TSCONFIG, quiet)?;
-    write(dir.join("examples/next-app/src/app/layout.tsx"), &render_md3_example_layout(name), quiet)?;
-    write(dir.join("examples/next-app/src/app/page.tsx"), M3_PAGE_TSX, quiet)?;
-    write(dir.join("examples/next-app/src/app/globals.css"), MD3_EXAMPLE_GLOBALS, quiet)?;
+    // --- examples/bun-app — exemple minimal Bun.serve (remplace Next) ---
+    write(dir.join("examples/bun-app/package.json"), &render_md3_example_pkg(name), quiet)?;
+    write(dir.join("examples/bun-app/tsconfig.json"), MD3_DOCS_TSCONFIG, quiet)?;
+    write(dir.join("examples/bun-app/server.ts"), MD3_SERVE_TS, quiet)?;
+    write(dir.join("examples/bun-app/index.html"), MD3_DOCS_INDEX_HTML, quiet)?;
+    write(dir.join("examples/bun-app/client.tsx"), MD3_DOCS_CLIENT_TSX, quiet)?;
+    write(dir.join("examples/bun-app/App.tsx"), M3_PAGE_TSX, quiet)?;
+    write(dir.join("examples/bun-app/styles.css"), MD3_DOCS_STYLES_CSS, quiet)?;
 
     Ok(())
 }
@@ -985,7 +990,7 @@ fn render_m3_registry_json(name: &str) -> String {
       "files": [
         {{ "path": "registry/new-york/ui/button.tsx", "type": "registry:ui" }}
       ],
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
+      "dependencies": ["class-variance-authority"],
       "registryDependencies": ["utils"]
     }},
     {{
@@ -1020,17 +1025,17 @@ fn render_m3_registry_json(name: &str) -> String {
       "name": "bottom-sheet",
       "type": "registry:ui",
       "title": "Bottom Sheet (M3 mobile-native-web)",
-      "description": "Modal + standard bottom sheet, drag-to-dismiss.",
+      "description": "Modal + standard bottom sheet, drag-to-dismiss — Base UI Dialog.",
       "files": [{{ "path": "registry/new-york/ui/bottom-sheet.tsx", "type": "registry:ui" }}],
-      "dependencies": ["@radix-ui/react-dialog"]
+      "dependencies": ["@base-ui-components/react"]
     }},
     {{
       "name": "segmented-control",
       "type": "registry:ui",
       "title": "Segmented Control (iOS/M3 mobile-native-web)",
-      "description": "Segmented button group type iOS + M3 mobile.",
+      "description": "Segmented button group type iOS + M3 mobile — Base UI ToggleGroup.",
       "files": [{{ "path": "registry/new-york/ui/segmented-control.tsx", "type": "registry:ui" }}],
-      "dependencies": ["@radix-ui/react-toggle-group"]
+      "dependencies": ["@base-ui-components/react"]
     }},
     {{
       "name": "app-bar",
@@ -1553,12 +1558,14 @@ export default function Home() {
 }
 "##;
 
-const M3_BUTTON_TSX: &str = r#"// M3 Button — 5 variants officiels Material Design 3.
-// Ports depuis https://m3.material.io/components/buttons et l'ancien
-// @material/web <md-filled-button>, <md-tonal-button>, etc.
+const M3_BUTTON_TSX: &str = r##"// M3 Button — 5 variants officiels Material Design 3.
+// https://m3.material.io/components/buttons
+//
+// Pattern `render` façon Base UI : passer `render={<Link />}` remplace le
+// <button> par un autre élément tout en préservant className + handlers.
+// Évite la dépendance @radix-ui/react-slot.
 
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../lib/utils";
 
@@ -1586,17 +1593,29 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+  /** Remplace l'élément rendu (<button> par défaut). Reçoit className + handlers mergés. */
+  render?: React.ReactElement;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return <Comp ref={ref} className={cn(buttonVariants({ variant, className }))} {...props} />;
+  ({ className, variant, render, ...props }, ref) => {
+    const merged = cn(buttonVariants({ variant, className }));
+    if (render) {
+      const child = render as React.ReactElement<Record<string, unknown>>;
+      const childProps = (child.props ?? {}) as { className?: string };
+      const mergedProps = {
+        ...props,
+        ...childProps,
+        ref,
+        className: cn(merged, childProps.className),
+      } as Record<string, unknown>;
+      return React.cloneElement(child, mergedProps);
+    }
+    return <button ref={ref} className={merged} {...props} />;
   }
 );
 Button.displayName = "M3Button";
-"#;
+"##;
 
 const M3_CARD_TSX: &str = r#"// M3 Card — Elevated / Filled / Outlined.
 // https://m3.material.io/components/cards
@@ -1788,47 +1807,50 @@ export function NavigationBar({
 }
 "#;
 
-const M3_BOTTOM_SHEET_TSX: &str = r#"// M3 Bottom Sheet — modal & standard, drag-to-dismiss via Radix Dialog.
+const M3_BOTTOM_SHEET_TSX: &str = r##"// M3 Bottom Sheet — modal & standard, drag-to-dismiss via Base UI Dialog.
 // Pattern mobile-native-web : comportement iOS/Android reproduit.
 
 "use client";
 
 import * as React from "react";
-import * as Dialog from "@radix-ui/react-dialog";
+import { Dialog } from "@base-ui-components/react/dialog";
 import { cn } from "../lib/utils";
 
 export const BottomSheet = Dialog.Root;
 export const BottomSheetTrigger = Dialog.Trigger;
+export const BottomSheetClose = Dialog.Close;
 
 export const BottomSheetContent = React.forwardRef<
-  React.ElementRef<typeof Dialog.Content>,
-  React.ComponentPropsWithoutRef<typeof Dialog.Content>
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Dialog.Popup>
 >(({ className, children, ...props }, ref) => (
   <Dialog.Portal>
-    <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-    <Dialog.Content
+    <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/50 data-[open]:animate-in data-[open]:fade-in data-[closed]:animate-out data-[closed]:fade-out" />
+    <Dialog.Popup
       ref={ref}
       className={cn(
-        "fixed bottom-0 inset-x-0 z-50 rounded-t-[28px] bg-[--md-sys-color-surface-container-low] pb-8 shadow-[var(--md-sys-elevation-level3)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        "fixed bottom-0 inset-x-0 z-50 rounded-t-[28px] bg-[--md-sys-color-surface-container-low] pb-8 shadow-[var(--md-sys-elevation-level3)] outline-none data-[open]:animate-in data-[open]:slide-in-from-bottom data-[closed]:animate-out data-[closed]:slide-out-to-bottom",
         className
       )}
       {...props}
     >
       <div className="mx-auto mt-4 h-1 w-8 rounded-full bg-[--md-sys-color-on-surface-variant]/40" />
       <div className="p-6">{children}</div>
-    </Dialog.Content>
+    </Dialog.Popup>
   </Dialog.Portal>
 ));
-BottomSheetContent.displayName = "BottomSheetContent";
-"#;
+BottomSheetContent.displayName = "M3BottomSheetContent";
+"##;
 
-const M3_SEGMENTED_TSX: &str = r#"// Segmented Control — mix iOS segmented control + M3 segmented button.
-// Utilise Radix ToggleGroup pour l'accessibilité.
+const M3_SEGMENTED_TSX: &str = r##"// Segmented Control — mix iOS segmented control + M3 segmented button.
+// Utilise Base UI ToggleGroup (accessible, keyboard nav, ARIA) pour la
+// sélection single-value.
 
 "use client";
 
 import * as React from "react";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import { ToggleGroup } from "@base-ui-components/react/toggle-group";
+import { Toggle } from "@base-ui-components/react/toggle";
 import { cn } from "../lib/utils";
 
 export function SegmentedControl({
@@ -1844,19 +1866,28 @@ export function SegmentedControl({
   children: React.ReactNode;
   className?: string;
 }) {
+  // Base UI ToggleGroup renvoie un Array<string> ; on maintient l'API M3
+  // single-select (string | null).
+  const handleChange = React.useCallback(
+    (values: string[]) => {
+      const v = values[0];
+      if (v) onValueChange?.(v);
+    },
+    [onValueChange]
+  );
+
   return (
-    <ToggleGroup.Root
-      type="single"
-      defaultValue={defaultValue}
-      value={value}
-      onValueChange={(v) => v && onValueChange?.(v)}
+    <ToggleGroup
+      defaultValue={defaultValue ? [defaultValue] : undefined}
+      value={value ? [value] : undefined}
+      onValueChange={handleChange}
       className={cn(
         "inline-flex h-10 rounded-full border border-[--md-sys-color-outline] overflow-hidden divide-x divide-[--md-sys-color-outline]",
         className
       )}
     >
       {children}
-    </ToggleGroup.Root>
+    </ToggleGroup>
   );
 }
 
@@ -1870,18 +1901,18 @@ export function Segment({
   className?: string;
 }) {
   return (
-    <ToggleGroup.Item
+    <Toggle
       value={value}
       className={cn(
-        "px-4 text-[14px] font-medium text-[--md-sys-color-on-surface] data-[state=on]:bg-[--md-sys-color-secondary-container] data-[state=on]:text-[--md-sys-color-on-secondary-container] transition-colors focus-visible:outline-none",
+        "px-4 text-[14px] font-medium text-[--md-sys-color-on-surface] data-[pressed]:bg-[--md-sys-color-secondary-container] data-[pressed]:text-[--md-sys-color-on-secondary-container] transition-colors focus-visible:outline-none",
         className
       )}
     >
       {children}
-    </ToggleGroup.Item>
+    </Toggle>
   );
 }
-"#;
+"##;
 
 // ===========================================================================
 // M3 COMPONENTS — 20 composants Material Design 3 (Base UI primitives)
@@ -3307,9 +3338,6 @@ const MD3_CORE_PACKAGE_JSON: &str = r#"{
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-rc.0",
-    "@radix-ui/react-slot": "^1.2.4",
-    "@radix-ui/react-dialog": "^1.1.15",
-    "@radix-ui/react-toggle-group": "^1.1.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.5.0",
@@ -3694,13 +3722,15 @@ const MD3_DOCS_PACKAGE_JSON: &str = r#"{
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "description": "md3-ui docs — 100 % Bun.serve fullstack (zero Next.js, zero Webpack).",
   "scripts": {
-    "dev": "bunx --bun next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start"
+    "dev": "bun --hot server.ts",
+    "start": "NODE_ENV=production bun server.ts",
+    "build": "bun build server.ts --compile --minify --outfile dist/md3-serve",
+    "build:wasm": "bun build:tokens",
+    "typecheck": "bunx --bun tsc --noEmit"
   },
   "dependencies": {
-    "next": "^16.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "@md3-ui/core": "workspace:*",
@@ -3708,7 +3738,6 @@ const MD3_DOCS_PACKAGE_JSON: &str = r#"{
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.2.2",
@@ -3717,6 +3746,250 @@ const MD3_DOCS_PACKAGE_JSON: &str = r#"{
   }
 }
 "#;
+
+/// Bun.serve full-stack server — remplace entièrement Next.js.
+/// Exploite : routes{}, HTML imports (bundle auto TSX+CSS), HMR natif
+/// (v1.2.3+), cookies API, HTMLRewriter pour injection theme.
+const MD3_SERVE_TS: &str = r##"// md3-docs — serveur Bun full-stack natif.
+// Tire parti de Bun.serve v1.2.3+ : routes{}, HTML imports, HMR, cookies,
+// HTMLRewriter. Zéro Next.js, zéro Webpack, zéro configuration runtime.
+
+import index from "./index.html";
+import expressive from "./expressive.html";
+import motion from "./motion.html";
+import tokens from "./tokens.html";
+
+// Port = $PORT si fourni, sinon 0 (Bun auto-assigne un port libre au boot ;
+// `server.url` exposera l'URL effective).
+const port = process.env.PORT ? Number(process.env.PORT) : 0;
+const DEV = process.env.NODE_ENV !== "production";
+
+const server = Bun.serve({
+  port,
+  // HTML imports : Bun bundle <script type="module"> et <link> à la volée
+  // (TSX, CSS, Tailwind v4 via @tailwindcss/postcss). Aucun build pré-requis.
+  routes: {
+    "/": index,
+    "/expressive": expressive,
+    "/motion": motion,
+    "/tokens": tokens,
+
+    // API — theme preference (cookie-based)
+    "/api/theme": {
+      GET(req) {
+        const theme = req.cookies.get("theme") ?? "light";
+        return Response.json({ theme });
+      },
+      POST(req) {
+        const url = new URL(req.url);
+        const theme = url.searchParams.get("v") ?? "light";
+        req.cookies.set("theme", theme, {
+          maxAge: 60 * 60 * 24 * 365,
+          path: "/",
+          sameSite: "lax",
+        });
+        return Response.json({ theme });
+      },
+    },
+
+    // API — registry JSON (shadcn-compatible) : /r/<slug> renvoie <slug>.json
+    "/r/:slug": async (req) => {
+      const slug = req.params.slug.replace(/\.json$/, "");
+      const file = Bun.file(`../registry/public/r/${slug}.json`);
+      if (!(await file.exists())) return new Response("Not found", { status: 404 });
+      return new Response(file);
+    },
+  },
+
+  // Fallback 404
+  fetch() {
+    return new Response("Not Found", { status: 404 });
+  },
+
+  // HMR natif + console forwardée en dev
+  development: DEV ? { hmr: true, console: true } : false,
+
+  error(err) {
+    console.error(err);
+    return new Response(`Error: ${err.message}`, { status: 500 });
+  },
+});
+
+console.log(`✓ md3-docs → ${server.url}`);
+"##;
+
+const MD3_DOCS_INDEX_HTML: &str = r##"<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>md3-ui — Material Design 3 · React · Base UI · Tailwind v4</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./client.tsx"></script>
+</body>
+</html>
+"##;
+
+const MD3_DOCS_EXPRESSIVE_HTML: &str = r##"<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M3 Expressive — md3-ui</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./pages/expressive.tsx"></script>
+</body>
+</html>
+"##;
+
+const MD3_DOCS_MOTION_HTML: &str = r##"<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M3 Motion — md3-ui</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./pages/motion.tsx"></script>
+</body>
+</html>
+"##;
+
+const MD3_DOCS_TOKENS_HTML: &str = r##"<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M3 Tokens — md3-ui</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./pages/tokens.tsx"></script>
+</body>
+</html>
+"##;
+
+const MD3_DOCS_CLIENT_TSX: &str = r##"// Entry client — monte le showcase principal dans #root.
+import { createRoot } from "react-dom/client";
+import { ThemeProvider } from "@md3-ui/core";
+import App from "./App";
+
+const root = document.getElementById("root")!;
+createRoot(root).render(
+  <ThemeProvider scheme="light">
+    <App />
+  </ThemeProvider>
+);
+"##;
+
+const MD3_DOCS_STYLES_CSS: &str = r##"@import "tailwindcss";
+@import "@md3-ui/tokens/css";
+
+html, body {
+  font-family: "Google Sans Flex Variable", system-ui, sans-serif;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+"##;
+
+const MD3_DOCS_PAGE_EXPRESSIVE_TSX: &str = r##"import { createRoot } from "react-dom/client";
+import { ThemeProvider, Typography, Card, CardContent } from "@md3-ui/core";
+
+function Page() {
+  return (
+    <main className="container mx-auto p-8 space-y-6">
+      <Typography as="h1" variant="display-medium">Material 3 Expressive</Typography>
+      <Typography variant="body-large">
+        Shapes exagérées, motion emphasized, couleurs saturées — M3 Expressive s'adresse aux
+        marques qui veulent dépasser la neutralité de M3 2.0.
+      </Typography>
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card variant="filled"><CardContent>Shape corner 28 px</CardContent></Card>
+        <Card variant="elevated"><CardContent>Elevation level 3</CardContent></Card>
+      </div>
+    </main>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <ThemeProvider scheme="light"><Page /></ThemeProvider>
+);
+"##;
+
+const MD3_DOCS_PAGE_MOTION_TSX: &str = r##"import { createRoot } from "react-dom/client";
+import { ThemeProvider, Typography, Card, CardContent } from "@md3-ui/core";
+
+const EASINGS = [
+  ["standard", "cubic-bezier(0.2, 0, 0, 1)"],
+  ["emphasized", "cubic-bezier(0.2, 0, 0, 1)"],
+  ["emphasized-accelerate", "cubic-bezier(0.3, 0, 0.8, 0.15)"],
+  ["emphasized-decelerate", "cubic-bezier(0.05, 0.7, 0.1, 1)"],
+] as const;
+
+function Page() {
+  return (
+    <main className="container mx-auto p-8 space-y-6">
+      <Typography as="h1" variant="display-medium">Material 3 Motion</Typography>
+      <div className="grid md:grid-cols-2 gap-4">
+        {EASINGS.map(([name, curve]) => (
+          <Card key={name} variant="outlined">
+            <CardContent>
+              <Typography variant="title-medium">{name}</Typography>
+              <Typography variant="body-small">{curve}</Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <ThemeProvider scheme="light"><Page /></ThemeProvider>
+);
+"##;
+
+const MD3_DOCS_PAGE_TOKENS_TSX: &str = r##"import { createRoot } from "react-dom/client";
+import { ThemeProvider, Typography } from "@md3-ui/core";
+
+const ROLES = [
+  "primary", "on-primary", "primary-container", "on-primary-container",
+  "secondary", "on-secondary", "tertiary", "on-tertiary",
+  "error", "on-error", "surface", "on-surface",
+];
+
+function Page() {
+  return (
+    <main className="container mx-auto p-8 space-y-4">
+      <Typography as="h1" variant="display-medium">Tokens M3</Typography>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {ROLES.map((role) => (
+          <div
+            key={role}
+            className="h-20 rounded-[12px] flex items-end p-2 text-[12px] font-medium"
+            style={{
+              background: `var(--md-sys-color-${role})`,
+              color: `var(--md-sys-color-on-${role.startsWith("on-") ? role.slice(3) : role})`,
+            }}
+          >
+            {role}
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <ThemeProvider scheme="light"><Page /></ThemeProvider>
+);
+"##;
 
 fn render_md3_docs_layout(name: &str) -> String {
     format!(
@@ -3916,17 +4189,18 @@ pub extern "C" fn on_before_parse_plugin_impl(
 
 fn render_md3_example_pkg(_name: &str) -> String {
     r#"{
-  "name": "@md3-ui/example-next",
+  "name": "@md3-ui/example-bun",
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "description": "Exemple minimal md3-ui — 100 % Bun.serve (routes{} + HTML imports + HMR natif).",
   "scripts": {
-    "dev": "bunx --bun next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start"
+    "dev": "bun --hot server.ts",
+    "start": "NODE_ENV=production bun server.ts",
+    "build": "bun build server.ts --compile --minify --outfile dist/app",
+    "typecheck": "bunx --bun tsc --noEmit"
   },
   "dependencies": {
-    "next": "^16.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "@md3-ui/core": "workspace:*",
@@ -3934,7 +4208,6 @@ fn render_md3_example_pkg(_name: &str) -> String {
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.2.2",
@@ -3974,15 +4247,19 @@ const MD3_EXAMPLE_GLOBALS: &str = MD3_DOCS_GLOBALS;
 const MD3_DOCS_TSCONFIG: &str = r#"{
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "types": ["bun"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "paths": {
-      "@/*": ["./src/*"]
-    },
-    "plugins": [{ "name": "next" }]
+      "@/*": ["./*"]
+    }
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }
 "#;
 
