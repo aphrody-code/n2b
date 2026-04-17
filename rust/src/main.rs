@@ -3,6 +3,7 @@ mod analyze;
 mod audit;
 mod bin_cmd;
 mod github;
+mod linux_cmd;
 mod patch;
 mod report;
 mod rules;
@@ -146,6 +147,19 @@ enum Cmd {
         report: ReportArg,
     },
 
+    /// Scaffolde des projets Bun + Linux bas-niveau :
+    /// FFI Rust (bun:ffi dlopen), inline C (bun:ffi cc, TinyCC), Bun Shell.
+    ///
+    ///   n2b linux init <name>        # projet complet (FFI + CC + Shell)
+    ///   n2b linux ffi <name>         # Rust cdylib + bun:ffi
+    ///   n2b linux cc <name>          # inline C via bun:ffi cc
+    ///   n2b linux shell <name>       # scripts Bun Shell
+    ///   n2b linux doctor             # check rustc/gcc/clang/tcc/…
+    Linux {
+        #[command(subcommand)]
+        sub: LinuxSub,
+    },
+
     /// Workflow Rust → WASM → Bun complet :
     /// `init` (scaffold), `doctor` (check tools), `build` (wasm-pack wrapper),
     /// `opt` (wasm-opt), `size` (twiggy top).
@@ -265,6 +279,44 @@ fn parse_wasm_template(s: &str) -> Result<wasm_cmd::WasmTemplate, String> {
 }
 
 #[derive(Subcommand, Debug)]
+enum LinuxSub {
+    /// Projet complet : FFI + CC + Shell dans un même repo.
+    Init {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffold Rust cdylib + bun:ffi dlopen.
+    Ffi {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffold inline C compilé à runtime (bun:ffi cc, TinyCC).
+    Cc {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffold scripts Bun Shell pour ops système.
+    Shell {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Vérifie que rustc / gcc / clang / tcc / pkg-config sont installés.
+    Doctor,
+}
+
+#[derive(Subcommand, Debug)]
 enum WasmSub {
     /// Scaffold un nouveau projet Rust→WASM.
     Init {
@@ -337,6 +389,25 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
+        }
+        Some(Cmd::Linux { sub }) => {
+            let cmd = match sub {
+                LinuxSub::Init { name, dir, force } => linux_cmd::LinuxCmd::Init {
+                    name, dir, force,
+                },
+                LinuxSub::Ffi { name, dir, force } => linux_cmd::LinuxCmd::Ffi {
+                    name, dir, force,
+                },
+                LinuxSub::Cc { name, dir, force } => linux_cmd::LinuxCmd::Cc {
+                    name, dir, force,
+                },
+                LinuxSub::Shell { name, dir, force } => linux_cmd::LinuxCmd::Shell {
+                    name, dir, force,
+                },
+                LinuxSub::Doctor => linux_cmd::LinuxCmd::Doctor,
+            };
+            linux_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Wasm { sub }) => {
             let cmd = match sub {
