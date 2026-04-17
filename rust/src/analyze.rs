@@ -174,6 +174,7 @@ fn analyze_one(
         quiet: true,
         ignore: opts.ignore.clone(),
         agent: false,
+        dry_run: false,
     };
     let fixes = run::run(&run_opts).with_context(|| format!("scan {}", path.display()))?;
 

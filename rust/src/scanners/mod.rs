@@ -1,6 +1,9 @@
+pub mod bunfig;
 pub mod dockerfile;
 pub mod husky;
 pub mod lockfile;
+pub mod next_config;
+pub mod npmrc;
 pub mod nvmrc;
 pub mod package_json;
 pub mod pnpm_workspace;

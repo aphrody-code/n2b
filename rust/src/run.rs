@@ -1,7 +1,10 @@
 use crate::scanners::{
+    bunfig::scan_bunfig,
     dockerfile::scan_dockerfile,
     husky::{is_husky_hook, scan_husky},
     lockfile::{check_lockfile, RIVAL_LOCKFILES},
+    next_config::{is_next_config, scan_next_config},
+    npmrc::{is_rc_file, scan_npmrc},
     nvmrc::scan_nvmrc,
     package_json::scan_package_json,
     pnpm_workspace::scan_pnpm_workspace,
@@ -126,6 +129,9 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
     let is_tsconfig = name == "tsconfig.json" || name.starts_with("tsconfig.");
     let is_husky = is_husky_hook(rel);
     let is_pnpm_ws = name == "pnpm-workspace.yaml";
+    let is_bunfig = name == "bunfig.toml";
+    let is_next = is_next_config(name);
+    let is_rc = is_rc_file(name);
 
     if !is_pkg
         && !is_source
@@ -136,6 +142,9 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         && !is_tsconfig
         && !is_husky
         && !is_pnpm_ws
+        && !is_bunfig
+        && !is_next
+        && !is_rc
     {
         return Ok(None);
     }
@@ -169,6 +178,12 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         scan_husky(rel, &before)
     } else if is_pnpm_ws {
         (scan_pnpm_workspace(rel, &before), before.clone())
+    } else if is_bunfig {
+        scan_bunfig(rel, &before)
+    } else if is_next {
+        scan_next_config(rel, &before)
+    } else if is_rc {
+        scan_npmrc(rel, &before)
     } else {
         scan_shell(rel, &before)
     };
@@ -177,7 +192,7 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         return Ok(None);
     }
 
-    if opts.mode != Mode::Check && after != before {
+    if opts.mode != Mode::Check && !opts.dry_run && after != before {
         std::fs::write(abs, &after)?;
     }
 
