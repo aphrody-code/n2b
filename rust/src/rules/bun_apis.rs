@@ -189,6 +189,194 @@ static RULES: Lazy<Vec<ApiRule>> = Lazy::new(|| {
             r"\bpath\.join\s*\(\s*__dirname\s*,",
             "dans un ESM Bun, path.join(import.meta.dir, ...) évite __dirname",
             None, false),
+
+        // --- Bun.password (bcrypt / argon2) ---
+        rule("api/bcrypt-hash",
+            r"\bbcrypt(?:js)?\.hash\s*\(",
+            "Bun.password.hash() supporte bcrypt et argon2 nativement (plus rapide, pas de dep native)",
+            None, false),
+        rule("api/bcrypt-compare",
+            r"\bbcrypt(?:js)?\.compare\s*\(",
+            "Bun.password.verify() remplace bcrypt.compare()",
+            None, false),
+        rule("api/argon2-hash",
+            r#"\bargon2\.(?:hash|verify)\s*\("#,
+            "Bun.password.hash({ algorithm: 'argon2id' }) / verify() est natif",
+            None, false),
+
+        // --- Bun.YAML ---
+        rule("api/yaml-parse",
+            r#"\b(?:yaml|YAML|jsyaml)\.(?:load|parse)\s*\("#,
+            "Bun.YAML.parse() est natif — plus besoin de js-yaml/yaml",
+            None, false),
+        rule("api/yaml-stringify",
+            r#"\b(?:yaml|YAML|jsyaml)\.(?:dump|stringify)\s*\("#,
+            "Bun.YAML.stringify() est natif",
+            None, false),
+
+        // --- Bun.JSON5 / Bun.JSONC ---
+        rule("api/json5-parse",
+            r"\bJSON5\.parse\s*\(",
+            "Bun.JSON5.parse() est natif — plus besoin de la dep json5",
+            Static("Bun.JSON5.parse("), true),
+        rule("api/json5-stringify",
+            r"\bJSON5\.stringify\s*\(",
+            "Bun.JSON5.stringify() est natif",
+            Static("Bun.JSON5.stringify("), true),
+
+        // --- Bun.markdown ---
+        rule("api/marked-call",
+            r"\bmarked\s*\(",
+            "Bun.markdown.html() est natif — plus besoin de marked",
+            None, false),
+        rule("api/marked-parse",
+            r"\bmarked\.parse\s*\(",
+            "Bun.markdown.html() est natif",
+            None, false),
+
+        // --- Bun.escapeHTML ---
+        rule("api/escape-html",
+            r"\b(?:escapeHtml|escape_html|he\.encode)\s*\(",
+            "Bun.escapeHTML() est natif (UTF-8, ~3× plus rapide que 'he')",
+            None, false),
+
+        // --- Bun.stripANSI / Bun.stringWidth / Bun.sliceAnsi ---
+        rule("api/strip-ansi",
+            r"\bstripAnsi\s*\(",
+            "Bun.stripANSI() est natif",
+            None, false),
+        rule("api/string-width",
+            r"\bstringWidth\s*\(",
+            "Bun.stringWidth() est natif (fullwidth + emoji aware)",
+            None, false),
+        rule("api/slice-ansi",
+            r"\bsliceAnsi\s*\(",
+            "Bun.sliceAnsi() est natif",
+            None, false),
+
+        // --- Bun.which ---
+        rule("api/which-call",
+            r#"\b(?:which|sync\.which)\s*\(\s*['"][^'"]+['"]\s*\)"#,
+            "Bun.which() remplace la dep 'which' (natif, zéro allocation)",
+            None, false),
+
+        // --- Bun.cron ---
+        rule("api/cron-schedule",
+            r#"\b(?:cron|nodeCron)\.schedule\s*\("#,
+            "Bun.cron remplace node-cron / croner",
+            None, false),
+        rule("api/cronjob-new",
+            r"\bnew\s+CronJob\s*\(",
+            "Bun.cron est l'API native — plus besoin de node-cron/croner",
+            None, false),
+
+        // --- Bun.deepEquals ---
+        rule("api/fast-deep-equal",
+            r"\bfastDeepEqual\s*\(",
+            "Bun.deepEquals() est natif (WebKit structural compare)",
+            None, false),
+
+        // --- Bun.gzipSync / Bun.gunzipSync ---
+        rule("api/pako-gzip",
+            r"\bpako\.(?:gzip|deflate)\s*\(",
+            "Bun.gzipSync() / Bun.deflateSync() remplacent pako (natif, SIMD)",
+            None, false),
+        rule("api/pako-gunzip",
+            r"\bpako\.(?:ungzip|inflate)\s*\(",
+            "Bun.gunzipSync() / Bun.inflateSync() remplacent pako",
+            None, false),
+
+        // --- Bun.serve vs frameworks ---
+        info_rule("api/express-app",
+            r"\b(?:const|let|var)\s+\w+\s*=\s*express\s*\(\s*\)",
+            "Bun.serve() est un serveur HTTP natif zéro-config (fetch-based, routing intégré)",
+            None, false),
+        info_rule("api/fastify-app",
+            r"\b(?:const|let|var)\s+\w+\s*=\s*fastify\s*\(",
+            "Bun.serve() + routing natif remplace fastify pour la plupart des cas simples",
+            None, false),
+        info_rule("api/koa-new",
+            r"\bnew\s+Koa\s*\(\s*\)",
+            "Bun.serve() avec middleware chaîné couvre la plupart des usages Koa",
+            None, false),
+
+        // --- fetch vs http.request / https.request ---
+        rule("api/http-request",
+            r"\b(?:const|let|var)\s+\w+\s*=\s*http\.request\s*\(",
+            "fetch() (global) remplace http.request avec une API plus simple",
+            None, false),
+        rule("api/https-request",
+            r"\b(?:const|let|var)\s+\w+\s*=\s*https\.request\s*\(",
+            "fetch() (global) remplace https.request",
+            None, false),
+
+        // --- crypto.randomBytes → Web crypto ---
+        rule("api/crypto-randomBytes",
+            r"\bcrypto\.randomBytes\s*\(",
+            "crypto.getRandomValues(new Uint8Array(n)) est Web-standard (pas besoin d'import 'crypto')",
+            None, false),
+
+        // --- Bun.EventSource ---
+        info_rule("api/eventsource-new",
+            r"\bnew\s+EventSource\s*\(",
+            "EventSource est global dans Bun (Bun.EventSource) — plus besoin de la dep 'eventsource'",
+            None, false),
+
+        // --- Cookie / CookieMap ---
+        rule("api/cookie-parse",
+            r"\bcookie\.parse\s*\(",
+            "new Bun.CookieMap(header) remplace cookie.parse()",
+            None, false),
+        rule("api/cookie-serialize",
+            r"\bcookie\.serialize\s*\(",
+            "Bun.Cookie.toString() remplace cookie.serialize()",
+            None, false),
+
+        // --- Bun.s3 ---
+        info_rule("api/aws-sdk-s3-client",
+            r"\bnew\s+S3Client\s*\(",
+            "Bun.s3 / Bun.S3Client est natif (multipart upload, presign) — pas besoin de @aws-sdk",
+            None, false),
+
+        // --- Bun.FileSystemRouter ---
+        info_rule("api/file-based-routing",
+            r#"\b(?:next-router|next/router|@tanstack/router-vite-plugin)"#,
+            "Bun.FileSystemRouter expose un routeur file-based sans build step",
+            None, false),
+
+        // --- Bun.color / Bun.Terminal ---
+        info_rule("api/chalk-call",
+            r"\bchalk\.(?:red|green|yellow|blue|magenta|cyan|white|gray|grey|bold|dim|italic|underline)\b",
+            "Bun supporte ANSI nativement ; Bun.color() permet la conversion programmatique",
+            None, false),
+
+        // --- zlib.gzipSync (Bun version plus rapide) ---
+        info_rule("api/zlib-gzipSync",
+            r"\bzlib\.gzipSync\s*\(",
+            "Bun.gzipSync() est plus rapide que zlib.gzipSync (libdeflate SIMD)",
+            None, false),
+
+        // --- Bun.nanoseconds vs process.hrtime.bigint ---
+        info_rule("api/process-hrtime-bigint",
+            r"\bprocess\.hrtime\.bigint\s*\(\s*\)",
+            "Bun.nanoseconds() est l'équivalent natif (retourne un Number plutôt qu'un BigInt)",
+            None, false),
+
+        // --- Bun.spawn vs execa ---
+        rule("api/execa-call",
+            r"\bexeca(?:Sync|Command|CommandSync)?\s*\(",
+            "le shell Bun ($`cmd`) ou Bun.spawn() remplacent execa",
+            None, false),
+
+        // --- Next.js custom server ---
+        rule("next/custom-server-next-app",
+            r"\bnext\s*\(\s*\{\s*(?:[^{}]*\b)?dev\s*:",
+            "Pattern Next.js custom server détecté (const app = next({ dev }) — Bun.serve({ fetch }) remplace http.createServer + app.getRequestHandler pour de meilleures perfs",
+            None, false),
+        rule("next/request-handler",
+            r"\bapp\.getRequestHandler\s*\(\s*\)",
+            "getRequestHandler() retourne un handler (req, res) — pour Bun.serve, wrapper : fetch: (req) => handler(req, Bun.nodeHttpResponse()) ou utiliser un adapter",
+            None, false),
     ]
 });
 
@@ -217,6 +405,16 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
                     let arg = m.as_str().trim();
                     looks_like_dir_context(source, index, arg)
                 });
+
+            // Bug fix : api/exec matche aussi regex.exec() et string.exec() (accès membre).
+            // Ne garder que les appels child_process → soit `child_process.exec(` explicite,
+            // soit `exec(` en position d'appel directe (pas précédé d'un `.`).
+            if r.id == "api/exec" && is_member_exec_call(source, index) {
+                continue;
+            }
+            if r.id == "api/execSync" && is_member_exec_call(source, index) {
+                continue;
+            }
 
             let has_repl = replacement.is_some() && !skip_autofix;
             findings.push(make_finding(
@@ -247,8 +445,22 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
 
     let mut out = source.to_string();
     if !edits.is_empty() {
-        edits.sort_by(|a, b| b.index.cmp(&a.index));
+        // Résout les overlaps : quand deux règles matchent des ranges imbriqués
+        // (ex. api/fs-readFileSync à l'intérieur de api/json-parse-readFileSync),
+        // on garde le range le plus large. Tri (index asc, len desc) puis filtre.
+        edits.sort_by(|a, b| a.index.cmp(&b.index).then(b.len.cmp(&a.len)));
+        let mut kept: Vec<Edit> = Vec::with_capacity(edits.len());
         for e in edits {
+            let overlaps_prev = kept
+                .last()
+                .map(|p| p.index + p.len > e.index)
+                .unwrap_or(false);
+            if !overlaps_prev {
+                kept.push(e);
+            }
+        }
+        kept.sort_by(|a, b| b.index.cmp(&a.index));
+        for e in kept {
             out.replace_range(e.index..e.index + e.len, &e.replacement);
         }
     }
@@ -270,4 +482,19 @@ fn looks_like_dir_context(source: &str, pos: usize, arg: &str) -> bool {
     let needle_sync = format!("fs.mkdirSync({arg}");
     let needle_async = format!("fs.mkdir({arg}");
     window.contains(&needle_sync) || window.contains(&needle_async)
+}
+
+/// Détecte les appels `.exec(` / `.execSync(` sur un objet (RegExp, etc.) plutôt
+/// que child_process. Si le `exec` est précédé d'un `.` ET que ce qui précède
+/// n'est pas `child_process`, alors c'est un appel membre → faux positif.
+fn is_member_exec_call(source: &str, pos: usize) -> bool {
+    if pos == 0 {
+        return false;
+    }
+    let bytes = source.as_bytes();
+    if bytes[pos - 1] != b'.' {
+        return false;
+    }
+    // Si on est juste après "child_process." → c'est le vrai appel Node
+    !source[..pos].ends_with("child_process.")
 }

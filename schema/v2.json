@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json",
+  "title": "n2b Report Schema v2",
+  "description": "Payload schema for n2b scan results (JSON / JSONL / JSON reports).",
+  "type": "object",
+  "required": ["version", "mode", "root", "files"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 2,
+      "description": "Schema version — bumped on breaking changes."
+    },
+    "tool": {
+      "type": "string",
+      "const": "n2b"
+    },
+    "tool_version": {
+      "type": "string",
+      "description": "n2b binary version (semver)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["check", "fix", "aggressive"]
+    },
+    "root": {
+      "type": "string",
+      "description": "Absolute path of the scanned root."
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "files_scanned": { "type": "integer" },
+        "files_modified": { "type": "integer" },
+        "errors": { "type": "integer" },
+        "warns": { "type": "integer" },
+        "infos": { "type": "integer" }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/FileFix" }
+    }
+  },
+  "definitions": {
+    "Severity": {
+      "type": "string",
+      "enum": ["error", "warn", "info"]
+    },
+    "Finding": {
+      "type": "object",
+      "required": ["ruleId", "severity", "message", "line", "col", "autofix"],
+      "properties": {
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "col": { "type": "integer", "minimum": 1 },
+        "ruleId": {
+          "type": "string",
+          "description": "Rule identifier — slash-separated category/name (e.g. 'api/fs-readFileSync')."
+        },
+        "category": {
+          "type": "string",
+          "description": "Top-level category derived from ruleId prefix."
+        },
+        "severity": { "$ref": "#/definitions/Severity" },
+        "message": { "type": "string" },
+        "original": {
+          "type": "string",
+          "description": "Exact text that matched (from source)."
+        },
+        "replacement": {
+          "type": ["string", "null"],
+          "description": "Suggested replacement, when applicable."
+        },
+        "autofix": {
+          "type": "boolean",
+          "description": "True when the rule can be auto-applied by --fix."
+        },
+        "aggressive": {
+          "type": ["boolean", "null"],
+          "description": "True when the rule is applied by --aggressive only."
+        },
+        "docs_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Stable Bun (or external) docs URL for this rule."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Heuristic confidence 0.0..1.0."
+        },
+        "context": {
+          "type": "object",
+          "description": "3 lines before + line + 3 lines after, for AI consumers.",
+          "properties": {
+            "before": { "type": "array", "items": { "type": "string" } },
+            "line":   { "type": "string" },
+            "after":  { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "FileFix": {
+      "type": "object",
+      "required": ["file", "findings"],
+      "properties": {
+        "file":     { "type": "string" },
+        "before":   { "type": "string" },
+        "after":    { "type": "string" },
+        "findings": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Finding" }
+        }
+      }
+    }
+  }
+}

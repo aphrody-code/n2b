@@ -34,6 +34,14 @@ pub fn category(rule_id: &str) -> &'static str {
         "workspace"
     } else if rule_id.starts_with("husky/") {
         "husky"
+    } else if rule_id.starts_with("bunfig/") {
+        "bunfig"
+    } else if rule_id.starts_with("ecosystem/") {
+        "ecosystem"
+    } else if rule_id.starts_with("next/") {
+        "nextjs"
+    } else if rule_id.starts_with("npmrc/") {
+        "npmrc"
     } else {
         "other"
     }
@@ -68,13 +76,73 @@ pub fn confidence(rule_id: &str, has_replacement: bool) -> f32 {
 }
 
 pub const SCHEMA_URL: &str =
-    "https://raw.githubusercontent.com/aphrody-code/node2bun/main/schema/v2.json";
+    "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json";
 
 pub fn docs_url(rule_id: &str) -> &'static str {
     // Mapping préfixe → page Bun. On prend un lien stable par catégorie ;
     // les IDs précis (api/fs-readFileSync, etc.) sont trop nombreux pour
     // avoir chacun leur URL dédiée.
     match rule_id {
+        // --- APIs ciblées : préférer les guides how-to (plus concrets que reference) ---
+        "api/bcrypt-hash" | "api/bcrypt-compare" | "api/argon2-hash" => {
+            "https://bun.sh/guides/util/hash-a-password"
+        }
+        "api/yaml-parse" | "api/yaml-stringify" => "https://bun.sh/guides/runtime/import-yaml",
+        "api/json5-parse" | "api/json5-stringify" => "https://bun.sh/guides/runtime/import-json",
+        "api/toml-parse" => "https://bun.sh/guides/runtime/import-toml",
+        "api/marked-call" | "api/marked-parse" => "https://bun.sh/reference/bun/markdown",
+        "api/escape-html" => "https://bun.sh/reference/bun/escapeHTML",
+        "api/strip-ansi" | "api/string-width" | "api/slice-ansi" => {
+            "https://bun.sh/reference/bun"
+        }
+        "api/which-call" => "https://bun.sh/reference/bun/which",
+        "api/cron-schedule" | "api/cronjob-new" => "https://bun.sh/reference/bun/cron",
+        "api/fast-deep-equal" => "https://bun.sh/guides/util/deep-equals",
+        "api/pako-gzip" | "api/pako-gunzip" | "api/zlib-gzipSync" => {
+            "https://bun.sh/guides/util/gzip"
+        }
+        "api/sleep-promise" => "https://bun.sh/guides/util/sleep",
+        "api/uuid-v4" => "https://bun.sh/reference/bun/randomUUIDv7",
+        "api/crypto-randomBytes" => {
+            "https://developer.mozilla.org/docs/Web/API/Crypto/getRandomValues"
+        }
+        "api/http-createServer" => "https://bun.sh/guides/http/simple",
+        "api/https-createServer" => "https://bun.sh/guides/http/tls",
+        "api/express-app" => "https://bun.sh/guides/ecosystem/express",
+        "api/fastify-app" => "https://bun.sh/guides",
+        "api/koa-new" | "api/http-request" | "api/https-request" => {
+            "https://bun.sh/guides/http/fetch"
+        }
+        "api/execSync" | "api/exec" | "api/child-process-spawn" => {
+            "https://bun.sh/guides/process/spawn"
+        }
+        "api/execa-call" => "https://bun.sh/guides/process/spawn",
+        "api/fs-readFileSync" | "api/fs-readFile-utf8" | "api/fs-readFile-promise" => {
+            "https://bun.sh/guides/read-file/string"
+        }
+        "api/fs-writeFileSync" => "https://bun.sh/guides/write-file/basic",
+        "api/fs-existsSync" => "https://bun.sh/guides/read-file/exists",
+        "api/json-parse-readFileSync" => "https://bun.sh/guides/read-file/json",
+        "api/crypto-createHash" => "https://bun.sh/docs/api/hashing",
+        "api/util-inspect" => "https://bun.sh/reference/bun/inspect",
+        "api/crypto-randomBytes" => "https://developer.mozilla.org/docs/Web/API/Crypto/getRandomValues",
+        "api/eventsource-new" => "https://bun.sh/reference/bun/EventSource",
+        "api/cookie-parse" | "api/cookie-serialize" => "https://bun.sh/reference/bun/Cookie",
+        "api/aws-sdk-s3-client" => "https://bun.sh/reference/bun/S3Client",
+        "api/file-based-routing" => "https://bun.sh/reference/bun/FileSystemRouter",
+        "api/chalk-call" => "https://bun.sh/reference/bun/color",
+        "api/process-hrtime-bigint" => "https://bun.sh/reference/bun/nanoseconds",
+        "api/execa-call" => "https://bun.sh/docs/runtime/shell",
+        "bunfig/registry-npmjs" | "bunfig/option-note" | "bunfig/unknown-option" => {
+            "https://bun.sh/docs/runtime/bunfig"
+        }
+        "tsconfig/module-legacy"
+        | "tsconfig/target-legacy"
+        | "tsconfig/module-detection"
+        | "tsconfig/verbatim-module-syntax"
+        | "tsconfig/allow-ts-extensions"
+        | "tsconfig/no-emit"
+        | "tsconfig/duplicate-node-types" => "https://bun.sh/docs/typescript",
         _ if rule_id.starts_with("api/fs-")
             || rule_id.starts_with("api/json-parse-readFileSync") =>
         {
@@ -100,9 +168,7 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         "api/performance-now" => "https://bun.sh/docs/api/utils#bun-nanoseconds",
         "api/util-inspect" => "https://bun.sh/docs/api/utils#bun-inspect",
         "api/util-promisify" | "api/set-immediate" => "https://bun.sh/docs/runtime/nodejs-apis",
-        "api/sleep-promise" => "https://bun.sh/docs/api/utils#bun-sleep",
         "api/semver" => "https://bun.sh/docs/api/semver",
-        "api/toml-parse" => "https://bun.sh/docs/api/utils#bun-toml-parse",
         "api/process-stdout-write" | "api/process-stderr-write" => {
             "https://bun.sh/docs/api/console"
         }
@@ -114,12 +180,15 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         }
         _ if rule_id.starts_with("imports/bun-native") => "https://bun.sh/docs/runtime/modules",
         _ if rule_id.starts_with("cli/") => "https://bun.sh/docs/cli/run",
-        _ if rule_id.starts_with("pkg/") => "https://bun.sh/docs/install/package-json",
+        _ if rule_id.starts_with("pkg/") => "https://bun.sh/docs/cli/install",
         _ if rule_id.starts_with("ci/") => "https://github.com/oven-sh/setup-bun",
         "shebang/node" => "https://bun.sh/docs/cli/run#shebangs",
         "lock/rival" => "https://bun.sh/docs/install/lockfile",
         _ if rule_id.starts_with("workspace/") => "https://bun.sh/docs/install/workspaces",
         _ if rule_id.starts_with("husky/") => "https://bun.sh/docs/cli/run",
+        _ if rule_id.starts_with("ecosystem/") => "https://bun.sh/guides/ecosystem",
+        _ if rule_id.starts_with("next/") => "https://bun.sh/guides/ecosystem/nextjs",
+        _ if rule_id.starts_with("npmrc/") => "https://bun.sh/docs/runtime/bunfig",
         _ => "https://bun.sh/docs",
     }
 }

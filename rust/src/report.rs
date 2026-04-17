@@ -312,14 +312,14 @@ pub fn render_sarif(fixes: &[FileFix], opts: &RunOptions) -> String {
         .collect();
 
     let sarif = json!({
-        "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+        "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
         "version": "2.1.0",
         "runs": [{
             "tool": {
                 "driver": {
                     "name": TOOL,
                     "version": VERSION,
-                    "informationUri": "https://github.com/aphrody-code/node2bun",
+                    "informationUri": "https://github.com/aphrody-code/n2b",
                     "rules": rules,
                 }
             },

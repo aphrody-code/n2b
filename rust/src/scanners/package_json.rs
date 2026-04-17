@@ -15,8 +15,102 @@ const REDUNDANT_DEPS: &[&str] = &[
     "concurrently",
 ];
 
+/// Mapping dep npm → guide Bun spécifique. Émis en Info pour pointer l'utilisateur
+/// vers la doc de portage / intégration sans rien "corriger".
+/// Tuples : (dep_name, rule_id suffix, guide_url, label).
+const ECOSYSTEM_GUIDES: &[(&str, &str, &str, &str)] = &[
+    // Frameworks full-stack
+    ("next",               "nextjs",          "https://bun.sh/guides/ecosystem/nextjs",          "Next.js"),
+    ("nuxt",               "nuxt",            "https://bun.sh/guides/ecosystem/nuxt",            "Nuxt"),
+    ("astro",              "astro",           "https://bun.sh/guides/ecosystem/astro",           "Astro"),
+    ("@remix-run/react",   "remix",           "https://bun.sh/guides/ecosystem/remix",           "Remix"),
+    ("@sveltejs/kit",      "sveltekit",       "https://bun.sh/guides/ecosystem/sveltekit",       "SvelteKit"),
+    ("@tanstack/start",    "tanstack-start",  "https://bun.sh/guides/ecosystem/tanstack-start",  "TanStack Start"),
+    ("solid-start",        "solid-start",     "https://bun.sh/guides",                           "SolidStart"),
+    ("@builder.io/qwik",   "qwik",            "https://bun.sh/guides/ecosystem/qwik",            "Qwik"),
+    // HTTP frameworks
+    ("hono",               "hono",            "https://bun.sh/guides/ecosystem/hono",            "Hono"),
+    ("elysia",             "elysia",          "https://bun.sh/guides/ecosystem/elysia",          "Elysia"),
+    ("fastify",            "fastify",         "https://bun.sh/guides",                           "Fastify"),
+    ("express",            "express",         "https://bun.sh/guides/ecosystem/express",         "Express"),
+    ("stric",              "stric",           "https://bun.sh/guides/ecosystem/stric",           "StricJS"),
+    // Build / frontend
+    ("vite",               "vite",            "https://bun.sh/guides/ecosystem/vite",            "Vite"),
+    // ORMs & DB clients
+    ("prisma",             "prisma",          "https://bun.sh/guides/ecosystem/prisma",          "Prisma"),
+    ("@prisma/client",     "prisma",          "https://bun.sh/guides/ecosystem/prisma",          "Prisma"),
+    ("drizzle-orm",        "drizzle",         "https://bun.sh/guides/ecosystem/drizzle",         "Drizzle"),
+    ("mongoose",           "mongoose",        "https://bun.sh/guides/ecosystem/mongoose",        "Mongoose"),
+    ("@edgedb/driver",     "gel",             "https://bun.sh/guides/ecosystem/gel",             "Gel"),
+    // Daemons / process managers
+    ("pm2",                "pm2",             "https://bun.sh/guides/ecosystem/pm2",             "PM2"),
+    // Observability
+    ("@sentry/node",       "sentry",          "https://bun.sh/guides/ecosystem/sentry",          "Sentry"),
+    ("@sentry/bun",        "sentry",          "https://bun.sh/guides/ecosystem/sentry",          "Sentry"),
+    // Bots
+    ("discord.js",         "discord-bot",     "https://bun.sh/guides/ecosystem/discordjs",       "discord.js"),
+    // --- Top 10 awesome-bun packages (https://github.com/oven-sh/awesome-bun) ---
+    ("graphql-yoga",       "graphql-yoga",    "https://the-guild.dev/graphql/yoga-server/v3/integrations/integration-with-bun", "GraphQL Yoga"),
+    ("@orama/orama",       "orama",           "https://github.com/oramasearch/orama",            "Orama (full-text search)"),
+    ("brisa",              "brisa",           "https://github.com/brisa-build/brisa",            "Brisa (full-stack + Web Components)"),
+    ("kysely",             "kysely",          "https://github.com/kysely-org/kysely",            "Kysely (SQL query builder)"),
+    ("kysely-bun-sqlite",  "kysely-bun",      "https://www.npmjs.com/package/kysely-bun-sqlite", "Kysely + bun:sqlite adapter"),
+    ("@hattip/core",       "hattip",          "https://github.com/hattipjs/hattip",              "HatTip (cross-runtime HTTP)"),
+    ("primate",            "primate",         "https://github.com/primatejs/primate",            "Primate web framework"),
+    ("vixeny",             "vixeny",          "https://github.com/mimiMonads/vixeny",            "Vixeny (functional web framework)"),
+    ("nbit",               "nbit",            "https://github.com/sstur/nbit",                   "NBit (zero-dep web framework)"),
+    ("bun-utilities",      "bun-utilities",   "https://www.npmjs.com/package/bun-utilities",     "bun-utilities (FS/shell helpers)"),
+    // Desktop / native apps
+    ("electrobun",         "electrobun",      "https://github.com/blackboardsh/electrobun",      "Electrobun (desktop apps Bun+Zig, alternative Electron)"),
+    ("electron",           "electron-alt",    "https://github.com/blackboardsh/electrobun",      "Electron détecté — envisager Electrobun (Bun+Zig, bundle ~10× plus petit)"),
+    ("tauri",              "tauri",           "https://tauri.app",                                "Tauri (Rust + WebView) — compatible avec Bun côté frontend"),
+    // CLI frameworks
+    ("ink",                "ink",             "https://github.com/vadimdemedes/ink",             "Ink (React for CLIs) — tourne sous Bun"),
+    ("bunli",              "bunli",           "https://bunli.dev/docs",                          "Bunli (CLI framework Bun-native, type-safe, zero-dep)"),
+    ("@bunli/core",        "bunli",           "https://bunli.dev/docs",                          "Bunli core"),
+    ("commander",          "commander",       "https://github.com/tj/commander.js",              "Commander — marche sous Bun (envisager Bunli pour Bun-native)"),
+    ("yargs",              "yargs",           "https://github.com/yargs/yargs",                  "yargs — marche sous Bun (envisager util.parseArgs natif ou Bunli)"),
+];
+
 static JEST_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\bjest(?:\s|$)").unwrap());
 static TSUP_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\btsup(?:\s|$)").unwrap());
+static NEXT_DEV_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*next\s+dev\b").unwrap());
+static NEXT_START_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*next\s+start\b").unwrap());
+static NEXT_BUILD_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*next\s+build\b").unwrap());
+
+/// Parcourt src/ du package pour détecter un import de "bun" (statique ou dynamique).
+fn package_uses_bun_import(package_json_path: &str) -> bool {
+    let pkg_dir = std::path::Path::new(package_json_path)
+        .parent()
+        .unwrap_or_else(|| std::path::Path::new("."));
+    let src_dir = pkg_dir.join("src");
+    if !src_dir.is_dir() {
+        return false;
+    }
+    fn walk(dir: &std::path::Path) -> bool {
+        let Ok(rd) = std::fs::read_dir(dir) else { return false };
+        for entry in rd.flatten() {
+            let p = entry.path();
+            if p.is_dir() {
+                if walk(&p) { return true; }
+            } else if let Some(ext) = p.extension().and_then(|s| s.to_str()) {
+                if matches!(ext, "ts" | "tsx" | "mts" | "cts" | "js" | "mjs" | "cjs") {
+                    if let Ok(c) = std::fs::read_to_string(&p) {
+                        if c.contains("from \"bun\"")
+                            || c.contains("from 'bun'")
+                            || c.contains("import(\"bun\")")
+                            || c.contains("import('bun')")
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        false
+    }
+    walk(&src_dir)
+}
 
 pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
     let mut findings: Vec<Finding> = Vec::new();
@@ -80,23 +174,65 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                 ));
             }
 
+            // next/scripts-bun-runtime — forcer Bun runtime pour next dev/start
+            if NEXT_DEV_RE.is_match(&rewritten) || NEXT_START_RE.is_match(&rewritten) {
+                findings.push(make_finding(
+                    path,
+                    &[],
+                    0,
+                    "next/script-runtime",
+                    format!(
+                        "script {name:?}={rewritten:?} — préfixer avec `bunx --bun` pour forcer Bun comme runtime (sinon Node peut être utilisé selon PATH)"
+                    ),
+                    rewritten.clone(),
+                    Some(format!("bunx --bun {}", rewritten.trim())),
+                    MakeFindingOpts {
+                        autofix: Some(false),
+                        aggressive: Some(true),
+                        severity: Some(Severity::Info),
+                    },
+                ));
+            }
+
+            // next/build-turbo — suggérer `next build --turbopack` (Next 16 default)
+            if NEXT_BUILD_RE.is_match(&rewritten) && !rewritten.contains("--turbopack") {
+                findings.push(make_finding(
+                    path,
+                    &[],
+                    0,
+                    "next/build-turbopack",
+                    format!(
+                        "script {name:?}={rewritten:?} — Next 16 utilise Turbopack par défaut pour `dev` ; pour `build` ajouter `--turbopack` explicitement accélère le build (50-80%)"
+                    ),
+                    rewritten.clone(),
+                    Some(format!("{} --turbopack", rewritten.trim_end())),
+                    MakeFindingOpts {
+                        autofix: Some(false),
+                        aggressive: Some(true),
+                        severity: Some(Severity::Info),
+                    },
+                ));
+            }
+
             // pkg/tsup-bun-external — détecte tsup sans --external bun
-            // (heuristique : si la racine contient un fichier source avec await import("bun"))
-            if TSUP_RE.is_match(&rewritten) && !rewritten.contains("--external bun") {
+            // Ne flaggue que si le package contient effectivement un import de "bun".
+            if TSUP_RE.is_match(&rewritten) && !rewritten.contains("--external bun")
+                && package_uses_bun_import(path)
+            {
                 findings.push(make_finding(
                     path,
                     &[],
                     0,
                     "pkg/tsup-bun-external",
                     format!(
-                        "script {name:?} utilise tsup — ajouter '--external bun' si le code fait 'await import(\"bun\")' (sinon esbuild échoue au bundle-time)"
+                        "script {name:?} utilise tsup et le code importe 'bun' — ajouter '--external bun' pour éviter l'échec d'esbuild au bundle-time"
                     ),
                     rewritten.clone(),
                     Some(format!("{} --external bun", rewritten.trim_end())),
                     MakeFindingOpts {
                         autofix: Some(false),
                         aggressive: Some(true),
-                        severity: Some(Severity::Info),
+                        severity: Some(Severity::Warn),
                     },
                 ));
             }
@@ -135,11 +271,34 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
         }
     }
 
-    // 4. Redundant deps
+    // 4. Redundant deps + 4b. Ecosystem guides
     let dep_keys = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"];
+    let mut seen_ecosystem: std::collections::HashSet<&str> = std::collections::HashSet::new();
     for key in dep_keys {
         if let Some(deps) = parsed.get(key).and_then(|v| v.as_object()) {
             for dep in deps.keys() {
+                // Ecosystem guide mapping (info, pas de remplacement)
+                for (name, suffix, url, label) in ECOSYSTEM_GUIDES {
+                    if *name == dep.as_str() && seen_ecosystem.insert(*suffix) {
+                        let rule_id = format!("ecosystem/{suffix}");
+                        findings.push(make_finding(
+                            path,
+                            &[],
+                            0,
+                            &rule_id,
+                            format!(
+                                "{label} détecté — guide d'intégration Bun : {url}"
+                            ),
+                            (*name).to_string(),
+                            Some((*url).to_string()),
+                            MakeFindingOpts {
+                                autofix: Some(false),
+                                severity: Some(Severity::Info),
+                                ..Default::default()
+                            },
+                        ));
+                    }
+                }
                 if REDUNDANT_DEPS.contains(&dep.as_str()) {
                     findings.push(make_finding(
                         path,

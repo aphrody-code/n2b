@@ -99,7 +99,49 @@ static BUN_REPLACEMENTS: Lazy<HashMap<&'static str, BunReplacement>> = Lazy::new
     m.insert("mime-types",      repl("<natif>",              "Bun.file().type retourne le MIME type automatiquement", false));
     m.insert("glob",            repl("bun (Glob)",           "import { Glob } from 'bun' est natif (pas bun:glob)", true));
     m.insert("fast-glob",       repl("bun (Glob)",           "import { Glob } from 'bun' est natif (pas bun:glob)", true));
+    m.insert("globby",          repl("bun (Glob)",           "import { Glob } from 'bun' est natif", true));
+    m.insert("tiny-glob",       repl("bun (Glob)",           "import { Glob } from 'bun' est natif", true));
     m.insert("glob-parent",     repl("bun (Glob)",           "utiliser import { Glob } from 'bun'", false));
+    // Deep equality / cloning / collections
+    m.insert("fast-deep-equal", repl("Bun.deepEquals",       "Bun.deepEquals() est natif et plus rapide", true));
+    m.insert("deep-equal",      repl("Bun.deepEquals",       "Bun.deepEquals() est natif", true));
+    m.insert("lodash.isequal",  repl("Bun.deepEquals",       "Bun.deepEquals() remplace lodash.isEqual", true));
+    // HTML / text
+    m.insert("he",              repl("Bun.escapeHTML",       "Bun.escapeHTML() est natif", true));
+    m.insert("escape-html",     repl("Bun.escapeHTML",       "Bun.escapeHTML() est natif", true));
+    m.insert("lodash.escape",   repl("Bun.escapeHTML",       "Bun.escapeHTML() remplace lodash.escape", true));
+    // Cookies / CSRF
+    m.insert("cookie",          repl("Bun.Cookie",           "Bun.Cookie / Bun.CookieMap sont natifs", true));
+    m.insert("cookie-parser",   repl("Bun.CookieMap",        "Bun.CookieMap est natif", true));
+    m.insert("csurf",           repl("Bun.CSRF",             "Bun.CSRF.generate/verify est natif", true));
+    m.insert("csrf",            repl("Bun.CSRF",             "Bun.CSRF.generate/verify est natif", true));
+    // YAML / Markdown / JSON variants
+    m.insert("js-yaml",         repl("Bun.YAML",             "Bun.YAML.parse() est natif", true));
+    m.insert("yaml",            repl("Bun.YAML",             "Bun.YAML.parse() est natif", true));
+    m.insert("marked",          repl("Bun.markdown",         "Bun.markdown.html() est natif", true));
+    m.insert("markdown-it",     repl("Bun.markdown",         "Bun.markdown.html() est natif", true));
+    m.insert("json5",           repl("Bun.JSON5",            "Bun.JSON5.parse() est natif", true));
+    m.insert("jsonc-parser",    repl("Bun.JSONC",            "Bun.JSONC.parse() est natif", true));
+    // Terminal / ANSI
+    m.insert("string-width",    repl("Bun.stringWidth",      "Bun.stringWidth() est natif", true));
+    m.insert("strip-ansi",      repl("Bun.stripANSI",        "Bun.stripANSI() est natif", true));
+    m.insert("ansi-regex",      repl("Bun.stripANSI",        "Bun.stripANSI() remplace ansi-regex dans la plupart des cas", false));
+    m.insert("slice-ansi",      repl("Bun.sliceAnsi",        "Bun.sliceAnsi() est natif", true));
+    m.insert("kleur",           repl("<natif>",              "Bun supporte les codes ANSI nativement (Bun.color)", false));
+    m.insert("colorette",       repl("<natif>",              "Bun supporte les codes ANSI nativement (Bun.color)", false));
+    m.insert("picocolors",      repl("<natif>",              "Bun supporte les codes ANSI nativement (Bun.color)", false));
+    // System / Spawn / Streams
+    m.insert("which",           repl("Bun.which",            "Bun.which() est natif", true));
+    m.insert("cross-spawn",     repl("Bun.spawn",            "Bun.spawn est cross-platform par défaut", true));
+    m.insert("execa",           repl("Bun.$ / Bun.spawn",    "le shell Bun ($`cmd`) ou Bun.spawn remplacent execa", true));
+    m.insert("shelljs",         repl("Bun.$",                "le shell Bun ($`cmd`) offre la même ergonomie", false));
+    // Network / streaming
+    m.insert("eventsource",     repl("Bun.EventSource",      "Bun.EventSource est un client SSE natif", true));
+    m.insert("@aws-sdk/client-s3", repl("Bun.s3 / Bun.S3Client", "Bun.s3 est un client S3 natif (multipart, presign)", true));
+    m.insert("aws-sdk",         repl("Bun.s3 / fetch s3://", "Bun.s3 et fetch('s3://...') sont natifs", false));
+    // Compression / crypto
+    m.insert("pako",            repl("Bun.gzipSync",         "Bun.gzipSync/gunzipSync/deflateSync/inflateSync natifs", true));
+    m.insert("keytar",          repl("Bun.secrets",          "Bun.secrets est un gestionnaire natif (OS keychain)", true));
     m
 });
 
@@ -181,8 +223,19 @@ pub fn apply_node_import_rules(
     // apply node: prefix edits here because that's also a safe fix in --fix mode.
     let mut out = source.to_string();
     if !edits.is_empty() {
-        edits.sort_by(|a, b| b.index.cmp(&a.index));
+        edits.sort_by(|a, b| a.index.cmp(&b.index).then(b.len.cmp(&a.len)));
+        let mut kept: Vec<Edit> = Vec::with_capacity(edits.len());
         for e in edits {
+            let overlaps_prev = kept
+                .last()
+                .map(|p| p.index + p.len > e.index)
+                .unwrap_or(false);
+            if !overlaps_prev {
+                kept.push(e);
+            }
+        }
+        kept.sort_by(|a, b| b.index.cmp(&a.index));
+        for e in kept {
             out.replace_range(e.index..e.index + e.len, &e.replacement);
         }
     }

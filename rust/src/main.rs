@@ -2,6 +2,7 @@ mod ai;
 mod analyze;
 mod audit;
 mod github;
+mod patch;
 mod report;
 mod rules;
 mod run;
@@ -143,6 +144,45 @@ enum Cmd {
         report: ReportArg,
     },
 
+    /// Génère ou applique des patches. Deux modes :
+    ///   · `n2b patch <pkg>`  → wrapper `bun patch` : applique les règles n2b
+    ///                            sur node_modules/<pkg>, puis `bun patch --commit`.
+    ///   · `n2b patch --self` → produit un diff unifié du repo courant
+    ///                            (n2b.patch) sans modifier les fichiers.
+    Patch {
+        /// Nom (ou name@version) du package npm à patcher (mode A).
+        package: Option<String>,
+
+        /// Mode B : patch le repo courant au lieu d'une dep npm.
+        #[arg(long = "self")]
+        self_repo: bool,
+
+        /// Racine du projet.
+        #[arg(long, default_value = ".")]
+        root: PathBuf,
+
+        /// Applique aussi les règles marquées `aggressive`.
+        #[arg(long)]
+        aggressive: bool,
+
+        /// Fichier de sortie pour le .patch (mode B).
+        #[arg(long, default_value = "n2b.patch")]
+        output: PathBuf,
+
+        /// Dossier où `bun patch --commit` écrit les patch files (mode A).
+        #[arg(long)]
+        patches_dir: Option<PathBuf>,
+
+        /// N'écrit rien (mode B imprime le patch sur stdout ; mode A skip
+        /// `bun patch --commit`).
+        #[arg(long)]
+        dry_run: bool,
+
+        /// Glob d'exclusion supplémentaire (cumulable).
+        #[arg(long)]
+        ignore: Vec<String>,
+    },
+
     /// Scan + audit + crosslink ML (embeddings) sur un ou plusieurs repos.
     Analyze {
         /// Chemins à analyser (défaut: discord.js/discordx/nextjs détectés dans cwd).
@@ -218,6 +258,29 @@ fn real_main() -> Result<ExitCode> {
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
         }
+        Some(Cmd::Patch {
+            package,
+            self_repo,
+            root,
+            aggressive,
+            output,
+            patches_dir,
+            dry_run,
+            ignore,
+        }) => {
+            patch::run_patch(patch::PatchOpts {
+                package,
+                self_repo,
+                root,
+                aggressive,
+                output,
+                patches_dir,
+                dry_run,
+                ignore,
+                quiet: cli.quiet,
+            })?;
+            return Ok(ExitCode::SUCCESS);
+        }
         Some(Cmd::Analyze { paths, issue_limit, top_k, threshold, report, ignore, apply }) => {
             let cwd = std::env::current_dir()?;
             let paths = if paths.is_empty() {
@@ -268,6 +331,7 @@ fn real_main() -> Result<ExitCode> {
         quiet: cli.quiet,
         ignore: cli.ignore,
         agent: cli.agent,
+        dry_run: false,
     };
 
     let fixes = run::run(&opts)?;
@@ -495,6 +559,112 @@ fn run_rules(report: Report) -> Result<ExitCode> {
         ("husky/pnpm-dlx", "hook husky 'pnpm dlx' → 'bunx --bun'"),
         ("pkg/jest-script", "script 'jest' → 'bun test'"),
         ("pkg/tsup-bun-external", "script tsup + import('bun') → ajouter '--external bun'"),
+        // --- Bun namespace APIs ---
+        ("api/bcrypt-hash", "bcrypt.hash → Bun.password.hash"),
+        ("api/bcrypt-compare", "bcrypt.compare → Bun.password.verify"),
+        ("api/argon2-hash", "argon2.hash/verify → Bun.password"),
+        ("api/yaml-parse", "yaml.load/parse → Bun.YAML.parse"),
+        ("api/yaml-stringify", "yaml.dump/stringify → Bun.YAML.stringify"),
+        ("api/json5-parse", "JSON5.parse → Bun.JSON5.parse"),
+        ("api/json5-stringify", "JSON5.stringify → Bun.JSON5.stringify"),
+        ("api/marked-call", "marked() → Bun.markdown.html"),
+        ("api/marked-parse", "marked.parse → Bun.markdown.html"),
+        ("api/escape-html", "escapeHtml / he.encode → Bun.escapeHTML"),
+        ("api/strip-ansi", "stripAnsi → Bun.stripANSI"),
+        ("api/string-width", "stringWidth → Bun.stringWidth"),
+        ("api/slice-ansi", "sliceAnsi → Bun.sliceAnsi"),
+        ("api/which-call", "which(pkg) → Bun.which(pkg)"),
+        ("api/cron-schedule", "cron.schedule → Bun.cron"),
+        ("api/cronjob-new", "new CronJob → Bun.cron"),
+        ("api/fast-deep-equal", "fastDeepEqual → Bun.deepEquals"),
+        ("api/pako-gzip", "pako.gzip/deflate → Bun.gzipSync / deflateSync"),
+        ("api/pako-gunzip", "pako.ungzip/inflate → Bun.gunzipSync / inflateSync"),
+        ("api/express-app", "express() → Bun.serve (info)"),
+        ("api/fastify-app", "fastify() → Bun.serve (info)"),
+        ("api/koa-new", "new Koa() → Bun.serve (info)"),
+        ("api/http-request", "http.request → fetch"),
+        ("api/https-request", "https.request → fetch"),
+        ("api/crypto-randomBytes", "crypto.randomBytes → crypto.getRandomValues"),
+        ("api/eventsource-new", "new EventSource → Bun.EventSource (déjà global, info)"),
+        ("api/cookie-parse", "cookie.parse → new Bun.CookieMap"),
+        ("api/cookie-serialize", "cookie.serialize → Bun.Cookie.toString"),
+        ("api/aws-sdk-s3-client", "new S3Client → Bun.S3Client"),
+        ("api/file-based-routing", "next-router → Bun.FileSystemRouter (info)"),
+        ("api/chalk-call", "chalk.<color> → Bun.color / ANSI natif (info)"),
+        ("api/zlib-gzipSync", "zlib.gzipSync → Bun.gzipSync (info)"),
+        ("api/process-hrtime-bigint", "process.hrtime.bigint → Bun.nanoseconds (info)"),
+        ("api/execa-call", "execa → Bun.$ / Bun.spawn"),
+        // --- bunfig.toml ---
+        ("bunfig/registry-npmjs", "registry npmjs par défaut (redondant)"),
+        ("bunfig/option-note", "note sur une option bunfig (isolated, saveTextLockfile)"),
+        ("bunfig/unknown-option", "option bunfig inconnue (legacy)"),
+        // --- tsconfig étendu ---
+        ("tsconfig/module-legacy", "module=CommonJS/AMD/UMD → ESNext/Preserve"),
+        ("tsconfig/target-legacy", "target=ES2021 ou moins → ES2022+/ESNext"),
+        ("tsconfig/module-detection", "moduleDetection absent → 'force'"),
+        ("tsconfig/verbatim-module-syntax", "moduleResolution=bundler + verbatimModuleSyntax=true"),
+        ("tsconfig/allow-ts-extensions", "Bun résout les .ts nativement → allowImportingTsExtensions"),
+        ("tsconfig/no-emit", "bundler + noEmit=true (Bun émet, tsc type-check)"),
+        ("tsconfig/duplicate-node-types", "types=['bun','node'] redondant — bun suffit"),
+        // --- Next.js ---
+        ("next/output-standalone", "next.config output:'standalone' (info, reste OK en Node)"),
+        ("next/webpack-custom", "next.config webpack() custom (Turbopack est default Next 16)"),
+        ("next/server-external-packages", "experimental.serverComponentsExternalPackages (auditer)"),
+        ("next/turbopack-missing", "next.config : webpack custom sans turbopack: {}"),
+        ("next/images-custom-loader", "next images.loader: 'custom'"),
+        ("next/script-runtime", "script 'next dev/start' → préfixer par bunx --bun"),
+        ("next/build-turbopack", "'next build' sans --turbopack (Next 16)"),
+        ("next/custom-server-next-app", "next({ dev }) custom server → Bun.serve({ fetch })"),
+        ("next/request-handler", "app.getRequestHandler() → wrapper pour Bun.serve"),
+        // --- Ecosystem (info, guides) ---
+        ("ecosystem/nextjs", "next détecté → guide Bun + Next.js"),
+        ("ecosystem/nuxt", "nuxt détecté → guide Bun + Nuxt"),
+        ("ecosystem/astro", "astro détecté → guide Bun + Astro"),
+        ("ecosystem/remix", "@remix-run/react détecté → guide Bun + Remix"),
+        ("ecosystem/sveltekit", "@sveltejs/kit détecté → guide Bun + SvelteKit"),
+        ("ecosystem/tanstack-start", "@tanstack/start → guide Bun"),
+        ("ecosystem/solid-start", "solid-start → guide Bun"),
+        ("ecosystem/qwik", "@builder.io/qwik → guide Bun"),
+        ("ecosystem/hono", "hono → guide Bun"),
+        ("ecosystem/elysia", "elysia → guide Bun"),
+        ("ecosystem/fastify", "fastify → guide Bun"),
+        ("ecosystem/express", "express → guide Bun"),
+        ("ecosystem/stric", "stric → guide Bun"),
+        ("ecosystem/vite", "vite → guide Bun"),
+        ("ecosystem/prisma", "prisma / @prisma/client → guide Bun"),
+        ("ecosystem/drizzle", "drizzle-orm → guide Bun"),
+        ("ecosystem/mongoose", "mongoose → guide Bun"),
+        ("ecosystem/gel", "@edgedb/driver (Gel) → guide Bun"),
+        ("ecosystem/pm2", "pm2 → guide daemon Bun"),
+        ("ecosystem/sentry", "@sentry/node → guide Sentry + Bun"),
+        ("ecosystem/discord-bot", "discord.js → guide Discord bot Bun"),
+        // --- Top 10 awesome-bun packages ---
+        ("ecosystem/graphql-yoga", "graphql-yoga → intégration Bun"),
+        ("ecosystem/orama", "@orama/orama → search engine"),
+        ("ecosystem/brisa", "brisa → full-stack framework"),
+        ("ecosystem/kysely", "kysely → SQL query builder"),
+        ("ecosystem/kysely-bun", "kysely-bun-sqlite → Kysely + bun:sqlite"),
+        ("ecosystem/hattip", "@hattip/core → HTTP cross-runtime"),
+        ("ecosystem/primate", "primate → web framework"),
+        ("ecosystem/vixeny", "vixeny → functional web framework"),
+        ("ecosystem/nbit", "nbit → zero-dep web framework"),
+        ("ecosystem/bun-utilities", "bun-utilities → FS/shell helpers"),
+        ("ecosystem/electrobun", "electrobun → desktop apps Bun+Zig"),
+        ("ecosystem/electron-alt", "electron → envisager Electrobun (Bun+Zig)"),
+        ("ecosystem/tauri", "tauri → compatible Bun frontend"),
+        ("ecosystem/ink", "ink (React CLI) → tourne sous Bun"),
+        ("ecosystem/bunli", "bunli → CLI framework Bun-native"),
+        ("ecosystem/commander", "commander → compatible, ou Bunli"),
+        ("ecosystem/yargs", "yargs → compatible, ou util.parseArgs/Bunli"),
+        // --- .npmrc / .yarnrc / .pnpmrc → bunfig.toml ---
+        ("npmrc/registry", ".npmrc registry → bunfig.toml [install].registry"),
+        ("npmrc/auth-token", ".npmrc _authToken → bunfig.toml [install.scopes]"),
+        ("npmrc/scoped-registry", "@scope:registry → bunfig.toml [install.scopes]"),
+        ("npmrc/always-auth", "'always-auth' spécifique npm"),
+        ("npmrc/save-prefix", "save-exact/save-prefix → bunfig.toml"),
+        ("npmrc/node-linker", "node-linker → bunfig.toml [install].linker"),
+        ("npmrc/engine-strict", "engine-strict (Bun lit engines.bun)"),
+        ("npmrc/lockfile-flag", "options lockfile obsolètes avec bun.lock"),
     ];
     match report {
         Report::Json | Report::Jsonl => {
@@ -545,6 +715,7 @@ fn run_prompt(
         quiet: true,
         ignore,
         agent,
+        dry_run: false,
     };
     let mut fixes = run::run(&opts)?;
     if !include_info {
