@@ -1,5 +1,5 @@
-import type { Finding } from "./types";
 import { computeLineOffsets, posFromOffsets } from "./native";
+import type { Finding } from "./types";
 
 export const colors = {
   reset: "\x1b[0m",

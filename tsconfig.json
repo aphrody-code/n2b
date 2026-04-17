@@ -1,19 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "types": ["bun-types"],
-    "lib": ["ESNext"],
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": false,
-    "allowImportingTsExtensions": true
-  },
-  "include": ["bin/**/*", "src/**/*"]
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/n2b" },
+    { "path": "./packages/n2b-cli" }
+  ]
 }

@@ -142,6 +142,12 @@ static BUN_REPLACEMENTS: Lazy<HashMap<&'static str, BunReplacement>> = Lazy::new
     // Compression / crypto
     m.insert("pako",            repl("Bun.gzipSync",         "Bun.gzipSync/gunzipSync/deflateSync/inflateSync natifs", true));
     m.insert("keytar",          repl("Bun.secrets",          "Bun.secrets est un gestionnaire natif (OS keychain)", true));
+    // --- Biome : remplace ESLint + Prettier (un seul binaire Rust, plus rapide) ---
+    m.insert("eslint",          repl("@biomejs/biome",       "Biome remplace ESLint (linter + formatter Rust, ~100× plus rapide)", false));
+    m.insert("prettier",        repl("@biomejs/biome",       "Biome remplace Prettier (formatter intégré au linter)", false));
+    m.insert("@typescript-eslint/parser", repl("@biomejs/biome", "Biome comprend TS nativement", false));
+    m.insert("@typescript-eslint/eslint-plugin", repl("@biomejs/biome", "Biome comprend TS nativement", false));
+    m.insert("eslint-config-prettier", repl("@biomejs/biome", "plus besoin de désactiver les règles ESLint qui conflictent avec Prettier — Biome unifie", false));
     m
 });
 

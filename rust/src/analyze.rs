@@ -14,7 +14,7 @@ use serde_json::json;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use crate::audit::{self, Hit, ItemState, Repo};
+use crate::audit::{self, Hit, ItemState};
 use crate::run;
 use crate::types::{Mode, Report, RunOptions, Severity};
 
@@ -422,7 +422,7 @@ fn enrich_hits(
         }
     }
     hits.iter()
-        .zip(per_hit.into_iter())
+        .zip(per_hit)
         .map(|(h, mut related)| {
             related.sort_by(|a, b| b.similarity.partial_cmp(&a.similarity).unwrap_or(std::cmp::Ordering::Equal));
             IssueWithMatches {

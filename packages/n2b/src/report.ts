@@ -26,7 +26,9 @@ export function renderText(fixes: FileFix[], opts: RunOptions): string {
       const sev = severityColor(f.severity);
       const loc = `${c.dim}${f.line}:${f.col}${c.reset}`;
       const tag = `${c.cyan}${f.ruleId}${c.reset}`;
-      const fix = f.replacement ? ` ${c.dim}→${c.reset} ${c.green}${ellipsis(f.replacement, 60)}${c.reset}` : "";
+      const fix = f.replacement
+        ? ` ${c.dim}→${c.reset} ${c.green}${ellipsis(f.replacement, 60)}${c.reset}`
+        : "";
       lines.push(`    ${sev} ${loc} ${tag} ${f.message}${fix}`);
     }
   }
@@ -34,11 +36,13 @@ export function renderText(fixes: FileFix[], opts: RunOptions): string {
   lines.push("");
   lines.push(
     `${c.bold}Bilan${c.reset} : ${c.red}${bySeverity.error} errors${c.reset}, ` +
-    `${c.yellow}${bySeverity.warn} warns${c.reset}, ` +
-    `${c.dim}${bySeverity.info} infos${c.reset}`,
+      `${c.yellow}${bySeverity.warn} warns${c.reset}, ` +
+      `${c.dim}${bySeverity.info} infos${c.reset}`,
   );
   if (opts.mode === "check" && totalFindings > 0) {
-    lines.push(`${c.dim}(relancer avec --fix pour appliquer les corrections sûres, --aggressive pour migrer les APIs)${c.reset}`);
+    lines.push(
+      `${c.dim}(relancer avec --fix pour appliquer les corrections sûres, --aggressive pour migrer les APIs)${c.reset}`,
+    );
   }
 
   return lines.join("\n");
@@ -62,7 +66,7 @@ export function renderJson(fixes: FileFix[], opts: RunOptions): string {
 
 export function renderMarkdown(fixes: FileFix[], opts: RunOptions): string {
   const out: string[] = [];
-  out.push(`# node2bun report`);
+  out.push("# node2bun report");
   out.push("");
   out.push(`- mode : \`${opts.mode}\``);
   out.push(`- racine : \`${opts.root}\``);
@@ -74,20 +78,29 @@ export function renderMarkdown(fixes: FileFix[], opts: RunOptions): string {
     out.push("| ligne | règle | message | remplacement |");
     out.push("| --- | --- | --- | --- |");
     for (const f of fix.findings) {
-      out.push(`| ${f.line}:${f.col} | \`${f.ruleId}\` | ${f.message} | ${f.replacement ? "`" + escapeMd(f.replacement) + "`" : ""} |`);
+      out.push(
+        `| ${f.line}:${f.col} | \`${f.ruleId}\` | ${f.message} | ${f.replacement ? `\`${escapeMd(f.replacement)}\`` : ""} |`,
+      );
     }
     out.push("");
   }
   return out.join("\n");
 }
 
-function escapeMd(s: string) { return s.replace(/\|/g, "\\|").replace(/\n/g, " "); }
-function ellipsis(s: string, n: number) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+function escapeMd(s: string) {
+  return s.replace(/\|/g, "\\|").replace(/\n/g, " ");
+}
+function ellipsis(s: string, n: number) {
+  return s.length > n ? `${s.slice(0, n - 1)}…` : s;
+}
 
 function severityColor(s: Finding["severity"]): string {
   switch (s) {
-    case "error": return `${c.red}✗${c.reset}`;
-    case "warn":  return `${c.yellow}!${c.reset}`;
-    default:      return `${c.dim}i${c.reset}`;
+    case "error":
+      return `${c.red}✗${c.reset}`;
+    case "warn":
+      return `${c.yellow}!${c.reset}`;
+    default:
+      return `${c.dim}i${c.reset}`;
   }
 }

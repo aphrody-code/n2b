@@ -18,6 +18,8 @@ pub enum WasmTemplate {
     GameOfLife,
     /// Rust+wgpu compute (WebGPU). Même contenu que `bin --flavor webgpu`.
     Wgpu,
+    /// SPA Yew (React-like Rust framework) — buildé via Trunk.
+    Yew,
 }
 
 impl WasmTemplate {
@@ -26,6 +28,7 @@ impl WasmTemplate {
             "basic" | "default" => Some(Self::Basic),
             "game-of-life" | "life" | "gol" => Some(Self::GameOfLife),
             "wgpu" | "webgpu" => Some(Self::Wgpu),
+            "yew" => Some(Self::Yew),
             _ => None,
         }
     }
@@ -95,6 +98,7 @@ fn init(
         WasmTemplate::Basic => basic_template(&target_dir, &name, quiet)?,
         WasmTemplate::GameOfLife => game_of_life_template(&target_dir, &name, quiet)?,
         WasmTemplate::Wgpu => wgpu_template(&target_dir, &name, quiet)?,
+        WasmTemplate::Yew => yew_template(&target_dir, &name, quiet)?,
     }
 
     if !quiet {
@@ -302,6 +306,38 @@ opt-level = "z"
     Ok(())
 }
 
+fn yew_template(dir: &Path, name: &str, quiet: bool) -> Result<()> {
+    write(
+        dir.join("Cargo.toml"),
+        &format!(
+            r#"[package]
+name = "{name}"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+yew = {{ version = "0.21", features = ["csr"] }}
+wasm-bindgen = "0.2"
+web-sys = {{ version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "console"] }}
+gloo = "0.11"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "z"
+"#,
+        ),
+        quiet,
+    )?;
+    write(dir.join("src/main.rs"), YEW_MAIN_RS, quiet)?;
+    write(dir.join("index.html"), &render_yew_index_html(name), quiet)?;
+    write(dir.join("Trunk.toml"), TRUNK_TOML, quiet)?;
+    write(dir.join("package.json"), &render_yew_package_json(name), quiet)?;
+    write(dir.join("README.md"), &readme(name, "SPA Yew (React-like Rust) via Trunk"), quiet)?;
+    write(dir.join(".gitignore"), GITIGNORE_WASM_YEW, quiet)?;
+    Ok(())
+}
+
 fn wgpu_template(dir: &Path, _name: &str, _quiet: bool) -> Result<()> {
     // Déléguer à bin_cmd::scaffold_webgpu pour ne pas dupliquer le code.
     crate::bin_cmd::run_bin(crate::bin_cmd::BinOpts {
@@ -497,3 +533,120 @@ pkg-bundler/
 pkg-node/
 .DS_Store
 "#;
+
+const GITIGNORE_WASM_YEW: &str = r#"target/
+node_modules/
+dist/
+pkg/
+.DS_Store
+"#;
+
+const YEW_MAIN_RS: &str = r#"//! Yew SPA minimale : compteur interactif + appel JS via web-sys.
+//!
+//! Docs :
+//!   - https://yew.rs/
+//!   - https://yew.rs/docs/concepts/basic-web-technologies/js
+//!   - https://yew.rs/docs/concepts/basic-web-technologies/wasm-bindgen
+//!
+//! Build :  trunk serve     (dev, hot-reload)
+//!          trunk build --release
+
+use gloo::console::log;
+use wasm_bindgen::UnwrapThrowExt;
+use web_sys::window;
+use yew::prelude::*;
+
+#[function_component]
+fn App() -> Html {
+    let counter = use_state(|| 0i32);
+    let onclick = {
+        let counter = counter.clone();
+        Callback::from(move |_: MouseEvent| {
+            let next = *counter + 1;
+            counter.set(next);
+            // Appel direct d'une API navigateur via web-sys :
+            let doc_title = window()
+                .and_then(|w| w.document())
+                .map(|d| d.title())
+                .unwrap_or_default();
+            log!(format!("tick {next} (doc title: {doc_title})"));
+        })
+    };
+
+    html! {
+        <main class="container">
+            <h1>{ "Hello from Yew + Bun" }</h1>
+            <p>
+                { "Count: " }
+                <b>{ *counter }</b>
+            </p>
+            <button {onclick}>{ "Tick" }</button>
+            <p class="hint">
+                { "Browser dev tools open → see console.log tick messages." }
+            </p>
+        </main>
+    }
+}
+
+fn main() {
+    // console_error_panic_hook est optionnel ; on se contente ici du log natif.
+    let _ = window().expect_throw("no window");
+    yew::Renderer::<App>::new().render();
+}
+"#;
+
+fn render_yew_index_html(name: &str) -> String {
+    format!(
+        r#"<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{name} — Yew + Bun</title>
+    <link data-trunk rel="css" href="style.css" />
+  </head>
+  <body>
+    <!-- Trunk injecte automatiquement le bundle WASM ici -->
+  </body>
+</html>
+"#,
+    )
+}
+
+const TRUNK_TOML: &str = r#"# Trunk — build tool Yew / wasm SPAs.
+# Doc : https://trunkrs.dev/
+
+[build]
+target = "index.html"
+dist = "dist"
+release = false
+filehash = true
+
+[serve]
+address = "127.0.0.1"
+port = 8080
+open = false
+"#;
+
+fn render_yew_package_json(name: &str) -> String {
+    format!(
+        r#"{{
+  "name": "{name}",
+  "version": "0.1.0",
+  "description": "Yew SPA scaffolded by n2b wasm init --template yew",
+  "type": "module",
+  "scripts": {{
+    "start": "trunk serve",
+    "build": "trunk build --release",
+    "clean": "trunk clean"
+  }},
+  "devDependencies": {{
+    "@types/bun": "latest"
+  }},
+  "engines": {{
+    "bun": ">=1.2.0"
+  }}
+}}
+"#,
+    )
+}

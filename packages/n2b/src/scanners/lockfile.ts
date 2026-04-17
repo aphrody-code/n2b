@@ -11,7 +11,14 @@ export const RIVAL_LOCKFILES = [
 /** Repère les lockfiles concurrents et émet un finding. */
 export function checkLockfile(path: string, name: string): Finding | null {
   if (!RIVAL_LOCKFILES.includes(name)) return null;
-  return makeFinding(path, "", 0, "lock/rival",
+  return makeFinding(
+    path,
+    "",
+    0,
+    "lock/rival",
     `lockfile concurrent '${name}' présent — exécuter 'bun install' puis supprimer ce fichier`,
-    name, undefined, { autofix: false, severity: "warn" });
+    name,
+    undefined,
+    { autofix: false, severity: "warn" },
+  );
 }

@@ -249,6 +249,11 @@ fn doctor(quiet: bool) -> Result<()> {
         ("scoop",      "iwr -useb get.scoop.sh | iex",              "package manager Windows"),
         ("x86_64-w64-mingw32-gcc", "sudo apt install mingw-w64",    "cross-compile Linux→Windows (GNU)"),
         ("cargo-xwin", "cargo install cargo-xwin",                  "cross-compile Linux→Windows (MSVC)"),
+        // --- Unix CLI essentiels sur Windows via uutils (cross-platform Rust) ---
+        ("ls",         "cargo install coreutils",                    "uutils/coreutils (ls/cp/cat/… natifs Windows)"),
+        ("find",       "cargo install findutils",                    "uutils/findutils (find/xargs natifs Windows)"),
+        ("diff",       "cargo install diffutils",                    "uutils/diffutils (diff/cmp natifs Windows)"),
+        ("ps",         "cargo install procps",                       "uutils/procps (ps/top/watch natifs Windows)"),
     ];
     let mut missing = 0;
     for (bin, install, desc) in tools {

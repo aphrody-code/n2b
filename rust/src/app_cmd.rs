@@ -156,6 +156,9 @@ fn doctor(quiet: bool) -> Result<()> {
         ("bun",     "curl -fsSL https://bun.sh/install | bash",    "runtime + bundler Bun"),
         ("tsc",     "bun add -g typescript",                       "TS compiler (optionnel)"),
         ("upx",     "sudo apt install upx",                        "compress binary (bun compile → upx)"),
+        // --- Unix CLIs cross-platform via uutils (utile pour scripts CLI multi-OS) ---
+        ("coreutils","cargo install coreutils",                    "uutils/coreutils (ls/cp/cat/… portables Windows/macOS/Linux)"),
+        ("findutils","cargo install findutils",                    "uutils/findutils (find/xargs)"),
     ];
     let mut missing = 0;
     for (bin, install, desc) in tools {

@@ -215,6 +215,12 @@ fn doctor(quiet: bool) -> Result<()> {
         ("objdump",     "sudo apt install binutils",                  "inspection ELF / symboles"),
         ("ldd",         "(glibc)",                                    "inspection deps dynamiques"),
         ("strace",      "sudo apt install strace",                    "trace syscalls (debug FFI)"),
+        // --- Unix CLI rewrites Rust (uutils) — drop-in modernes pour dev / scripts ---
+        ("coreutils",   "cargo install coreutils",                    "uutils/coreutils (ls/cp/cat/… Rust)"),
+        ("findutils",   "cargo install findutils",                    "uutils/findutils (find/xargs Rust)"),
+        ("diffutils",   "cargo install diffutils",                    "uutils/diffutils (diff/cmp Rust)"),
+        ("procps",      "cargo install procps",                       "uutils/procps (ps/top/watch Rust)"),
+        ("util-linux-rs","cargo install --git https://github.com/uutils/util-linux", "uutils/util-linux (mount/fdisk/lscpu/dmesg Rust)"),
     ];
     let mut missing = 0;
     for (bin, install, desc) in tools {

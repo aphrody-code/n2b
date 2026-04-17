@@ -64,7 +64,7 @@ bun run bin/node2bun.ts . --ignore="**/legacy/**"
 
 ## Documentation de référence
 
-Les règles sont basées sur `/home/ubuntu/gnu-rust/bun-docs/` :
+Les règles sont basées sur `/home/ubuntu/rsbun/docs/bun-docs/` :
 - `runtime/nodejs-compat.md` — matrice de compatibilité
 - `runtime/bun-apis.md` — catalogue des APIs natives
 - `pm/` — équivalents `bun install`, `bunx`, `bun add`, …

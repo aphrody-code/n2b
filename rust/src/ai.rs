@@ -42,6 +42,12 @@ pub fn category(rule_id: &str) -> &'static str {
         "nextjs"
     } else if rule_id.starts_with("npmrc/") {
         "npmrc"
+    } else if rule_id.starts_with("turbo/") {
+        "turbo"
+    } else if rule_id.starts_with("tauri/") {
+        "tauri"
+    } else if rule_id.starts_with("shadcn/") {
+        "ui"
     } else {
         "other"
     }
@@ -189,6 +195,9 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         _ if rule_id.starts_with("ecosystem/") => "https://bun.sh/guides/ecosystem",
         _ if rule_id.starts_with("next/") => "https://bun.sh/guides/ecosystem/nextjs",
         _ if rule_id.starts_with("npmrc/") => "https://bun.sh/docs/runtime/bunfig",
+        _ if rule_id.starts_with("turbo/") => "https://turborepo.com/docs/reference/configuration",
+        _ if rule_id.starts_with("tauri/") => "https://v2.tauri.app/reference/config/",
+        _ if rule_id.starts_with("shadcn/") => "https://ui.shadcn.com/docs/components-json",
         _ => "https://bun.sh/docs",
     }
 }

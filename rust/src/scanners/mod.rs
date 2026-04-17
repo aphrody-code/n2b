@@ -1,5 +1,6 @@
 pub mod bunfig;
 pub mod cargo_toml;
+pub mod components_json;
 pub mod dockerfile;
 pub mod husky;
 pub mod lockfile;
@@ -11,5 +12,7 @@ pub mod pnpm_workspace;
 pub mod shebang;
 pub mod shell;
 pub mod source;
+pub mod tauri_conf;
 pub mod tsconfig;
+pub mod turbo_json;
 pub mod workflows;

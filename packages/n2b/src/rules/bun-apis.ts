@@ -37,7 +37,8 @@ const RULES: ApiRule[] = [
   },
   {
     id: "api/dirname-esm",
-    pattern: /\b(?:const|let|var)\s+__dirname\s*=\s*(?:path\.)?dirname\s*\(\s*fileURLToPath\s*\(\s*import\.meta\.url\s*\)\s*\)/g,
+    pattern:
+      /\b(?:const|let|var)\s+__dirname\s*=\s*(?:path\.)?dirname\s*\(\s*fileURLToPath\s*\(\s*import\.meta\.url\s*\)\s*\)/g,
     message: "dans un ESM Bun, utiliser directement import.meta.dir (ou import.meta.dirname)",
     replace: () => "const __dirname = import.meta.dir",
     aggressive: true,
@@ -95,7 +96,8 @@ const RULES: ApiRule[] = [
   },
   {
     id: "api/json-parse-readFileSync",
-    pattern: /\bJSON\.parse\s*\(\s*fs\.readFileSync\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)\s*\)/g,
+    pattern:
+      /\bJSON\.parse\s*\(\s*fs\.readFileSync\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)\s*\)/g,
     message: "remplacer JSON.parse(fs.readFileSync(path,'utf8')) par await Bun.file(path).json()",
     replace: (m) => `await Bun.file(${m[1]}).json()`,
     aggressive: true,
@@ -168,7 +170,8 @@ const RULES: ApiRule[] = [
   // --- Timers ---
   {
     id: "api/sleep-promise",
-    pattern: /\bnew\s+Promise\s*\(\s*(?:resolve|res)\s*=>\s*setTimeout\s*\(\s*(?:resolve|res)\s*,\s*([^)]+?)\s*\)\s*\)/g,
+    pattern:
+      /\bnew\s+Promise\s*\(\s*(?:resolve|res)\s*=>\s*setTimeout\s*\(\s*(?:resolve|res)\s*,\s*([^)]+?)\s*\)\s*\)/g,
     message: "remplacer new Promise(res => setTimeout(res, ms)) par Bun.sleep(ms)",
     replace: (m) => `Bun.sleep(${m[1]})`,
     aggressive: true,
@@ -184,7 +187,7 @@ const RULES: ApiRule[] = [
     id: "api/util-inspect",
     pattern: /\butil\.inspect\s*\(/g,
     message: "Bun.inspect() est l'équivalent natif (pretty-print avec couleurs)",
-    replace: () => `Bun.inspect(`,
+    replace: () => "Bun.inspect(",
     aggressive: true,
   },
 
@@ -192,7 +195,8 @@ const RULES: ApiRule[] = [
   {
     id: "api/new-url-import-meta",
     pattern: /\bnew\s+URL\s*\(\s*['"][^'"]+['"]\s*,\s*import\.meta\.url\s*\)/g,
-    message: "utiliser import.meta.dir ou path.join(import.meta.dir, ...) plutôt que new URL(..., import.meta.url)",
+    message:
+      "utiliser import.meta.dir ou path.join(import.meta.dir, ...) plutôt que new URL(..., import.meta.url)",
   },
 
   // --- TOML ---
@@ -205,7 +209,8 @@ const RULES: ApiRule[] = [
   // --- Semver ---
   {
     id: "api/semver",
-    pattern: /\b(?:semver\.satisfies|semver\.valid|semver\.gt|semver\.lt|semver\.gte|semver\.lte|semver\.coerce)\s*\(/g,
+    pattern:
+      /\b(?:semver\.satisfies|semver\.valid|semver\.gt|semver\.lt|semver\.gte|semver\.lte|semver\.coerce)\s*\(/g,
     message: "Bun.semver.satisfies() et autres helpers sont disponibles nativement",
   },
 
@@ -213,7 +218,8 @@ const RULES: ApiRule[] = [
   {
     id: "api/performance-now",
     pattern: /\bperformance\.now\s*\(\s*\)/g,
-    message: "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+    message:
+      "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
   },
 ];
 

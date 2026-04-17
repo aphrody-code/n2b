@@ -11,6 +11,7 @@ mod rules;
 mod run;
 mod scanners;
 mod types;
+mod ui_cmd;
 mod util;
 mod wasm_cmd;
 mod win32_cmd;
@@ -147,6 +148,21 @@ enum Cmd {
         /// Format du rapport.
         #[arg(long, value_enum, default_value = "text")]
         report: ReportArg,
+    },
+
+    /// Scaffolde une app Next.js avec un design system UI moderne :
+    /// shadcn/ui (Radix+Tailwind v4), MUI (Material UI), Material Web
+    /// Components (M3 vanilla), ou Material Tailwind.
+    ///
+    ///   n2b ui init <name> --flavor shadcn|mui|material-web|material-tailwind|md3-ui
+    ///   n2b ui doctor
+    ///
+    /// `md3-ui` : registry shadcn personnalisé qui porte Material Web Components
+    /// vers shadcn+Tailwind avec composants mobile-native-web (FAB, Bottom Sheet,
+    /// Segmented Control, Navigation Bar) et build pipeline Bun + Rust.
+    Ui {
+        #[command(subcommand)]
+        sub: UiSub,
     },
 
     /// Scaffolde des apps Bun : CLI, TUI (Ink React), GUI (Electrobun),
@@ -341,6 +357,25 @@ fn parse_app_flavor(s: &str) -> Result<app_cmd::AppFlavor, String> {
         .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : cli, tui, gui, exe)"))
 }
 
+fn parse_ui_flavor(s: &str) -> Result<ui_cmd::UiFlavor, String> {
+    ui_cmd::UiFlavor::parse(s)
+        .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : shadcn, mui, material-web, material-tailwind, md3-ui)"))
+}
+
+#[derive(Subcommand, Debug)]
+enum UiSub {
+    Init {
+        name: String,
+        #[arg(long, default_value = "shadcn", value_parser = parse_ui_flavor)]
+        flavor: ui_cmd::UiFlavor,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    Doctor,
+}
+
 #[derive(Subcommand, Debug)]
 enum Win32Sub {
     /// Projet complet : FFI + CC + PowerShell dans un même repo.
@@ -490,6 +525,16 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
+        }
+        Some(Cmd::Ui { sub }) => {
+            let cmd = match sub {
+                UiSub::Init { name, flavor, dir, force } => ui_cmd::UiCmd::Init {
+                    name, flavor, dir, force,
+                },
+                UiSub::Doctor => ui_cmd::UiCmd::Doctor,
+            };
+            ui_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::App { sub }) => {
             let cmd = match sub {
@@ -998,6 +1043,141 @@ fn run_rules(report: Report) -> Result<ExitCode> {
         ("ecosystem/libc", "libc (Cargo.toml) → POSIX + CRT"),
         ("ecosystem/nix-rs", "nix (Cargo.toml) → POSIX idiomatic"),
         ("ecosystem/lightningcss", "lightningcss (Cargo.toml) → CSS bundler"),
+        ("ecosystem/uutils", "uutils coreutils/findutils/diffutils/procps (cross-platform CLI)"),
+        ("ecosystem/util-linux-rs", "uutils/util-linux (mount/fdisk/lscpu/dmesg Rust, Linux-only)"),
+        // --- GNU → Rust rewrites ---
+        ("ecosystem/ripgrep", "ripgrep (grep successor)"),
+        ("ecosystem/fd-find", "fd (find successor)"),
+        ("ecosystem/bat", "bat (cat + syntax)"),
+        ("ecosystem/tokei", "tokei (cloc successor)"),
+        ("ecosystem/hyperfine", "hyperfine (benchmark)"),
+        ("ecosystem/du-dust", "dust (du successor)"),
+        ("ecosystem/ouch", "ouch (universal de/compress)"),
+        ("ecosystem/zoxide", "zoxide (cd successor)"),
+        ("ecosystem/eza", "eza (ls successor)"),
+        ("ecosystem/sd", "sd (sed successor)"),
+        ("ecosystem/bottom", "bottom (top/htop successor)"),
+        ("ecosystem/delta", "delta (git diff viewer)"),
+        ("ecosystem/just", "just (make successor)"),
+        ("ecosystem/watchexec", "watchexec (watch+exec)"),
+        ("ecosystem/xh", "xh (curl/httpie successor)"),
+        ("ecosystem/miniserve", "miniserve (HTTP serveur minimal)"),
+        ("ecosystem/duf", "duf (df successor)"),
+        // --- SWC stack ---
+        ("ecosystem/swc", "SWC (@swc/core ou swc_core Cargo.toml)"),
+        ("ecosystem/swc-node", "@swc-node/register (TS loader Node)"),
+        // --- TypeScript type generation from Rust ---
+        ("ecosystem/ts-rs", "ts-rs (Cargo.toml) → génère .ts depuis Rust"),
+        ("ecosystem/specta", "specta (Cargo.toml) → alternative ts-rs"),
+        // --- Turbopack internals ---
+        ("ecosystem/turbopack", "turbopack / turbopack-core (Cargo.toml)"),
+        ("ecosystem/turbo-tasks", "turbo-tasks (Cargo.toml)"),
+        // --- Rust backend stack ---
+        ("ecosystem/serde", "serde (Cargo.toml)"),
+        ("ecosystem/serde-json", "serde_json (Cargo.toml)"),
+        ("ecosystem/tokio", "tokio (Cargo.toml) → async runtime"),
+        ("ecosystem/reqwest", "reqwest (Cargo.toml) → HTTP client"),
+        ("ecosystem/axum", "axum (Cargo.toml) → HTTP framework"),
+        ("ecosystem/clap", "clap (Cargo.toml) → CLI parser"),
+        ("ecosystem/anyhow", "anyhow (Cargo.toml)"),
+        ("ecosystem/thiserror", "thiserror (Cargo.toml)"),
+        // --- Rstack awesome (package.json) ---
+        ("ecosystem/rstest", "@rstest/core → test runner Rust-based"),
+        ("ecosystem/rslint", "@rslint/core → linter Rust-based"),
+        ("ecosystem/storybook-rsbuild", "storybook-rsbuild"),
+        ("ecosystem/nx-rspack", "@nx/rspack"),
+        ("ecosystem/nx-rsbuild", "@nx/rsbuild"),
+        ("ecosystem/nuxt-rspack", "@nuxt/rspack-builder"),
+        ("ecosystem/repack", "Re.Pack (React Native)"),
+        ("ecosystem/modernjs", "Modern.js"),
+        ("ecosystem/esmx", "Esmx (micro-frontend)"),
+        ("ecosystem/extension-js", "Extension.js"),
+        // --- Next.js Turbopack config ---
+        ("next/turbopack-rules", "turbopack.rules dans next.config"),
+        ("next/turbopack-alias", "turbopack.resolveAlias"),
+        ("next/transpile-packages", "transpilePackages (config Next)"),
+        ("next/compiler-styled", "compiler.styledComponents (SWC)"),
+        ("next/compiler-emotion", "compiler.emotion (SWC)"),
+        ("next/compiler-remove-console", "compiler.removeConsole"),
+        ("next/compiler-react-remove-props", "compiler.reactRemoveProperties"),
+        ("next/compiler-relay", "compiler.relay"),
+        ("next/compiler-define", "compiler.define / defineServer (Next 15+)"),
+        ("next/swc-plugins", "experimental.swcPlugins"),
+        ("next/swc-trace", "experimental.swcTraceProfiling"),
+        // --- Tauri v2 ---
+        ("ecosystem/tauri-v2", "@tauri-apps/api / cli"),
+        ("ecosystem/tauri-v2-plugin", "@tauri-apps/plugin-*"),
+        ("tauri/before-cmd-pm", "tauri.conf beforeDevCommand utilise npm/pnpm/yarn"),
+        ("tauri/frontend-dist-next-export", "frontendDist='out' → Next static export"),
+        // --- Rust web frameworks (flosse/rust-web-framework-comparison) ---
+        ("ecosystem/actix-web", "actix-web (Cargo.toml)"),
+        ("ecosystem/rocket", "rocket (Cargo.toml)"),
+        ("ecosystem/salvo", "salvo (Cargo.toml)"),
+        ("ecosystem/warp", "warp (Cargo.toml)"),
+        ("ecosystem/tide", "tide (Cargo.toml)"),
+        ("ecosystem/poem", "poem (Cargo.toml)"),
+        ("ecosystem/gotham", "gotham (Cargo.toml)"),
+        ("ecosystem/iron", "iron (Cargo.toml, legacy)"),
+        ("ecosystem/nickel", "nickel (Cargo.toml)"),
+        ("ecosystem/cot", "cot (Cargo.toml)"),
+        ("ecosystem/pavex", "pavex (Cargo.toml)"),
+        // --- Rust WASM frontend (étendu) ---
+        ("ecosystem/egui", "egui (immediate-mode GUI)"),
+        ("ecosystem/iced", "iced (Elm-inspired GUI)"),
+        ("ecosystem/silkenweb", "silkenweb"),
+        ("ecosystem/vizia", "vizia"),
+        ("ecosystem/xilem", "xilem (experimental)"),
+        ("ecosystem/floem", "floem"),
+        // --- Templating ---
+        ("ecosystem/askama", "askama (Jinja, compile-time)"),
+        ("ecosystem/handlebars", "handlebars (runtime)"),
+        ("ecosystem/tera", "tera (Jinja/Django)"),
+        ("ecosystem/maud", "maud (HTML DSL macro)"),
+        ("ecosystem/sailfish", "sailfish (compile-time fast)"),
+        // --- WebSocket/HTTP ---
+        ("ecosystem/tokio-tungstenite", "tokio-tungstenite (WS async)"),
+        ("ecosystem/tungstenite", "tungstenite (WS blocking)"),
+        ("ecosystem/hyper", "hyper (low-level HTTP)"),
+        ("ecosystem/ureq", "ureq (sync HTTP)"),
+        ("ecosystem/isahc", "isahc (libcurl)"),
+        // --- UI : shadcn + Radix ---
+        ("ecosystem/shadcn", "shadcn/ui (components.json ou CLI)"),
+        ("ecosystem/radix-ui", "@radix-ui/react-* (primitives headless)"),
+        ("ecosystem/cva", "class-variance-authority (variants Tailwind)"),
+        ("ecosystem/clsx", "clsx (className concat)"),
+        ("ecosystem/tailwind-merge", "tailwind-merge (dédupe classes)"),
+        ("ecosystem/lucide", "lucide-react (icons default shadcn)"),
+        // --- UI : Material Design 3 ---
+        ("ecosystem/material-web", "@material/web (Web Components M3)"),
+        ("ecosystem/material-tailwind", "@material-tailwind/* (M3 + Tailwind)"),
+        ("ecosystem/mui", "@mui/* (Material UI React)"),
+        ("ecosystem/mui-x", "@mui/x-* (Data Grid, Pickers, Charts)"),
+        ("ecosystem/emotion", "@emotion/* (CSS-in-JS, MUI default)"),
+        // --- UI : icons & fonts ---
+        ("ecosystem/material-symbols", "material-symbols (variable icons)"),
+        ("ecosystem/fontsource", "@fontsource/* (self-host Google Fonts)"),
+        // --- UI : utility libs ---
+        ("ecosystem/sonner", "sonner (toasts)"),
+        ("ecosystem/vaul", "vaul (drawer)"),
+        ("ecosystem/cmdk", "cmdk (command menu)"),
+        ("ecosystem/react-hook-form", "react-hook-form"),
+        ("ecosystem/zod", "zod (schema validation)"),
+        ("ecosystem/hookform-resolvers", "@hookform/resolvers"),
+        ("ecosystem/skills", "skills (AI skills CLI, context packs)"),
+        ("ecosystem/biome", "@biomejs/biome (linter+formatter Rust, remplace ESLint+Prettier)"),
+        ("ecosystem/oxc", "oxc (JS/TS Rust parser, Cargo.toml)"),
+        ("ecosystem/oxlint", "oxlint (linter Rust OXC)"),
+        // --- shadcn config issues ---
+        ("shadcn/tailwind-css", "components.json tailwind.css invalide"),
+        ("shadcn/style-unknown", "components.json style invalide"),
+        ("shadcn/custom-registry", "components.json registries custom"),
+        // --- Turborepo ---
+        ("ecosystem/turbo", "turbo (turborepo, Rust)"),
+        ("ecosystem/turbo-gen", "@turbo/gen"),
+        ("turbo/global-deps-bun-lock", "globalDependencies : ajouter bun.lock"),
+        ("turbo/task-inputs-lock", "task inputs mentionne lockfile non-Bun"),
+        ("ecosystem/react-wasm", "react-wasm → charge .wasm comme composants React"),
+        ("ecosystem/wasm-react", "wasm-react (Cargo.toml) → composants React Rust→WASM"),
         // --- .npmrc / .yarnrc / .pnpmrc → bunfig.toml ---
         ("npmrc/registry", ".npmrc registry → bunfig.toml [install].registry"),
         ("npmrc/auth-token", ".npmrc _authToken → bunfig.toml [install.scopes]"),

@@ -5,25 +5,24 @@
 // SIMD) et mis en cache par source via WeakMap. posFromIndex peut
 // alors faire une binary search O(log n) au lieu d'un scan O(n).
 
-import { dlopen, FFIType, suffix, ptr } from "bun:ffi";
+import { FFIType, dlopen, ptr, suffix } from "bun:ffi";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 type Native = {
-  find_newlines_u16: (
-    buf: Uint8Array,
-    byteLen: number,
-    out: Uint32Array,
-    outCap: number,
-  ) => number;
+  find_newlines_u16: (buf: Uint8Array, byteLen: number, out: Uint32Array, outCap: number) => number;
   node2bun_abi_version: () => number;
 };
 
 function tryLoad(): Native | null {
   const here = fileURLToPath(new URL(".", import.meta.url));
-  // Chemins candidats : dev (native/target/release) puis installé (lib/).
+  // Chemins candidats :
+  //   - dev workspace : ../../../../target/release/ (packages/n2b/src → root/target/)
+  //   - dev legacy    : ../../../native/target/release/
+  //   - installé      : ../lib/
   const candidates = [
-    join(here, "..", "native", "target", "release", `libnode2bun_native.${suffix}`),
+    join(here, "..", "..", "..", "..", "target", "release", `libnode2bun_native.${suffix}`),
+    join(here, "..", "..", "..", "native", "target", "release", `libnode2bun_native.${suffix}`),
     join(here, "..", "lib", `libnode2bun_native.${suffix}`),
   ];
   for (const path of candidates) {
@@ -39,9 +38,7 @@ function tryLoad(): Native | null {
       return {
         node2bun_abi_version: () => Number(lib.symbols.node2bun_abi_version()),
         find_newlines_u16: (buf, byteLen, out, outCap) =>
-          Number(
-            lib.symbols.find_newlines_u16(ptr(buf), byteLen, ptr(out), outCap),
-          ),
+          Number(lib.symbols.find_newlines_u16(ptr(buf), byteLen, ptr(out), outCap)),
       };
     } catch {
       // Essaie le candidat suivant.
@@ -68,7 +65,9 @@ function keyFor(_source: string): object {
   // posFromIndex.
   throw new Error("unreachable");
 }
-void keyFor; void cache; void keys;
+void keyFor;
+void cache;
+void keys;
 
 /**
  * Calcule les positions de newlines dans `source` (en u16 code units).
@@ -81,7 +80,7 @@ export function computeLineOffsets(source: string): Uint32Array {
     const bytes = Buffer.from(source, "utf16le");
     if (bytes.byteLength === 0) return new Uint32Array(0);
     // Heuristique : ~1 newline tous les 40 chars + marge.
-    let cap = Math.max(16, (source.length >>> 5) + 8);
+    const cap = Math.max(16, (source.length >>> 5) + 8);
     let out = new Uint32Array(cap);
     let n = NATIVE.find_newlines_u16(bytes, bytes.byteLength, out, cap);
     if (n > cap) {
@@ -117,10 +116,7 @@ function lastNewlineBefore(offsets: Uint32Array, index: number): number {
  * Convertit un index (u16 offset dans source) en (line, col), 1-based.
  * Reproduit exactement la sémantique de l'ancien posFromIndex JS.
  */
-export function posFromOffsets(
-  offsets: Uint32Array,
-  index: number,
-): { line: number; col: number } {
+export function posFromOffsets(offsets: Uint32Array, index: number): { line: number; col: number } {
   const i = lastNewlineBefore(offsets, index);
   if (i < 0) return { line: 1, col: index + 1 };
   const line = i + 2;
