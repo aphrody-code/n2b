@@ -207,6 +207,47 @@ fn scaffold_md3_ui_framework(dir: &Path, name: &str, quiet: bool) -> Result<()> 
     write(dir.join("packages/core/src/bottom-sheet/index.ts"), "export * from \"./BottomSheet\";\n", quiet)?;
     write(dir.join("packages/core/src/segmented-control/SegmentedControl.tsx"), M3_SEGMENTED_TSX, quiet)?;
     write(dir.join("packages/core/src/segmented-control/index.ts"), "export * from \"./SegmentedControl\";\n", quiet)?;
+    // 19 composants M3 supplémentaires — Base UI primitives + Tailwind M3 tokens
+    write(dir.join("packages/core/src/app-bar/AppBar.tsx"), M3_APP_BAR_TSX, quiet)?;
+    write(dir.join("packages/core/src/app-bar/index.ts"), "export * from \"./AppBar\";\n", quiet)?;
+    write(dir.join("packages/core/src/navigation-drawer/NavigationDrawer.tsx"), M3_NAV_DRAWER_TSX, quiet)?;
+    write(dir.join("packages/core/src/navigation-drawer/index.ts"), "export * from \"./NavigationDrawer\";\n", quiet)?;
+    write(dir.join("packages/core/src/navigation-rail/NavigationRail.tsx"), M3_NAV_RAIL_TSX, quiet)?;
+    write(dir.join("packages/core/src/navigation-rail/index.ts"), "export * from \"./NavigationRail\";\n", quiet)?;
+    write(dir.join("packages/core/src/text-field/TextField.tsx"), M3_TEXT_FIELD_TSX, quiet)?;
+    write(dir.join("packages/core/src/text-field/index.ts"), "export * from \"./TextField\";\n", quiet)?;
+    write(dir.join("packages/core/src/icon-button/IconButton.tsx"), M3_ICON_BUTTON_TSX, quiet)?;
+    write(dir.join("packages/core/src/icon-button/index.ts"), "export * from \"./IconButton\";\n", quiet)?;
+    write(dir.join("packages/core/src/tooltip/Tooltip.tsx"), M3_TOOLTIP_TSX, quiet)?;
+    write(dir.join("packages/core/src/tooltip/index.ts"), "export * from \"./Tooltip\";\n", quiet)?;
+    write(dir.join("packages/core/src/switch/Switch.tsx"), M3_SWITCH_TSX, quiet)?;
+    write(dir.join("packages/core/src/switch/index.ts"), "export * from \"./Switch\";\n", quiet)?;
+    write(dir.join("packages/core/src/checkbox/Checkbox.tsx"), M3_CHECKBOX_TSX, quiet)?;
+    write(dir.join("packages/core/src/checkbox/index.ts"), "export * from \"./Checkbox\";\n", quiet)?;
+    write(dir.join("packages/core/src/radio/Radio.tsx"), M3_RADIO_TSX, quiet)?;
+    write(dir.join("packages/core/src/radio/index.ts"), "export * from \"./Radio\";\n", quiet)?;
+    write(dir.join("packages/core/src/slider/Slider.tsx"), M3_SLIDER_TSX, quiet)?;
+    write(dir.join("packages/core/src/slider/index.ts"), "export * from \"./Slider\";\n", quiet)?;
+    write(dir.join("packages/core/src/tabs/Tabs.tsx"), M3_TABS_TSX, quiet)?;
+    write(dir.join("packages/core/src/tabs/index.ts"), "export * from \"./Tabs\";\n", quiet)?;
+    write(dir.join("packages/core/src/menu/Menu.tsx"), M3_MENU_TSX, quiet)?;
+    write(dir.join("packages/core/src/menu/index.ts"), "export * from \"./Menu\";\n", quiet)?;
+    write(dir.join("packages/core/src/dialog/Dialog.tsx"), M3_DIALOG_TSX, quiet)?;
+    write(dir.join("packages/core/src/dialog/index.ts"), "export * from \"./Dialog\";\n", quiet)?;
+    write(dir.join("packages/core/src/snackbar/Snackbar.tsx"), M3_SNACKBAR_TSX, quiet)?;
+    write(dir.join("packages/core/src/snackbar/index.ts"), "export * from \"./Snackbar\";\n", quiet)?;
+    write(dir.join("packages/core/src/linear-progress/LinearProgress.tsx"), M3_LINEAR_PROGRESS_TSX, quiet)?;
+    write(dir.join("packages/core/src/linear-progress/index.ts"), "export * from \"./LinearProgress\";\n", quiet)?;
+    write(dir.join("packages/core/src/circular-progress/CircularProgress.tsx"), M3_CIRCULAR_PROGRESS_TSX, quiet)?;
+    write(dir.join("packages/core/src/circular-progress/index.ts"), "export * from \"./CircularProgress\";\n", quiet)?;
+    write(dir.join("packages/core/src/badge/Badge.tsx"), M3_BADGE_TSX, quiet)?;
+    write(dir.join("packages/core/src/badge/index.ts"), "export * from \"./Badge\";\n", quiet)?;
+    write(dir.join("packages/core/src/divider/Divider.tsx"), M3_DIVIDER_TSX, quiet)?;
+    write(dir.join("packages/core/src/divider/index.ts"), "export * from \"./Divider\";\n", quiet)?;
+    write(dir.join("packages/core/src/list/List.tsx"), M3_LIST_TSX, quiet)?;
+    write(dir.join("packages/core/src/list/index.ts"), "export * from \"./List\";\n", quiet)?;
+    write(dir.join("packages/core/src/typography/Typography.tsx"), M3_TYPOGRAPHY_TSX, quiet)?;
+    write(dir.join("packages/core/src/typography/index.ts"), "export * from \"./Typography\";\n", quiet)?;
     // Motion module (M3 motion spec : easings + durations)
     write(dir.join("packages/core/src/motion/index.ts"), MD3_MOTION_INDEX_TS, quiet)?;
     write(dir.join("packages/core/src/motion/useMotion.ts"), MD3_USE_MOTION_TS, quiet)?;
@@ -232,6 +273,26 @@ fn scaffold_md3_ui_framework(dir: &Path, name: &str, quiet: bool) -> Result<()> 
     write(dir.join("packages/registry/registry/new-york/ui/navigation-bar.tsx"), M3_NAV_BAR_TSX, quiet)?;
     write(dir.join("packages/registry/registry/new-york/ui/bottom-sheet.tsx"), M3_BOTTOM_SHEET_TSX, quiet)?;
     write(dir.join("packages/registry/registry/new-york/ui/segmented-control.tsx"), M3_SEGMENTED_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/app-bar.tsx"), M3_APP_BAR_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/navigation-drawer.tsx"), M3_NAV_DRAWER_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/navigation-rail.tsx"), M3_NAV_RAIL_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/text-field.tsx"), M3_TEXT_FIELD_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/icon-button.tsx"), M3_ICON_BUTTON_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/tooltip.tsx"), M3_TOOLTIP_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/switch.tsx"), M3_SWITCH_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/checkbox.tsx"), M3_CHECKBOX_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/radio.tsx"), M3_RADIO_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/slider.tsx"), M3_SLIDER_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/tabs.tsx"), M3_TABS_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/menu.tsx"), M3_MENU_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/dialog.tsx"), M3_DIALOG_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/snackbar.tsx"), M3_SNACKBAR_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/linear-progress.tsx"), M3_LINEAR_PROGRESS_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/circular-progress.tsx"), M3_CIRCULAR_PROGRESS_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/badge.tsx"), M3_BADGE_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/divider.tsx"), M3_DIVIDER_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/list.tsx"), M3_LIST_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/typography.tsx"), M3_TYPOGRAPHY_TSX, quiet)?;
     write(dir.join("packages/registry/registry/new-york/lib/utils.ts"), SHADCN_UTILS_TS, quiet)?;
     write(dir.join("packages/registry/registry/new-york/lib/m3-tokens.css"), M3_TOKENS_CSS, quiet)?;
 
@@ -972,6 +1033,162 @@ fn render_m3_registry_json(name: &str) -> String {
       "dependencies": ["@radix-ui/react-toggle-group"]
     }},
     {{
+      "name": "app-bar",
+      "type": "registry:ui",
+      "title": "App Bar (M3)",
+      "description": "Top App Bar : small / center-aligned / medium / large.",
+      "files": [{{ "path": "registry/new-york/ui/app-bar.tsx", "type": "registry:ui" }}]
+    }},
+    {{
+      "name": "navigation-drawer",
+      "type": "registry:ui",
+      "title": "Navigation Drawer (M3)",
+      "description": "Modal / standard navigation drawer, Base UI Dialog.",
+      "files": [{{ "path": "registry/new-york/ui/navigation-drawer.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "navigation-rail",
+      "type": "registry:ui",
+      "title": "Navigation Rail (M3)",
+      "description": "Vertical desktop navigation rail (80px).",
+      "files": [{{ "path": "registry/new-york/ui/navigation-rail.tsx", "type": "registry:ui" }}]
+    }},
+    {{
+      "name": "text-field",
+      "type": "registry:ui",
+      "title": "Text Field (M3)",
+      "description": "Filled + Outlined — Base UI Field.",
+      "files": [{{ "path": "registry/new-york/ui/text-field.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react", "class-variance-authority"]
+    }},
+    {{
+      "name": "icon-button",
+      "type": "registry:ui",
+      "title": "Icon Button (M3)",
+      "description": "Standard / Filled / Tonal / Outlined.",
+      "files": [{{ "path": "registry/new-york/ui/icon-button.tsx", "type": "registry:ui" }}],
+      "dependencies": ["class-variance-authority"]
+    }},
+    {{
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip (M3)",
+      "description": "Plain tooltip — Base UI Tooltip.",
+      "files": [{{ "path": "registry/new-york/ui/tooltip.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch (M3)",
+      "description": "On / Off — Base UI Switch.",
+      "files": [{{ "path": "registry/new-york/ui/switch.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox (M3)",
+      "description": "Unchecked / Checked / Indeterminate — Base UI Checkbox.",
+      "files": [{{ "path": "registry/new-york/ui/checkbox.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "radio",
+      "type": "registry:ui",
+      "title": "Radio (M3)",
+      "description": "Radio group — Base UI Radio.",
+      "files": [{{ "path": "registry/new-york/ui/radio.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider (M3)",
+      "description": "Continuous slider — Base UI Slider.",
+      "files": [{{ "path": "registry/new-york/ui/slider.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs (M3)",
+      "description": "Primary + Secondary tabs — Base UI Tabs.",
+      "files": [{{ "path": "registry/new-york/ui/tabs.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react", "class-variance-authority"]
+    }},
+    {{
+      "name": "menu",
+      "type": "registry:ui",
+      "title": "Menu (M3)",
+      "description": "Dropdown menu — Base UI Menu.",
+      "files": [{{ "path": "registry/new-york/ui/menu.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog (M3)",
+      "description": "Basic / Full-screen dialog — Base UI Dialog.",
+      "files": [{{ "path": "registry/new-york/ui/dialog.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "snackbar",
+      "type": "registry:ui",
+      "title": "Snackbar (M3)",
+      "description": "Transient notification — Base UI Toast.",
+      "files": [{{ "path": "registry/new-york/ui/snackbar.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "linear-progress",
+      "type": "registry:ui",
+      "title": "Linear Progress (M3)",
+      "description": "Determinate + indeterminate — Base UI Progress.",
+      "files": [{{ "path": "registry/new-york/ui/linear-progress.tsx", "type": "registry:ui" }}],
+      "dependencies": ["@base-ui-components/react"]
+    }},
+    {{
+      "name": "circular-progress",
+      "type": "registry:ui",
+      "title": "Circular Progress (M3)",
+      "description": "SVG pur, determinate + indeterminate.",
+      "files": [{{ "path": "registry/new-york/ui/circular-progress.tsx", "type": "registry:ui" }}]
+    }},
+    {{
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge (M3)",
+      "description": "Small dot + large numeric.",
+      "files": [{{ "path": "registry/new-york/ui/badge.tsx", "type": "registry:ui" }}],
+      "dependencies": ["class-variance-authority"]
+    }},
+    {{
+      "name": "divider",
+      "type": "registry:ui",
+      "title": "Divider (M3)",
+      "description": "Horizontal / vertical, full / inset / middle.",
+      "files": [{{ "path": "registry/new-york/ui/divider.tsx", "type": "registry:ui" }}],
+      "dependencies": ["class-variance-authority"]
+    }},
+    {{
+      "name": "list",
+      "type": "registry:ui",
+      "title": "List (M3)",
+      "description": "1/2/3-line list items with leading + trailing slots.",
+      "files": [{{ "path": "registry/new-york/ui/list.tsx", "type": "registry:ui" }}]
+    }},
+    {{
+      "name": "typography",
+      "type": "registry:ui",
+      "title": "Typography (M3)",
+      "description": "Display / Headline / Title / Body / Label — 15 rôles officiels M3.",
+      "files": [{{ "path": "registry/new-york/ui/typography.tsx", "type": "registry:ui" }}],
+      "dependencies": ["class-variance-authority"]
+    }},
+    {{
       "name": "utils",
       "type": "registry:lib",
       "files": [{{ "path": "registry/new-york/lib/utils.ts", "type": "registry:lib" }}]
@@ -1200,68 +1417,141 @@ const M3_TOKENS_CSS: &str = r#"/* Material Design 3 tokens — couleurs + typogr
 }
 "#;
 
-const M3_PAGE_TSX: &str = r#"import { Button } from "@md3-ui/core/button";
+const M3_PAGE_TSX: &str = r##"import { Button } from "@md3-ui/core/button";
 import { Card, CardContent } from "@md3-ui/core/card";
 import { Chip } from "@md3-ui/core/chip";
 import { Fab } from "@md3-ui/core/fab";
 import { SegmentedControl, Segment } from "@md3-ui/core/segmented-control";
+import { AppBar, AppBarTitle } from "@md3-ui/core/app-bar";
+import { IconButton } from "@md3-ui/core/icon-button";
+import { Badge } from "@md3-ui/core/badge";
+import { Divider } from "@md3-ui/core/divider";
+import { LinearProgress } from "@md3-ui/core/linear-progress";
+import { CircularProgress } from "@md3-ui/core/circular-progress";
+import { Typography } from "@md3-ui/core/typography";
+import { List, ListItem } from "@md3-ui/core/list";
+import { Switch } from "@md3-ui/core/switch";
+import { Checkbox } from "@md3-ui/core/checkbox";
+import { Radio, RadioGroup } from "@md3-ui/core/radio";
+import { Slider } from "@md3-ui/core/slider";
+import { TextField } from "@md3-ui/core/text-field";
 
 export default function Home() {
   return (
-    <main className="container mx-auto p-8 space-y-8">
-      <header>
-        <h1 className="text-5xl font-medium text-[--md-sys-color-on-surface]">
-          Material 3 × shadcn
-        </h1>
-        <p className="mt-2 text-[--md-sys-color-on-surface-variant]">
-          Registry : <code>bunx shadcn@latest add https://your.domain/r/button.json</code>
-        </p>
-      </header>
+    <>
+      <AppBar variant="small">
+        <AppBarTitle>md3-ui</AppBarTitle>
+        <IconButton variant="standard">★</IconButton>
+      </AppBar>
+      <main className="container mx-auto p-8 space-y-10">
+        <header>
+          <Typography as="h1" variant="display-medium">Material 3 × shadcn</Typography>
+          <Typography variant="body-large" className="mt-2 text-[--md-sys-color-on-surface-variant]">
+            26 composants — propulsés par Base UI + Tailwind v4 + tokens M3.
+          </Typography>
+        </header>
 
-      <section>
-        <h2 className="text-2xl mb-4">Buttons</h2>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="filled">Filled</Button>
-          <Button variant="tonal">Tonal</Button>
-          <Button variant="outlined">Outlined</Button>
-          <Button variant="elevated">Elevated</Button>
-          <Button variant="text">Text</Button>
-        </div>
-      </section>
+        <section className="space-y-3">
+          <Typography as="h2" variant="headline-small">Actions</Typography>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="filled">Filled</Button>
+            <Button variant="tonal">Tonal</Button>
+            <Button variant="outlined">Outlined</Button>
+            <Button variant="elevated">Elevated</Button>
+            <Button variant="text">Text</Button>
+          </div>
+          <div className="flex gap-2">
+            <IconButton variant="standard">♥</IconButton>
+            <IconButton variant="filled">♥</IconButton>
+            <IconButton variant="tonal">♥</IconButton>
+            <IconButton variant="outlined">♥</IconButton>
+          </div>
+        </section>
 
-      <section>
-        <h2 className="text-2xl mb-4">Chips</h2>
-        <div className="flex flex-wrap gap-2">
-          <Chip variant="assist">Assist</Chip>
-          <Chip variant="filter">Filter</Chip>
-          <Chip variant="input">Input</Chip>
-          <Chip variant="suggestion">Suggestion</Chip>
-        </div>
-      </section>
+        <Divider />
 
-      <section>
-        <h2 className="text-2xl mb-4">Cards</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card variant="elevated"><CardContent>Elevated</CardContent></Card>
-          <Card variant="filled"><CardContent>Filled</CardContent></Card>
-          <Card variant="outlined"><CardContent>Outlined</CardContent></Card>
-        </div>
-      </section>
+        <section className="space-y-3">
+          <Typography as="h2" variant="headline-small">Forms</Typography>
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl">
+            <TextField label="Email" variant="outlined" placeholder="you@example.com" />
+            <TextField label="Password" variant="filled" type="password" />
+          </div>
+          <div className="flex items-center gap-6 flex-wrap">
+            <label className="flex items-center gap-2"><Checkbox defaultChecked /> Checkbox</label>
+            <label className="flex items-center gap-2"><Switch defaultChecked /> Switch</label>
+            <RadioGroup defaultValue="a" className="flex gap-4">
+              <label className="flex items-center gap-2"><Radio value="a" /> A</label>
+              <label className="flex items-center gap-2"><Radio value="b" /> B</label>
+            </RadioGroup>
+          </div>
+          <Slider defaultValue={50} className="max-w-md" />
+        </section>
 
-      <section>
-        <h2 className="text-2xl mb-4">Segmented Control (mobile-native-web)</h2>
-        <SegmentedControl defaultValue="day">
-          <Segment value="day">Day</Segment>
-          <Segment value="week">Week</Segment>
-          <Segment value="month">Month</Segment>
-        </SegmentedControl>
-      </section>
+        <Divider />
 
-      <Fab>+</Fab>
-    </main>
+        <section className="space-y-3">
+          <Typography as="h2" variant="headline-small">Chips + Segmented</Typography>
+          <div className="flex flex-wrap gap-2">
+            <Chip variant="assist">Assist</Chip>
+            <Chip variant="filter">Filter</Chip>
+            <Chip variant="input">Input</Chip>
+            <Chip variant="suggestion">Suggestion</Chip>
+          </div>
+          <SegmentedControl defaultValue="day" className="max-w-md">
+            <Segment value="day">Day</Segment>
+            <Segment value="week">Week</Segment>
+            <Segment value="month">Month</Segment>
+          </SegmentedControl>
+        </section>
+
+        <Divider />
+
+        <section className="space-y-3">
+          <Typography as="h2" variant="headline-small">Cards</Typography>
+          <div className="grid md:grid-cols-3 gap-4">
+            <Card variant="elevated"><CardContent>Elevated</CardContent></Card>
+            <Card variant="filled"><CardContent>Filled</CardContent></Card>
+            <Card variant="outlined"><CardContent>Outlined</CardContent></Card>
+          </div>
+        </section>
+
+        <Divider />
+
+        <section className="space-y-3">
+          <Typography as="h2" variant="headline-small">Feedback</Typography>
+          <div className="flex items-center gap-6">
+            <div className="flex-1">
+              <LinearProgress value={66} max={100} />
+            </div>
+            <CircularProgress indeterminate size={32} />
+            <span className="relative">
+              Inbox
+              <Badge variant="small" className="absolute -top-1 -right-2" />
+            </span>
+          </div>
+        </section>
+
+        <Divider />
+
+        <section className="space-y-3">
+          <Typography as="h2" variant="headline-small">Data display</Typography>
+          <Card variant="outlined">
+            <List>
+              <ListItem leading="📁" supporting="Updated 2h ago">Documents</ListItem>
+              <Divider inset="left" />
+              <ListItem leading="🖼️" supporting="Updated 5h ago">Photos</ListItem>
+              <Divider inset="left" />
+              <ListItem leading="🎵" supporting="Updated 1d ago">Music</ListItem>
+            </List>
+          </Card>
+        </section>
+
+        <Fab>+</Fab>
+      </main>
+    </>
   );
 }
-"#;
+"##;
 
 const M3_BUTTON_TSX: &str = r#"// M3 Button — 5 variants officiels Material Design 3.
 // Ports depuis https://m3.material.io/components/buttons et l'ancien
@@ -1592,6 +1882,831 @@ export function Segment({
   );
 }
 "#;
+
+// ===========================================================================
+// M3 COMPONENTS — 20 composants Material Design 3 (Base UI primitives)
+// Spec : https://m3.material.io/components
+// Chaque template suit la convention shadcn : CVA variants + Tailwind + tokens
+// CSS M3. Les primitives accessibles viennent de @base-ui-components/react.
+// ===========================================================================
+
+const M3_APP_BAR_TSX: &str = r##"// M3 Top App Bar — center-aligned / small / medium / large.
+// https://m3.material.io/components/top-app-bar
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const appBarVariants = cva(
+  "sticky top-0 z-30 flex items-center gap-2 bg-[--md-sys-color-surface] text-[--md-sys-color-on-surface] px-4",
+  {
+    variants: {
+      variant: {
+        small:          "h-[64px]",
+        "center-aligned":"h-[64px] justify-center",
+        medium:         "h-[112px] items-end pb-2",
+        large:          "h-[152px] items-end pb-2",
+      },
+      elevated: {
+        true: "shadow-[var(--md-sys-elevation-level2)] bg-[--md-sys-color-surface-container]",
+        false: "",
+      },
+    },
+    defaultVariants: { variant: "small", elevated: false },
+  }
+);
+
+export interface AppBarProps
+  extends React.HTMLAttributes<HTMLElement>,
+    VariantProps<typeof appBarVariants> {}
+
+export const AppBar = React.forwardRef<HTMLElement, AppBarProps>(
+  ({ className, variant, elevated, ...props }, ref) => (
+    <header ref={ref} className={cn(appBarVariants({ variant, elevated, className }))} {...props} />
+  )
+);
+AppBar.displayName = "M3AppBar";
+
+export function AppBarTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <h1 className={cn("text-[22px] font-medium flex-1 truncate", className)} {...props} />;
+}
+"##;
+
+const M3_NAV_DRAWER_TSX: &str = r##"// M3 Navigation Drawer — standard + modal (via Base UI Dialog).
+// https://m3.material.io/components/navigation-drawer
+
+import * as React from "react";
+import { Dialog } from "@base-ui-components/react/dialog";
+import { cn } from "../lib/utils";
+
+export const NavigationDrawer = Dialog.Root;
+export const NavigationDrawerTrigger = Dialog.Trigger;
+export const NavigationDrawerClose = Dialog.Close;
+
+export const NavigationDrawerContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Dialog.Popup> & { side?: "left" | "right" }
+>(({ className, side = "left", ...props }, ref) => (
+  <Dialog.Portal>
+    <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/40 data-[open]:animate-in data-[open]:fade-in data-[closed]:animate-out data-[closed]:fade-out" />
+    <Dialog.Popup
+      ref={ref}
+      className={cn(
+        "fixed top-0 bottom-0 z-50 w-[360px] bg-[--md-sys-color-surface-container-low] text-[--md-sys-color-on-surface] shadow-[var(--md-sys-elevation-level1)] rounded-r-[16px] p-3 outline-none data-[open]:animate-in data-[closed]:animate-out",
+        side === "left" ? "left-0 rounded-l-none rounded-r-[16px] data-[open]:slide-in-from-left data-[closed]:slide-out-to-left" : "right-0 rounded-r-none rounded-l-[16px] data-[open]:slide-in-from-right data-[closed]:slide-out-to-right",
+        className
+      )}
+      {...props}
+    />
+  </Dialog.Portal>
+));
+NavigationDrawerContent.displayName = "M3NavigationDrawerContent";
+
+export function NavigationDrawerItem({
+  active,
+  className,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "w-full flex items-center gap-3 rounded-full h-[56px] px-4 text-[14px] font-medium transition-colors",
+        active
+          ? "bg-[--md-sys-color-secondary-container] text-[--md-sys-color-on-secondary-container]"
+          : "hover:bg-[--md-sys-color-on-surface]/8 text-[--md-sys-color-on-surface-variant]",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+"##;
+
+const M3_NAV_RAIL_TSX: &str = r##"// M3 Navigation Rail — vertical nav desktop (80px wide).
+// https://m3.material.io/components/navigation-rail
+
+import * as React from "react";
+import { cn } from "../lib/utils";
+
+export function NavigationRail({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLElement>) {
+  return (
+    <nav
+      className={cn(
+        "sticky top-0 flex flex-col items-center gap-3 w-[80px] h-screen py-3 bg-[--md-sys-color-surface] text-[--md-sys-color-on-surface-variant]",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </nav>
+  );
+}
+
+export function NavigationRailItem({
+  active,
+  icon,
+  label,
+  className,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  active?: boolean;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      className={cn("flex flex-col items-center gap-1 focus-visible:outline-none group", className)}
+      {...props}
+    >
+      <span
+        className={cn(
+          "w-[56px] h-[32px] flex items-center justify-center rounded-full transition-colors",
+          active
+            ? "bg-[--md-sys-color-secondary-container] text-[--md-sys-color-on-secondary-container]"
+            : "group-hover:bg-[--md-sys-color-on-surface]/8"
+        )}
+      >
+        {icon}
+      </span>
+      <span className="text-[12px] font-medium">{label}</span>
+    </button>
+  );
+}
+"##;
+
+const M3_TEXT_FIELD_TSX: &str = r##"// M3 TextField — filled + outlined variants (Base UI Field).
+// https://m3.material.io/components/text-fields
+
+import * as React from "react";
+import { Field } from "@base-ui-components/react/field";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const fieldVariants = cva(
+  "w-full h-[56px] rounded-[4px] px-4 text-[16px] text-[--md-sys-color-on-surface] focus:outline-none transition-colors",
+  {
+    variants: {
+      variant: {
+        filled:
+          "bg-[--md-sys-color-surface-container-highest] border-b-2 border-[--md-sys-color-on-surface-variant] focus:border-[--md-sys-color-primary] rounded-b-none",
+        outlined:
+          "bg-transparent border border-[--md-sys-color-outline] focus:border-2 focus:border-[--md-sys-color-primary]",
+      },
+    },
+    defaultVariants: { variant: "outlined" },
+  }
+);
+
+export interface TextFieldProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+    VariantProps<typeof fieldVariants> {
+  label?: string;
+  supporting?: string;
+  error?: string;
+}
+
+export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
+  ({ className, variant, label, supporting, error, id, ...props }, ref) => {
+    const gid = React.useId();
+    return (
+      <Field.Root name={props.name} className="flex flex-col gap-1">
+        {label && (
+          <Field.Label className="text-[12px] font-medium text-[--md-sys-color-on-surface-variant]">
+            {label}
+          </Field.Label>
+        )}
+        <Field.Control
+          ref={ref}
+          id={id ?? gid}
+          className={cn(fieldVariants({ variant, className }))}
+          {...props}
+        />
+        {error ? (
+          <Field.Error className="text-[12px] text-[--md-sys-color-error]">{error}</Field.Error>
+        ) : supporting ? (
+          <Field.Description className="text-[12px] text-[--md-sys-color-on-surface-variant]">
+            {supporting}
+          </Field.Description>
+        ) : null}
+      </Field.Root>
+    );
+  }
+);
+TextField.displayName = "M3TextField";
+"##;
+
+const M3_ICON_BUTTON_TSX: &str = r##"// M3 Icon Button — standard / filled / tonal / outlined.
+// https://m3.material.io/components/icon-buttons
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const iconButtonVariants = cva(
+  "inline-flex items-center justify-center size-[40px] rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] disabled:opacity-38 [&_svg]:size-[24px]",
+  {
+    variants: {
+      variant: {
+        standard: "text-[--md-sys-color-on-surface-variant] hover:bg-[--md-sys-color-on-surface]/8",
+        filled:
+          "bg-[--md-sys-color-primary] text-[--md-sys-color-on-primary] hover:shadow-[var(--md-sys-elevation-level1)]",
+        tonal:
+          "bg-[--md-sys-color-secondary-container] text-[--md-sys-color-on-secondary-container] hover:shadow-[var(--md-sys-elevation-level1)]",
+        outlined:
+          "border border-[--md-sys-color-outline] text-[--md-sys-color-on-surface-variant] hover:bg-[--md-sys-color-on-surface]/8",
+      },
+      toggled: { true: "", false: "" },
+    },
+    defaultVariants: { variant: "standard" },
+  }
+);
+
+export interface IconButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color">,
+    VariantProps<typeof iconButtonVariants> {}
+
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
+  ({ className, variant, toggled, ...props }, ref) => (
+    <button
+      ref={ref}
+      type="button"
+      className={cn(iconButtonVariants({ variant, toggled, className }))}
+      {...props}
+    />
+  )
+);
+IconButton.displayName = "M3IconButton";
+"##;
+
+const M3_TOOLTIP_TSX: &str = r##"// M3 Tooltip — plain (Base UI Tooltip).
+// https://m3.material.io/components/tooltips
+
+import * as React from "react";
+import { Tooltip } from "@base-ui-components/react/tooltip";
+import { cn } from "../lib/utils";
+
+export const TooltipProvider = Tooltip.Provider;
+export const TooltipRoot = Tooltip.Root;
+export const TooltipTrigger = Tooltip.Trigger;
+
+export const TooltipContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Tooltip.Popup>
+>(({ className, children, ...props }, ref) => (
+  <Tooltip.Portal>
+    <Tooltip.Positioner sideOffset={8}>
+      <Tooltip.Popup
+        ref={ref}
+        className={cn(
+          "rounded-[4px] bg-[--md-sys-color-inverse-surface] text-[--md-sys-color-inverse-on-surface] text-[12px] font-medium px-2 py-1 shadow-[var(--md-sys-elevation-level2)] data-[open]:animate-in data-[open]:fade-in data-[closed]:animate-out data-[closed]:fade-out",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </Tooltip.Popup>
+    </Tooltip.Positioner>
+  </Tooltip.Portal>
+));
+TooltipContent.displayName = "M3TooltipContent";
+"##;
+
+const M3_SWITCH_TSX: &str = r##"// M3 Switch — on/off (Base UI Switch).
+// https://m3.material.io/components/switch
+
+import * as React from "react";
+import { Switch } from "@base-ui-components/react/switch";
+import { cn } from "../lib/utils";
+
+export const M3Switch = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof Switch.Root>
+>(({ className, ...props }, ref) => (
+  <Switch.Root
+    ref={ref}
+    className={cn(
+      "relative inline-flex h-[32px] w-[52px] cursor-pointer items-center rounded-full border-2 transition-colors data-[checked]:bg-[--md-sys-color-primary] data-[checked]:border-[--md-sys-color-primary] data-[unchecked]:bg-[--md-sys-color-surface-container-highest] data-[unchecked]:border-[--md-sys-color-outline] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] disabled:opacity-38",
+      className
+    )}
+    {...props}
+  >
+    <Switch.Thumb className="block size-[16px] data-[checked]:size-[24px] rounded-full bg-[--md-sys-color-outline] data-[checked]:bg-[--md-sys-color-on-primary] transition-all translate-x-[6px] data-[checked]:translate-x-[24px]" />
+  </Switch.Root>
+));
+M3Switch.displayName = "M3Switch";
+export { M3Switch as Switch };
+"##;
+
+const M3_CHECKBOX_TSX: &str = r##"// M3 Checkbox (Base UI Checkbox).
+// https://m3.material.io/components/checkbox
+
+import * as React from "react";
+import { Checkbox } from "@base-ui-components/react/checkbox";
+import { cn } from "../lib/utils";
+
+export const M3Checkbox = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof Checkbox.Root>
+>(({ className, ...props }, ref) => (
+  <Checkbox.Root
+    ref={ref}
+    className={cn(
+      "flex items-center justify-center size-[18px] rounded-[2px] border-2 border-[--md-sys-color-on-surface-variant] data-[checked]:bg-[--md-sys-color-primary] data-[checked]:border-[--md-sys-color-primary] data-[indeterminate]:bg-[--md-sys-color-primary] data-[indeterminate]:border-[--md-sys-color-primary] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] disabled:opacity-38",
+      className
+    )}
+    {...props}
+  >
+    <Checkbox.Indicator className="text-[--md-sys-color-on-primary]">
+      <svg viewBox="0 0 18 18" className="size-[14px] fill-none stroke-current stroke-[3]">
+        <polyline points="3,9 7,13 15,5" />
+      </svg>
+    </Checkbox.Indicator>
+  </Checkbox.Root>
+));
+M3Checkbox.displayName = "M3Checkbox";
+export { M3Checkbox as Checkbox };
+"##;
+
+const M3_RADIO_TSX: &str = r##"// M3 Radio + RadioGroup (Base UI Radio).
+// https://m3.material.io/components/radio-button
+
+import * as React from "react";
+import { Radio } from "@base-ui-components/react/radio";
+import { RadioGroup } from "@base-ui-components/react/radio-group";
+import { cn } from "../lib/utils";
+
+export const M3RadioGroup = RadioGroup;
+
+export const M3Radio = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof Radio.Root>
+>(({ className, ...props }, ref) => (
+  <Radio.Root
+    ref={ref}
+    className={cn(
+      "flex items-center justify-center size-[20px] rounded-full border-2 border-[--md-sys-color-on-surface-variant] data-[checked]:border-[--md-sys-color-primary] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] disabled:opacity-38",
+      className
+    )}
+    {...props}
+  >
+    <Radio.Indicator className="size-[10px] rounded-full bg-[--md-sys-color-primary]" />
+  </Radio.Root>
+));
+M3Radio.displayName = "M3Radio";
+export { M3Radio as Radio, M3RadioGroup as RadioGroup };
+"##;
+
+const M3_SLIDER_TSX: &str = r##"// M3 Slider — continuous (Base UI Slider).
+// https://m3.material.io/components/sliders
+
+import * as React from "react";
+import { Slider } from "@base-ui-components/react/slider";
+import { cn } from "../lib/utils";
+
+export const M3Slider = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Slider.Root>
+>(({ className, ...props }, ref) => (
+  <Slider.Root ref={ref} className={cn("relative flex items-center w-full h-[44px]", className)} {...props}>
+    <Slider.Control className="flex w-full items-center">
+      <Slider.Track className="relative grow h-[4px] rounded-full bg-[--md-sys-color-surface-container-highest]">
+        <Slider.Indicator className="absolute h-full rounded-full bg-[--md-sys-color-primary]" />
+        <Slider.Thumb className="block size-[20px] rounded-full bg-[--md-sys-color-primary] shadow-[var(--md-sys-elevation-level1)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[--md-sys-color-primary]/24" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+));
+M3Slider.displayName = "M3Slider";
+export { M3Slider as Slider };
+"##;
+
+const M3_TABS_TSX: &str = r##"// M3 Tabs — primary + secondary (Base UI Tabs).
+// https://m3.material.io/components/tabs
+
+import * as React from "react";
+import { Tabs } from "@base-ui-components/react/tabs";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const tabsListVariants = cva(
+  "relative flex gap-6 border-b border-[--md-sys-color-surface-container-highest]",
+  {
+    variants: {
+      variant: { primary: "", secondary: "h-[48px]" },
+    },
+    defaultVariants: { variant: "primary" },
+  }
+);
+
+export const TabsRoot = Tabs.Root;
+export const TabsPanel = Tabs.Panel;
+
+export const TabsList = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Tabs.List> & VariantProps<typeof tabsListVariants>
+>(({ className, variant, ...props }, ref) => (
+  <Tabs.List
+    ref={ref}
+    className={cn(tabsListVariants({ variant, className }))}
+    {...props}
+  />
+));
+TabsList.displayName = "M3TabsList";
+
+export const TabsTab = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof Tabs.Tab>
+>(({ className, ...props }, ref) => (
+  <Tabs.Tab
+    ref={ref}
+    className={cn(
+      "relative h-[48px] px-4 text-[14px] font-medium text-[--md-sys-color-on-surface-variant] data-[selected]:text-[--md-sys-color-primary] focus-visible:outline-none transition-colors",
+      className
+    )}
+    {...props}
+  />
+));
+TabsTab.displayName = "M3TabsTab";
+
+export const TabsIndicator = React.forwardRef<
+  HTMLSpanElement,
+  React.ComponentPropsWithoutRef<typeof Tabs.Indicator>
+>(({ className, ...props }, ref) => (
+  <Tabs.Indicator
+    ref={ref}
+    className={cn(
+      "absolute bottom-0 h-[3px] rounded-t bg-[--md-sys-color-primary] transition-all",
+      className
+    )}
+    {...props}
+  />
+));
+TabsIndicator.displayName = "M3TabsIndicator";
+"##;
+
+const M3_MENU_TSX: &str = r##"// M3 Menu (Base UI Menu).
+// https://m3.material.io/components/menus
+
+import * as React from "react";
+import { Menu } from "@base-ui-components/react/menu";
+import { cn } from "../lib/utils";
+
+export const MenuRoot = Menu.Root;
+export const MenuTrigger = Menu.Trigger;
+
+export const MenuContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Menu.Popup>
+>(({ className, children, ...props }, ref) => (
+  <Menu.Portal>
+    <Menu.Positioner sideOffset={4}>
+      <Menu.Popup
+        ref={ref}
+        className={cn(
+          "min-w-[112px] rounded-[4px] bg-[--md-sys-color-surface-container] text-[--md-sys-color-on-surface] shadow-[var(--md-sys-elevation-level2)] py-2 outline-none data-[open]:animate-in data-[open]:fade-in data-[closed]:animate-out",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </Menu.Popup>
+    </Menu.Positioner>
+  </Menu.Portal>
+));
+MenuContent.displayName = "M3MenuContent";
+
+export const MenuItem = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Menu.Item>
+>(({ className, ...props }, ref) => (
+  <Menu.Item
+    ref={ref}
+    className={cn(
+      "h-[48px] px-3 text-[14px] font-medium flex items-center gap-3 data-[highlighted]:bg-[--md-sys-color-on-surface]/8 cursor-pointer outline-none",
+      className
+    )}
+    {...props}
+  />
+));
+MenuItem.displayName = "M3MenuItem";
+"##;
+
+const M3_DIALOG_TSX: &str = r##"// M3 Dialog — basic + full-screen (Base UI Dialog).
+// https://m3.material.io/components/dialogs
+
+import * as React from "react";
+import { Dialog } from "@base-ui-components/react/dialog";
+import { cn } from "../lib/utils";
+
+export const DialogRoot = Dialog.Root;
+export const DialogTrigger = Dialog.Trigger;
+export const DialogClose = Dialog.Close;
+
+export const DialogContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Dialog.Popup>
+>(({ className, children, ...props }, ref) => (
+  <Dialog.Portal>
+    <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/40 data-[open]:animate-in data-[open]:fade-in data-[closed]:animate-out data-[closed]:fade-out" />
+    <Dialog.Popup
+      ref={ref}
+      className={cn(
+        "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[560px] rounded-[28px] bg-[--md-sys-color-surface-container-high] text-[--md-sys-color-on-surface] p-6 shadow-[var(--md-sys-elevation-level3)] outline-none data-[open]:animate-in data-[closed]:animate-out",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </Dialog.Popup>
+  </Dialog.Portal>
+));
+DialogContent.displayName = "M3DialogContent";
+
+export function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <h2 className={cn("text-[24px] font-normal mb-4", className)} {...props} />;
+}
+
+export function DialogDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return <p className={cn("text-[14px] text-[--md-sys-color-on-surface-variant] mb-6", className)} {...props} />;
+}
+
+export function DialogActions({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex justify-end gap-2", className)} {...props} />;
+}
+"##;
+
+const M3_SNACKBAR_TSX: &str = r##"// M3 Snackbar — standard + with action (Base UI Toast).
+// https://m3.material.io/components/snackbar
+
+import * as React from "react";
+import { Toast } from "@base-ui-components/react/toast";
+import { cn } from "../lib/utils";
+
+export const SnackbarProvider: typeof Toast.Provider = Toast.Provider;
+
+export const SnackbarRoot = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Toast.Root>
+>(({ className, children, ...props }, ref) => (
+  <Toast.Root
+    ref={ref}
+    className={cn(
+      "flex items-center gap-4 min-w-[344px] max-w-[568px] rounded-[4px] bg-[--md-sys-color-inverse-surface] text-[--md-sys-color-inverse-on-surface] px-4 h-[48px] shadow-[var(--md-sys-elevation-level3)] data-[open]:animate-in data-[open]:slide-in-from-bottom data-[closed]:animate-out data-[closed]:slide-out-to-bottom",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </Toast.Root>
+));
+SnackbarRoot.displayName = "M3SnackbarRoot";
+
+export const SnackbarTitle: typeof Toast.Title = Toast.Title;
+export const SnackbarDescription: typeof Toast.Description = Toast.Description;
+
+export function SnackbarAction({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      type="button"
+      className={cn("text-[--md-sys-color-inverse-primary] text-[14px] font-medium px-3 uppercase", className)}
+      {...props}
+    />
+  );
+}
+"##;
+
+const M3_LINEAR_PROGRESS_TSX: &str = r##"// M3 Linear Progress — determinate + indeterminate (Base UI Progress).
+// https://m3.material.io/components/progress-indicators
+
+import * as React from "react";
+import { Progress } from "@base-ui-components/react/progress";
+import { cn } from "../lib/utils";
+
+export const LinearProgress = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof Progress.Root> & { showTrack?: boolean }
+>(({ className, showTrack = true, ...props }, ref) => (
+  <Progress.Root ref={ref} className={cn("relative h-[4px] w-full overflow-hidden", className)} {...props}>
+    {showTrack && <Progress.Track className="absolute inset-0 bg-[--md-sys-color-surface-container-highest]" />}
+    <Progress.Indicator className="absolute h-full bg-[--md-sys-color-primary] transition-[width]" />
+  </Progress.Root>
+));
+LinearProgress.displayName = "M3LinearProgress";
+"##;
+
+const M3_CIRCULAR_PROGRESS_TSX: &str = r##"// M3 Circular Progress — determinate + indeterminate (CSS/SVG pure).
+// https://m3.material.io/components/progress-indicators
+
+import * as React from "react";
+import { cn } from "../lib/utils";
+
+export interface CircularProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+  value?: number;
+  size?: number;
+  strokeWidth?: number;
+  indeterminate?: boolean;
+}
+
+export const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgressProps>(
+  ({ className, value, size = 40, strokeWidth = 4, indeterminate = true, ...props }, ref) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = indeterminate ? 0 : circumference * (1 - (value ?? 0) / 100);
+    return (
+      <div
+        ref={ref}
+        role="progressbar"
+        aria-valuenow={indeterminate ? undefined : value}
+        className={cn("inline-block", indeterminate && "animate-spin", className)}
+        style={{ width: size, height: size }}
+        {...props}
+      >
+        <svg viewBox={`0 0 ${size} ${size}`} className="size-full">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+            className="fill-none stroke-[--md-sys-color-primary]"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            style={indeterminate ? { strokeDasharray: `${circumference * 0.25} ${circumference * 0.75}` } : undefined}
+          />
+        </svg>
+      </div>
+    );
+  }
+);
+CircularProgress.displayName = "M3CircularProgress";
+"##;
+
+const M3_BADGE_TSX: &str = r##"// M3 Badge — small (dot) / large (with content).
+// https://m3.material.io/components/badges
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const badgeVariants = cva(
+  "inline-flex items-center justify-center bg-[--md-sys-color-error] text-[--md-sys-color-on-error] font-medium",
+  {
+    variants: {
+      variant: {
+        small: "size-[6px] rounded-full",
+        large: "min-w-[16px] h-[16px] rounded-full text-[11px] px-1",
+      },
+    },
+    defaultVariants: { variant: "small" },
+  }
+);
+
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLSpanElement>,
+    VariantProps<typeof badgeVariants> {}
+
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant, ...props }, ref) => (
+    <span ref={ref} className={cn(badgeVariants({ variant, className }))} {...props} />
+  )
+);
+Badge.displayName = "M3Badge";
+"##;
+
+const M3_DIVIDER_TSX: &str = r##"// M3 Divider — full + inset + middle (horizontal or vertical).
+// https://m3.material.io/components/divider
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const dividerVariants = cva("bg-[--md-sys-color-outline-variant] shrink-0", {
+  variants: {
+    orientation: {
+      horizontal: "w-full h-px",
+      vertical: "h-full w-px",
+    },
+    inset: {
+      none:   "",
+      left:   "ml-4",
+      middle: "mx-4",
+    },
+  },
+  defaultVariants: { orientation: "horizontal", inset: "none" },
+});
+
+export interface DividerProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof dividerVariants> {}
+
+export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
+  ({ className, orientation, inset, ...props }, ref) => (
+    <div
+      ref={ref}
+      role="separator"
+      aria-orientation={orientation ?? "horizontal"}
+      className={cn(dividerVariants({ orientation, inset, className }))}
+      {...props}
+    />
+  )
+);
+Divider.displayName = "M3Divider";
+"##;
+
+const M3_LIST_TSX: &str = r##"// M3 List + ListItem — 1/2/3-line variants.
+// https://m3.material.io/components/lists
+
+import * as React from "react";
+import { cn } from "../lib/utils";
+
+export function List({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) {
+  return (
+    <ul
+      role="list"
+      className={cn("flex flex-col bg-[--md-sys-color-surface] text-[--md-sys-color-on-surface]", className)}
+      {...props}
+    />
+  );
+}
+
+export interface ListItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
+  leading?: React.ReactNode;
+  trailing?: React.ReactNode;
+  supporting?: React.ReactNode;
+}
+
+export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
+  ({ className, children, leading, trailing, supporting, ...props }, ref) => (
+    <li
+      ref={ref}
+      className={cn(
+        "flex items-center gap-4 px-4 min-h-[56px] hover:bg-[--md-sys-color-on-surface]/8 cursor-pointer",
+        className
+      )}
+      {...props}
+    >
+      {leading && <span className="shrink-0 text-[--md-sys-color-on-surface-variant]">{leading}</span>}
+      <div className="flex-1 min-w-0">
+        <div className="text-[16px] truncate">{children}</div>
+        {supporting && (
+          <div className="text-[14px] text-[--md-sys-color-on-surface-variant] truncate">{supporting}</div>
+        )}
+      </div>
+      {trailing && <span className="shrink-0 text-[--md-sys-color-on-surface-variant]">{trailing}</span>}
+    </li>
+  )
+);
+ListItem.displayName = "M3ListItem";
+"##;
+
+const M3_TYPOGRAPHY_TSX: &str = r##"// M3 Typography scale — display / headline / title / body / label.
+// https://m3.material.io/styles/typography
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const typographyVariants = cva("text-[--md-sys-color-on-surface]", {
+  variants: {
+    variant: {
+      "display-large":    "text-[57px] leading-[64px] font-normal tracking-[-0.25px]",
+      "display-medium":   "text-[45px] leading-[52px] font-normal",
+      "display-small":    "text-[36px] leading-[44px] font-normal",
+      "headline-large":   "text-[32px] leading-[40px] font-normal",
+      "headline-medium":  "text-[28px] leading-[36px] font-normal",
+      "headline-small":   "text-[24px] leading-[32px] font-normal",
+      "title-large":      "text-[22px] leading-[28px] font-medium",
+      "title-medium":     "text-[16px] leading-[24px] font-medium tracking-[0.15px]",
+      "title-small":      "text-[14px] leading-[20px] font-medium tracking-[0.1px]",
+      "body-large":       "text-[16px] leading-[24px] font-normal tracking-[0.5px]",
+      "body-medium":      "text-[14px] leading-[20px] font-normal tracking-[0.25px]",
+      "body-small":       "text-[12px] leading-[16px] font-normal tracking-[0.4px]",
+      "label-large":      "text-[14px] leading-[20px] font-medium tracking-[0.1px]",
+      "label-medium":     "text-[12px] leading-[16px] font-medium tracking-[0.5px]",
+      "label-small":      "text-[11px] leading-[16px] font-medium tracking-[0.5px]",
+    },
+  },
+  defaultVariants: { variant: "body-medium" },
+});
+
+type AllowedTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "div";
+
+export interface TypographyProps
+  extends React.HTMLAttributes<HTMLElement>,
+    VariantProps<typeof typographyVariants> {
+  as?: AllowedTags;
+}
+
+export function Typography({ as: Tag = "p", className, variant, ...props }: TypographyProps) {
+  return <Tag className={cn(typographyVariants({ variant, className }))} {...props} />;
+}
+"##;
 
 /// Script Bun qui génère public/r/*.json depuis registry/.
 /// Équivalent Rust dans crates/m3-registry-builder (plus rapide sur gros registry).
@@ -2146,19 +3261,39 @@ const MD3_CORE_PACKAGE_JSON: &str = r#"{
   "name": "@md3-ui/core",
   "version": "0.1.0",
   "type": "module",
-  "description": "React components — Material Design 3 (fork shadcn, no CSS-in-JS)",
+  "description": "React components — Material Design 3 (Base UI primitives, no CSS-in-JS)",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./button": "./src/button/index.ts",
-    "./card":   "./src/card/index.ts",
-    "./chip":   "./src/chip/index.ts",
-    "./fab":    "./src/fab/index.ts",
-    "./navigation-bar":    "./src/navigation-bar/index.ts",
+    "./app-bar":           "./src/app-bar/index.ts",
+    "./badge":             "./src/badge/index.ts",
     "./bottom-sheet":      "./src/bottom-sheet/index.ts",
+    "./button":            "./src/button/index.ts",
+    "./card":              "./src/card/index.ts",
+    "./checkbox":          "./src/checkbox/index.ts",
+    "./chip":              "./src/chip/index.ts",
+    "./circular-progress": "./src/circular-progress/index.ts",
+    "./dialog":            "./src/dialog/index.ts",
+    "./divider":           "./src/divider/index.ts",
+    "./fab":               "./src/fab/index.ts",
+    "./icon-button":       "./src/icon-button/index.ts",
+    "./linear-progress":   "./src/linear-progress/index.ts",
+    "./list":              "./src/list/index.ts",
+    "./menu":              "./src/menu/index.ts",
+    "./navigation-bar":    "./src/navigation-bar/index.ts",
+    "./navigation-drawer": "./src/navigation-drawer/index.ts",
+    "./navigation-rail":   "./src/navigation-rail/index.ts",
+    "./radio":             "./src/radio/index.ts",
     "./segmented-control": "./src/segmented-control/index.ts",
+    "./slider":            "./src/slider/index.ts",
+    "./snackbar":          "./src/snackbar/index.ts",
+    "./switch":            "./src/switch/index.ts",
+    "./tabs":              "./src/tabs/index.ts",
+    "./text-field":        "./src/text-field/index.ts",
+    "./tooltip":           "./src/tooltip/index.ts",
+    "./typography":        "./src/typography/index.ts",
     "./motion":            "./src/motion/index.ts",
     "./theme":             "./src/theme/ThemeProvider.tsx",
     "./lib/utils":         "./src/lib/utils.ts"
@@ -2171,6 +3306,7 @@ const MD3_CORE_PACKAGE_JSON: &str = r#"{
     "typecheck": "bunx --bun tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui-components/react": "^1.0.0-rc.0",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-toggle-group": "^1.1.11",
@@ -2240,19 +3376,47 @@ export default defineConfig({
 });
 "#;
 
-const MD3_CORE_INDEX: &str = r#"// Public API of @md3-ui/core.
-// Compilé par Rspack+SWC, linté par Biome, tokens M3 via @md3-ui/tokens
-// (CSS custom properties, zero CSS-in-JS). Motion M3 natif via les tokens
-// --md-sys-motion-* (easing + duration).
+const MD3_CORE_INDEX: &str = r#"// Public API of @md3-ui/core — 26 composants Material Design 3.
+// Primitives Base UI (@base-ui-components/react) + Tailwind v4 + tokens M3.
+// Motion M3 via tokens --md-sys-motion-*.
 
+// Actions
 export * from "./button";
-export * from "./card";
-export * from "./chip";
+export * from "./icon-button";
 export * from "./fab";
-export * from "./navigation-bar";
+// Containers
+export * from "./card";
+export * from "./dialog";
 export * from "./bottom-sheet";
+// Chips + Segmented
+export * from "./chip";
 export * from "./segmented-control";
+// Forms
+export * from "./checkbox";
+export * from "./radio";
+export * from "./switch";
+export * from "./slider";
+export * from "./text-field";
+// Navigation
+export * from "./app-bar";
+export * from "./navigation-bar";
+export * from "./navigation-drawer";
+export * from "./navigation-rail";
+export * from "./tabs";
+export * from "./menu";
+// Feedback
+export * from "./snackbar";
+export * from "./tooltip";
+export * from "./linear-progress";
+export * from "./circular-progress";
+// Data display
+export * from "./list";
+export * from "./badge";
+export * from "./divider";
+export * from "./typography";
+// Motion
 export * from "./motion";
+// Theme
 export { ThemeProvider, useTheme } from "./theme/ThemeProvider";
 export type { M3ColorScheme } from "./theme/tokens";
 "#;

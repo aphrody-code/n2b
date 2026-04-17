@@ -37,6 +37,11 @@ pub struct LlmstxtOpts {
     pub keep_intermediate: bool,
     pub skip_crawl: bool,
     pub quiet: bool,
+    /// Auto-detect + consomme un sitemap.xml comme seed (si `true`, tente
+    /// `<url>/sitemap.xml` ou utilise `url` si déjà un sitemap).
+    pub sitemap: bool,
+    /// Exporte aussi `sitemap.xml` + `sitemap.txt` dans `<out>/` à la fin.
+    pub export_sitemap: bool,
 }
 
 pub fn run(opts: &LlmstxtOpts) -> Result<()> {
@@ -57,7 +62,10 @@ pub fn run(opts: &LlmstxtOpts) -> Result<()> {
     }
 
     eprintln!("{} parse markdown export", "[2/3]".cyan().bold());
-    let site = parse::scan_export(&md_dir, &opts.url)?;
+    // Pour la reconstruction d'URLs : si l'input était un sitemap.xml, on
+    // remonte à l'origine (host root) pour les reconstruct_url internes.
+    let root_url = opts.url.trim_end_matches("/sitemap.xml");
+    let site = parse::scan_export(&md_dir, root_url)?;
     eprintln!(
         "       {} pages détectées, {} sections",
         site.pages.len(),
@@ -96,6 +104,23 @@ pub fn run(opts: &LlmstxtOpts) -> Result<()> {
             std::fs::metadata(&full_path)
                 .map(|m| m.len())
                 .unwrap_or(0)
+        );
+    }
+
+    // Sitemap export : siteone peut l'écrire (voir crawl.rs --sitemap-*-file),
+    // mais si l'utilisateur a passé --skip-crawl, on synthétise depuis les
+    // pages détectées.
+    if opts.export_sitemap {
+        let xml_path = opts.out.join("sitemap.xml");
+        let txt_path = opts.out.join("sitemap.txt");
+        if !xml_path.exists() || !txt_path.exists() {
+            generate::write_sitemap(&site, &xml_path, &txt_path)?;
+        }
+        eprintln!(
+            "       {} sitemap.xml ({} bytes)  sitemap.txt ({} bytes)",
+            "✓".green(),
+            std::fs::metadata(&xml_path).map(|m| m.len()).unwrap_or(0),
+            std::fs::metadata(&txt_path).map(|m| m.len()).unwrap_or(0),
         );
     }
 

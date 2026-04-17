@@ -24,7 +24,10 @@ similar = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 octocrab = "0.49"
 futures = "0.3"
-fastembed = "5"
+# fastembed : feature `ai` optionnelle — énorme (model ONNX + tokenizers
+# + hf-hub + image + png) → +100 deps, +15 MB binaire. Désactivé par défaut
+# depuis v0.3 ; `cargo install n2b --features ai` pour activer crosslink ML.
+fastembed = { version = "5", optional = true }
 # AST parser JS/TS (remplacement de la regex IMPORT_RE pour node-imports).
 # oxc publie des versions cohérentes ensemble — pas de version hell.
 oxc_allocator = "0.126"
@@ -37,4 +40,9 @@ url = "2"
 walkdir = "2"
 which = "6"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "blocking"] }
+
+[features]
+default = []
+# Active le crosslink ML dans `n2b analyze` (fastembed + AllMiniLML6V2).
+ai = ["dep:fastembed"]
 

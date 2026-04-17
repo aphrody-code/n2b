@@ -24,8 +24,18 @@ pub fn run_siteone(cli: &LlmstxtOpts, md_dir: &Path, md_single: &Path) -> Result
     let _ = std::fs::remove_file(md_single);
     std::fs::create_dir_all(md_dir)?;
 
+    // Pipeline sitemap — si `--sitemap` et que l'URL ne pointe pas déjà sur
+    // un sitemap.xml, on substitue l'URL par `<url>/sitemap.xml`. siteone
+    // reconnaît nativement ce format et l'utilise comme seed.
+    let seed_url = if cli.sitemap && !cli.url.ends_with("sitemap.xml") {
+        let base = cli.url.trim_end_matches('/');
+        format!("{base}/sitemap.xml")
+    } else {
+        cli.url.clone()
+    };
+
     let mut cmd = Command::new(&bin);
-    cmd.arg(format!("--url={}", cli.url))
+    cmd.arg(format!("--url={seed_url}"))
         .arg(format!("--markdown-export-dir={}", md_dir.display()))
         .arg(format!(
             "--markdown-export-single-file={}",
@@ -36,6 +46,15 @@ pub fn run_siteone(cli: &LlmstxtOpts, md_dir: &Path, md_single: &Path) -> Result
         .arg("--markdown-remove-links-and-images-from-single-file")
         .arg("--offline-export-no-auto-redirect-html")
         .arg("--no-color");
+
+    // Export sitemap — siteone écrit lui-même `sitemap.xml` + `sitemap.txt`
+    // dans `<out>/` quand on lui passe les flags dédiés. On coupe ainsi le
+    // besoin d'un fallback userland dans 99 % des cas.
+    if cli.export_sitemap {
+        let parent = md_dir.parent().unwrap_or(md_dir);
+        cmd.arg(format!("--sitemap-xml-file={}/sitemap.xml", parent.display()))
+            .arg(format!("--sitemap-txt-file={}/sitemap.txt", parent.display()));
+    }
 
     if cli.max_depth > 0 {
         cmd.arg(format!("--max-depth={}", cli.max_depth));

@@ -32,8 +32,20 @@ once_cell = "1"
 memchr = "2"
 
 # Profile unique propagé à rust/ et native/.
+# `panic = "abort"` retire le code d'unwinding (~5-10% binaire, ~3-5% perf
+# sur chemins sans panique). CLI → pas besoin de recovery propre.
 [profile.release]
-lto = true
+lto = "fat"
 codegen-units = 1
-strip = true
+strip = "symbols"
 opt-level = 3
+panic = "abort"
+incremental = false
+
+# Profile pour dev rapide + binaire tout de même light — pour itérer sur
+# les templates scaffold sans attendre une minute de link.
+[profile.dev]
+opt-level = 0
+debug = "line-tables-only"
+split-debuginfo = "unpacked"
+incremental = true
