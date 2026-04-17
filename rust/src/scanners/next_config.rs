@@ -96,6 +96,27 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
         ));
     }
 
+    // 4.5 next-rspack : withRspack() enveloppe la config
+    static WITH_RSPACK: Lazy<Regex> = Lazy::new(|| {
+        Regex::new(r"\bwithRspack\s*\(").unwrap()
+    });
+    if WITH_RSPACK.is_match(content) {
+        findings.push(make_finding(
+            path,
+            &[],
+            0,
+            "next/rspack-wrapper",
+            "withRspack() détecté — Next.js backed by Rspack (next-rspack). Compatible Bun runtime ; voir https://rspack.rs/guide/tech/next",
+            "withRspack(",
+            None,
+            MakeFindingOpts {
+                autofix: Some(false),
+                severity: Some(Severity::Info),
+                ..Default::default()
+            },
+        ));
+    }
+
     // 5. images.loader custom
     static IMAGES_CUSTOM: Lazy<Regex> = Lazy::new(|| {
         Regex::new(r#"loader\s*:\s*['"]custom['"]"#).unwrap()
