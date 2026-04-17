@@ -1,0 +1,29 @@
+{
+  "name": "fixture",
+  "version": "1.0.0",
+  "type": "module",
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "npm run build && npx vite",
+    "test": "npm test",
+    "setup": "npm i && npm run prepare",
+    "ci": "npm ci && yarn run lint",
+    "clean": "rimraf dist",
+    "install-extra": "pnpm add -D vitest && pnpm dlx prisma generate"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "node-fetch": "^3.0.0",
+    "express": "^4.0.0",
+    "better-sqlite3": "^11.0.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.0.0",
+    "rimraf": "^5.0.0"
+  }
+}

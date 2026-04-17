@@ -1,0 +1,32 @@
+{
+  "name": "node2bun",
+  "version": "0.1.0",
+  "description": "Analyse un package Node.js et corrige les incompatibilités avec Bun : CLI, imports, APIs.",
+  "type": "module",
+  "bin": {
+    "node2bun": "./bin/node2bun.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./plugin": "./src/plugin.ts"
+  },
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "bun run bin/node2bun.ts",
+    "build:native": "cargo build --release --manifest-path native/Cargo.toml",
+    "build": "bun run build:native && bun build bin/node2bun.ts --target=bun --outfile=dist/node2bun.js --minify",
+    "build:compile": "bun run build:native && bun build bin/node2bun.ts --compile --minify --bytecode --target=bun --outfile=dist/node2bun",
+    "install:local": "bun run build:compile && sudo install -m755 dist/node2bun /usr/local/bin/node2bun",
+    "test": "bun test",
+    "check-self": "bun run bin/node2bun.ts ."
+  },
+  "keywords": ["bun", "node", "migration", "codemod", "cli"],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "bun": ">=1.2.0"
+  }
+}
