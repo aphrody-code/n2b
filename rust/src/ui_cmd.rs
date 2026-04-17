@@ -218,9 +218,22 @@ fn scaffold_md3_ui_framework(dir: &Path, name: &str, quiet: bool) -> Result<()> 
     write(dir.join("packages/tokens/src/theme.json"), MD3_THEME_JSON, quiet)?;
 
     // --- packages/registry — shadcn registry fork ---
+    // Registry.json référence `registry/new-york/ui/*.tsx` — on écrit donc les
+    // composants à ce chemin (duplicate des sources `packages/core/src/`),
+    // plus `lib/utils.ts` et `lib/m3-tokens.css`. Ce layout est ce que shadcn
+    // attend pour `bunx shadcn add https://.../button.json`.
     write(dir.join("packages/registry/package.json"), MD3_REGISTRY_PACKAGE_JSON, quiet)?;
     write(dir.join("packages/registry/registry.json"), &render_m3_registry_json(name), quiet)?;
     write(dir.join("packages/registry/scripts/build.ts"), M3_BUILD_REGISTRY_TS, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/button.tsx"), M3_BUTTON_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/card.tsx"), M3_CARD_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/chip.tsx"), M3_CHIP_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/fab.tsx"), M3_FAB_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/navigation-bar.tsx"), M3_NAV_BAR_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/bottom-sheet.tsx"), M3_BOTTOM_SHEET_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/ui/segmented-control.tsx"), M3_SEGMENTED_TSX, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/lib/utils.ts"), SHADCN_UTILS_TS, quiet)?;
+    write(dir.join("packages/registry/registry/new-york/lib/m3-tokens.css"), M3_TOKENS_CSS, quiet)?;
 
     // --- packages/cli ---
     write(dir.join("packages/cli/package.json"), &render_md3_cli_package_json(name), quiet)?;
@@ -260,6 +273,7 @@ fn scaffold_md3_ui_framework(dir: &Path, name: &str, quiet: bool) -> Result<()> 
     // --- examples/next-app ---
     write(dir.join("examples/next-app/package.json"), &render_md3_example_pkg(name), quiet)?;
     write(dir.join("examples/next-app/next.config.ts"), NEXT_CONFIG_TS, quiet)?;
+    write(dir.join("examples/next-app/tsconfig.json"), MD3_DOCS_TSCONFIG, quiet)?;
     write(dir.join("examples/next-app/src/app/layout.tsx"), &render_md3_example_layout(name), quiet)?;
     write(dir.join("examples/next-app/src/app/page.tsx"), M3_PAGE_TSX, quiet)?;
     write(dir.join("examples/next-app/src/app/globals.css"), MD3_EXAMPLE_GLOBALS, quiet)?;
@@ -343,22 +357,22 @@ fn render_shadcn_package_json(name: &str) -> String {
     "add": "bunx shadcn@latest add"
   }},
   "dependencies": {{
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@radix-ui/react-slot": "^1.1.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
-    "tailwind-merge": "^2.5.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
     "lucide-react": "^0.454.0"
   }},
   "devDependencies": {{
     "@types/bun": "latest",
-    "@types/react": "^19.0.0",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.6.0",
-    "tailwindcss": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.0"
+    "@types/react": "^19.2.14",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3",
+    "tailwindcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.2"
   }}
 }}
 "#,
@@ -378,9 +392,9 @@ fn render_mui_package_json(name: &str) -> String {
     "start": "next start"
   }},
   "dependencies": {{
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "@mui/material": "^6.0.0",
     "@mui/icons-material": "^6.0.0",
     "@mui/material-nextjs": "^6.0.0",
@@ -391,8 +405,8 @@ fn render_mui_package_json(name: &str) -> String {
   }},
   "devDependencies": {{
     "@types/bun": "latest",
-    "@types/react": "^19.0.0",
-    "typescript": "^5.6.0"
+    "@types/react": "^19.2.14",
+    "typescript": "^6.0.3"
   }}
 }}
 "#,
@@ -417,7 +431,7 @@ fn render_material_web_package_json(name: &str) -> String {
   }},
   "devDependencies": {{
     "@types/bun": "latest",
-    "typescript": "^5.6.0"
+    "typescript": "^6.0.3"
   }}
 }}
 "#,
@@ -437,15 +451,15 @@ fn render_mt_package_json(name: &str) -> String {
     "start": "next start"
   }},
   "dependencies": {{
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "@material-tailwind/react": "^2.1.0"
   }},
   "devDependencies": {{
     "@types/bun": "latest",
-    "@types/react": "^19.0.0",
-    "typescript": "^5.6.0",
+    "@types/react": "^19.2.14",
+    "typescript": "^6.0.3",
     "tailwindcss": "^3.4.0",
     "postcss": "^8.4.0",
     "autoprefixer": "^10.4.0"
@@ -868,26 +882,26 @@ fn render_m3_package_json(name: &str) -> String {
     "preview": "bun scripts/build-registry.ts && bun dev"
   }},
   "dependencies": {{
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@radix-ui/react-slot": "^1.1.0",
-    "@radix-ui/react-dialog": "^1.1.0",
-    "@radix-ui/react-toggle-group": "^1.1.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
-    "tailwind-merge": "^2.5.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-toggle-group": "^1.1.11",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
     "lucide-react": "^0.454.0",
     "material-symbols": "^0.27.0",
     "@fontsource-variable/google-sans-flex": "^5.1.0"
   }},
   "devDependencies": {{
     "@types/bun": "latest",
-    "@types/react": "^19.0.0",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.6.0",
-    "tailwindcss": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.0"
+    "@types/react": "^19.2.14",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3",
+    "tailwindcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.2"
   }}
 }}
 "#,
@@ -1186,11 +1200,11 @@ const M3_TOKENS_CSS: &str = r#"/* Material Design 3 tokens — couleurs + typogr
 }
 "#;
 
-const M3_PAGE_TSX: &str = r#"import { Button } from "@/registry/new-york/ui/button";
-import { Card, CardContent } from "@/registry/new-york/ui/card";
-import { Chip } from "@/registry/new-york/ui/chip";
-import { Fab } from "@/registry/new-york/ui/fab";
-import { SegmentedControl, Segment } from "@/registry/new-york/ui/segmented-control";
+const M3_PAGE_TSX: &str = r#"import { Button } from "@md3-ui/core/button";
+import { Card, CardContent } from "@md3-ui/core/card";
+import { Chip } from "@md3-ui/core/chip";
+import { Fab } from "@md3-ui/core/fab";
+import { SegmentedControl, Segment } from "@md3-ui/core/segmented-control";
 
 export default function Home() {
   return (
@@ -1256,7 +1270,7 @@ const M3_BUTTON_TSX: &str = r#"// M3 Button — 5 variants officiels Material De
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 h-10 px-6 rounded-full text-[14px] font-medium tracking-[0.1px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] disabled:opacity-38 disabled:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0",
@@ -1299,7 +1313,7 @@ const M3_CARD_TSX: &str = r#"// M3 Card — Elevated / Filled / Outlined.
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 const cardVariants = cva(
   "rounded-[12px] overflow-hidden transition-shadow [--md-shape:var(--md-sys-shape-corner-medium)]",
@@ -1342,7 +1356,7 @@ const M3_CHIP_TSX: &str = r#"// M3 Chip — Assist / Filter / Input / Suggestion
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 const chipVariants = cva(
   "inline-flex items-center gap-1 h-8 px-3 rounded-[8px] border text-[14px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] disabled:opacity-38",
@@ -1380,7 +1394,7 @@ const M3_FAB_TSX: &str = r#"// M3 FAB + Extended FAB — small / medium / large.
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 const fabVariants = cva(
   "fixed bottom-4 right-4 z-50 inline-flex items-center justify-center gap-2 rounded-[16px] shadow-[var(--md-sys-elevation-level3)] transition-all hover:shadow-[var(--md-sys-elevation-level4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--md-sys-color-primary] [&_svg]:shrink-0",
@@ -1408,7 +1422,7 @@ const fabVariants = cva(
 );
 
 export interface FabProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color">,
     VariantProps<typeof fabVariants> {}
 
 export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(
@@ -1423,7 +1437,7 @@ const M3_NAV_BAR_TSX: &str = r#"// M3 Navigation Bar — bottom navigation mobil
 // https://m3.material.io/components/navigation-bar
 
 import * as React from "react";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 export interface NavItem {
   label: string;
@@ -1491,7 +1505,7 @@ const M3_BOTTOM_SHEET_TSX: &str = r#"// M3 Bottom Sheet — modal & standard, dr
 
 import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 export const BottomSheet = Dialog.Root;
 export const BottomSheetTrigger = Dialog.Trigger;
@@ -1525,7 +1539,7 @@ const M3_SEGMENTED_TSX: &str = r#"// Segmented Control — mix iOS segmented con
 
 import * as React from "react";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { cn } from "@/registry/new-york/lib/utils";
+import { cn } from "../lib/utils";
 
 export function SegmentedControl({
   defaultValue,
@@ -1934,9 +1948,9 @@ fn render_md3_root_package_json(name: &str) -> String {
     "cargo:check": "cargo check --workspace"
   }},
   "devDependencies": {{
-    "@biomejs/biome": "^1.9.0",
-    "turbo": "^2.0.0",
-    "typescript": "^5.6.0",
+    "@biomejs/biome": "^2.4.12",
+    "turbo": "^2.9.6",
+    "typescript": "^6.0.3",
     "@types/bun": "latest"
   }},
   "engines": {{
@@ -2133,33 +2147,36 @@ const MD3_CORE_PACKAGE_JSON: &str = r#"{
   "version": "0.1.0",
   "type": "module",
   "description": "React components — Material Design 3 (fork shadcn, no CSS-in-JS)",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": { "import": "./dist/index.js", "types": "./src/index.ts" },
-    "./button": { "import": "./dist/button/index.js", "types": "./src/button/index.ts" },
-    "./card":   { "import": "./dist/card/index.js",   "types": "./src/card/index.ts" },
-    "./chip":   { "import": "./dist/chip/index.js",   "types": "./src/chip/index.ts" },
-    "./fab":    { "import": "./dist/fab/index.js",    "types": "./src/fab/index.ts" },
-    "./navigation-bar":    { "import": "./dist/navigation-bar/index.js",    "types": "./src/navigation-bar/index.ts" },
-    "./bottom-sheet":      { "import": "./dist/bottom-sheet/index.js",      "types": "./src/bottom-sheet/index.ts" },
-    "./segmented-control": { "import": "./dist/segmented-control/index.js", "types": "./src/segmented-control/index.ts" },
-    "./motion": { "import": "./dist/motion/index.js", "types": "./src/motion/index.ts" },
-    "./theme":  { "import": "./dist/theme/index.js",  "types": "./src/theme/index.ts" }
+    ".": "./src/index.ts",
+    "./button": "./src/button/index.ts",
+    "./card":   "./src/card/index.ts",
+    "./chip":   "./src/chip/index.ts",
+    "./fab":    "./src/fab/index.ts",
+    "./navigation-bar":    "./src/navigation-bar/index.ts",
+    "./bottom-sheet":      "./src/bottom-sheet/index.ts",
+    "./segmented-control": "./src/segmented-control/index.ts",
+    "./motion":            "./src/motion/index.ts",
+    "./theme":             "./src/theme/ThemeProvider.tsx",
+    "./lib/utils":         "./src/lib/utils.ts"
   },
+  "files": ["src"],
   "sideEffects": false,
   "scripts": {
-    "build": "rsbuild build",
-    "dev": "rsbuild dev"
+    "build": "bunx --bun tsc --noEmit",
+    "dev": "echo 'no-op dev (sources consumed directly via workspace)'",
+    "typecheck": "bunx --bun tsc --noEmit"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.0",
-    "@radix-ui/react-dialog": "^1.1.0",
-    "@radix-ui/react-toggle-group": "^1.1.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
-    "tailwind-merge": "^2.5.0",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-toggle-group": "^1.1.11",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
     "@md3-ui/tokens": "workspace:*"
   },
   "peerDependencies": {
@@ -2167,10 +2184,8 @@ const MD3_CORE_PACKAGE_JSON: &str = r#"{
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@rsbuild/core": "^1.1.0",
-    "@rsbuild/plugin-react": "^1.0.0",
-    "@types/react": "^19.0.0",
-    "typescript": "^5.6.0"
+    "@types/react": "^19.2.14",
+    "typescript": "^6.0.3"
   }
 }
 "#;
@@ -2433,7 +2448,7 @@ const MD3_LINT_PACKAGE_JSON: &str = r#"{
   "main": "./src/index.ts",
   "exports": { ".": "./src/index.ts" },
   "keywords": ["biome", "eslint-plugin", "material-design", "md3"],
-  "devDependencies": { "@types/bun": "latest", "typescript": "^5.6.0" }
+  "devDependencies": { "@types/bun": "latest", "typescript": "^6.0.3" }
 }
 "#;
 
@@ -2521,18 +2536,20 @@ const MD3_DOCS_PACKAGE_JSON: &str = r#"{
     "start": "next start"
   },
   "dependencies": {
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "@md3-ui/core": "workspace:*",
     "@md3-ui/tokens": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/react": "^19.0.0",
-    "tailwindcss": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.0",
-    "typescript": "^5.6.0"
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.2",
+    "typescript": "^6.0.3"
   }
 }
 "#;
@@ -2745,18 +2762,20 @@ fn render_md3_example_pkg(_name: &str) -> String {
     "start": "next start"
   },
   "dependencies": {
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "@md3-ui/core": "workspace:*",
     "@md3-ui/tokens": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/react": "^19.0.0",
-    "tailwindcss": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.0",
-    "typescript": "^5.6.0"
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.2",
+    "typescript": "^6.0.3"
   }
 }
 "#
