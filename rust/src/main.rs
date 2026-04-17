@@ -348,6 +348,16 @@ enum Cmd {
         /// Skip siteone — réutilise un export existant dans --out.
         #[arg(long)]
         skip_crawl: bool,
+
+        /// Auto-utilise `<url>/sitemap.xml` comme seed (ou reconnaît que
+        /// l'URL passée est déjà un sitemap). Accélère le crawl sur gros
+        /// sites et garantit la couverture.
+        #[arg(long)]
+        sitemap: bool,
+
+        /// Exporte aussi `sitemap.xml` + `sitemap.txt` dans `--out`.
+        #[arg(long)]
+        export_sitemap: bool,
     },
 
     /// Scan + audit + crosslink ML (embeddings) sur un ou plusieurs repos.
@@ -729,6 +739,8 @@ fn real_main() -> Result<ExitCode> {
             model,
             keep_intermediate,
             skip_crawl,
+            sitemap,
+            export_sitemap,
         }) => {
             llmstxt::run(&llmstxt::LlmstxtOpts {
                 url,
@@ -746,6 +758,8 @@ fn real_main() -> Result<ExitCode> {
                 keep_intermediate,
                 skip_crawl,
                 quiet: cli.quiet,
+                sitemap,
+                export_sitemap,
             })?;
             return Ok(ExitCode::SUCCESS);
         }

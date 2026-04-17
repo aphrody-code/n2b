@@ -81,3 +81,32 @@ fn write_page_body(f: &mut fs::File, page: &Page) -> std::io::Result<()> {
     }
     Ok(())
 }
+
+/// Écrit `sitemap.xml` (spec sitemaps.org 0.9) + `sitemap.txt` (1 URL/ligne).
+/// Utilisé quand l'utilisateur passe `--export-sitemap` et que siteone n'a
+/// pas écrit lui-même (ex : `--skip-crawl`).
+pub fn write_sitemap(site: &Site, xml_out: &Path, txt_out: &Path) -> Result<()> {
+    // sitemap.xml
+    let mut xml = fs::File::create(xml_out).with_context(|| format!("créer {}", xml_out.display()))?;
+    writeln!(xml, r#"<?xml version="1.0" encoding="UTF-8"?>"#)?;
+    writeln!(xml, r#"<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">"#)?;
+    for p in &site.pages {
+        writeln!(xml, "  <url><loc>{}</loc></url>", escape_xml(&p.url))?;
+    }
+    writeln!(xml, "</urlset>")?;
+
+    // sitemap.txt
+    let mut txt = fs::File::create(txt_out).with_context(|| format!("créer {}", txt_out.display()))?;
+    for p in &site.pages {
+        writeln!(txt, "{}", p.url)?;
+    }
+    Ok(())
+}
+
+fn escape_xml(s: &str) -> String {
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;")
+}

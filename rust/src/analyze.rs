@@ -18,6 +18,15 @@ use crate::audit::{self, Hit, ItemState};
 use crate::run;
 use crate::types::{Mode, Report, RunOptions, Severity};
 
+/// Alias pour l'embedder ML. Sous feature `ai`, c'est le vrai
+/// `fastembed::TextEmbedding`. Sans, c'est un type non-instanciable →
+/// toutes les fonctions qui en prennent un sont des no-ops.
+#[cfg(feature = "ai")]
+type Embedder = fastembed::TextEmbedding;
+
+#[cfg(not(feature = "ai"))]
+pub enum Embedder {}
+
 #[derive(Debug, Serialize)]
 pub struct AnalysisReport {
     pub generated_at: String,
@@ -138,7 +147,8 @@ pub fn run_analyze(opts: AnalyzeOpts) -> Result<()> {
     Ok(())
 }
 
-fn try_init_embedder() -> Option<fastembed::TextEmbedding> {
+#[cfg(feature = "ai")]
+fn try_init_embedder() -> Option<Embedder> {
     use fastembed::{EmbeddingModel, InitOptions, TextEmbedding};
     eprintln!(
         "{} modèle fastembed (AllMiniLML6V2, ~23 MB, cache ~/.cache)",
@@ -159,11 +169,22 @@ fn try_init_embedder() -> Option<fastembed::TextEmbedding> {
     }
 }
 
+/// Fallback sans feature `ai` : crosslink ML désactivé, analyse dédiée
+/// uniquement aux findings + audit.
+#[cfg(not(feature = "ai"))]
+fn try_init_embedder() -> Option<Embedder> {
+    eprintln!(
+        "{} build sans feature `ai` — crosslink ML désactivé (recompiler avec `cargo install --features ai` pour activer)",
+        "info".dimmed()
+    );
+    None
+}
+
 fn analyze_one(
     rt: &tokio::runtime::Runtime,
     path: &Path,
     opts: &AnalyzeOpts,
-    embedder: Option<&mut fastembed::TextEmbedding>,
+    embedder: Option<&mut Embedder>,
 ) -> Result<RepoAnalysis> {
     // 1. Scan
     let scan_mode = opts.apply.unwrap_or(Mode::Check);
@@ -246,10 +267,20 @@ fn analyze_one(
         }
     }
 
-    // 3. Crosslink ML
+    // 3. Crosslink ML (feature `ai`) — fallback au no-ML si absent.
+    #[cfg(feature = "ai")]
     let (issues_enriched, prs_enriched, top_findings) = if let Some(emb) = embedder {
         crosslink(emb, &fixes, &issues, &prs, opts.top_k, opts.threshold)?
     } else {
+        (
+            issues.iter().map(issue_basic).collect(),
+            prs.iter().map(issue_basic).collect(),
+            top_findings_without_ml(&fixes),
+        )
+    };
+    #[cfg(not(feature = "ai"))]
+    let (issues_enriched, prs_enriched, top_findings) = {
+        let _ = embedder; // silence unused warning
         (
             issues.iter().map(issue_basic).collect(),
             prs.iter().map(issue_basic).collect(),
@@ -300,8 +331,9 @@ fn top_findings_without_ml(fixes: &[crate::types::FileFix]) -> Vec<FindingWithIs
     out
 }
 
+#[cfg(feature = "ai")]
 fn crosslink(
-    emb: &mut fastembed::TextEmbedding,
+    emb: &mut Embedder,
     fixes: &[crate::types::FileFix],
     issues: &[Hit],
     prs: &[Hit],
