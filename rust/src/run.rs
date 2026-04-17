@@ -1,5 +1,6 @@
 use crate::scanners::{
     bunfig::scan_bunfig,
+    cargo_toml::{is_cargo_toml, scan_cargo_toml},
     dockerfile::scan_dockerfile,
     husky::{is_husky_hook, scan_husky},
     lockfile::{check_lockfile, RIVAL_LOCKFILES},
@@ -132,6 +133,7 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
     let is_bunfig = name == "bunfig.toml";
     let is_next = is_next_config(name);
     let is_rc = is_rc_file(name);
+    let is_cargo = is_cargo_toml(name);
 
     if !is_pkg
         && !is_source
@@ -145,6 +147,7 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         && !is_bunfig
         && !is_next
         && !is_rc
+        && !is_cargo
     {
         return Ok(None);
     }
@@ -184,6 +187,8 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         scan_next_config(rel, &before)
     } else if is_rc {
         scan_npmrc(rel, &before)
+    } else if is_cargo {
+        scan_cargo_toml(rel, &before)
     } else {
         scan_shell(rel, &before)
     };

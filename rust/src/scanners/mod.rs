@@ -1,4 +1,5 @@
 pub mod bunfig;
+pub mod cargo_toml;
 pub mod dockerfile;
 pub mod husky;
 pub mod lockfile;

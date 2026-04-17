@@ -10,6 +10,7 @@ mod run;
 mod scanners;
 mod types;
 mod util;
+mod wasm_cmd;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand, ValueEnum};
@@ -145,6 +146,14 @@ enum Cmd {
         report: ReportArg,
     },
 
+    /// Workflow Rust → WASM → Bun complet :
+    /// `init` (scaffold), `doctor` (check tools), `build` (wasm-pack wrapper),
+    /// `opt` (wasm-opt), `size` (twiggy top).
+    Wasm {
+        #[command(subcommand)]
+        sub: WasmSub,
+    },
+
     /// Scaffold un projet binaire natif : plugin Rust pour Bun.build
     /// (bun-native-plugin), exemple MDX→JSX, ou module WASM.
     ///
@@ -247,7 +256,49 @@ enum ApplyArg {
 
 fn parse_bin_flavor(s: &str) -> Result<bin_cmd::BinFlavor, String> {
     bin_cmd::BinFlavor::parse(s)
-        .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : native, mdx, wasm)"))
+        .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : native, mdx, wasm, webgpu)"))
+}
+
+fn parse_wasm_template(s: &str) -> Result<wasm_cmd::WasmTemplate, String> {
+    wasm_cmd::WasmTemplate::parse(s)
+        .ok_or_else(|| format!("template inconnu '{s}' (valeurs : basic, game-of-life, wgpu)"))
+}
+
+#[derive(Subcommand, Debug)]
+enum WasmSub {
+    /// Scaffold un nouveau projet Rust→WASM.
+    Init {
+        name: String,
+        #[arg(long, default_value = "basic", value_parser = parse_wasm_template)]
+        template: wasm_cmd::WasmTemplate,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Vérifie que wasm-pack / cargo-generate / wasm-opt / twiggy / wasm2wat sont installés.
+    Doctor,
+    /// Build via wasm-pack avec les bonnes options par défaut.
+    Build {
+        #[arg(default_value = ".")]
+        root: PathBuf,
+        #[arg(long, default_value = "web")]
+        target: String,
+        #[arg(long, default_value_t = true)]
+        release: bool,
+    },
+    /// Passe wasm-opt (-Oz par défaut) sur un fichier .wasm, en place.
+    Opt {
+        path: PathBuf,
+        #[arg(long, default_value = "-Oz")]
+        level: String,
+    },
+    /// Affiche les N symboles les plus volumineux (twiggy top).
+    Size {
+        path: PathBuf,
+        #[arg(long, default_value_t = 20)]
+        top: usize,
+    },
 }
 
 impl From<ApplyArg> for Mode {
@@ -286,6 +337,21 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
+        }
+        Some(Cmd::Wasm { sub }) => {
+            let cmd = match sub {
+                WasmSub::Init { name, template, dir, force } => wasm_cmd::WasmCmd::Init {
+                    name, template, dir, force,
+                },
+                WasmSub::Doctor => wasm_cmd::WasmCmd::Doctor,
+                WasmSub::Build { root, target, release } => wasm_cmd::WasmCmd::Build {
+                    root, target, release,
+                },
+                WasmSub::Opt { path, level } => wasm_cmd::WasmCmd::Opt { path, level },
+                WasmSub::Size { path, top } => wasm_cmd::WasmCmd::Size { path, top },
+            };
+            wasm_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Bin { name, flavor, dir, force }) => {
             bin_cmd::run_bin(bin_cmd::BinOpts {
@@ -695,6 +761,35 @@ fn run_rules(report: Report) -> Result<ExitCode> {
         ("ecosystem/bunli", "bunli → CLI framework Bun-native"),
         ("ecosystem/commander", "commander → compatible, ou Bunli"),
         ("ecosystem/yargs", "yargs → compatible, ou util.parseArgs/Bunli"),
+        // --- Rspack / Rstack (bundlers Rust) ---
+        ("ecosystem/rspack", "@rspack/core → Rspack (Rust bundler)"),
+        ("ecosystem/next-rspack", "next-rspack → Next.js + Rspack"),
+        ("ecosystem/rsbuild", "@rsbuild/core → Rsbuild"),
+        ("ecosystem/rslib", "@rslib/core → Rslib (build libs)"),
+        ("ecosystem/rsdoctor", "rsdoctor → build analyzer"),
+        ("ecosystem/rspress", "rspress → static site generator Rust"),
+        ("next/rspack-wrapper", "withRspack() détecté dans next.config"),
+        // --- Cargo.toml — frameworks Rust → WASM ---
+        ("ecosystem/yew", "yew (Cargo.toml) → React-like Rust"),
+        ("ecosystem/leptos", "leptos (Cargo.toml) → fine-grained reactivity"),
+        ("ecosystem/dioxus", "dioxus (Cargo.toml) → cross-platform Rust GUI"),
+        ("ecosystem/sycamore", "sycamore (Cargo.toml) → Solid-like Rust"),
+        ("ecosystem/seed", "seed (Cargo.toml) → Elm-like SPA"),
+        ("ecosystem/wgpu", "wgpu (Cargo.toml) → WebGPU"),
+        ("ecosystem/naga", "naga (Cargo.toml) → shader translator"),
+        ("ecosystem/wasm-bindgen", "wasm-bindgen (Cargo.toml)"),
+        ("ecosystem/js-sys", "js-sys (Cargo.toml)"),
+        ("ecosystem/web-sys", "web-sys (Cargo.toml)"),
+        ("ecosystem/wasm-bindgen-futures", "wasm-bindgen-futures"),
+        ("ecosystem/panic-hook", "console_error_panic_hook"),
+        ("ecosystem/wee-alloc", "wee_alloc (small WASM allocator)"),
+        ("ecosystem/napi-rs", "napi / napi-derive → napi-rs"),
+        ("ecosystem/bun-native-plugin", "bun-native-plugin (Cargo.toml)"),
+        ("ecosystem/serde-wasm", "serde-wasm-bindgen"),
+        ("ecosystem/gloo", "gloo (Rust+WASM toolkit)"),
+        ("ecosystem/tauri-rs", "tauri (Cargo.toml)"),
+        ("ecosystem/bevy", "bevy (Cargo.toml) → game engine"),
+        ("ecosystem/mdxjs-rs", "mdxjs-rs (Cargo.toml)"),
         // --- .npmrc / .yarnrc / .pnpmrc → bunfig.toml ---
         ("npmrc/registry", ".npmrc registry → bunfig.toml [install].registry"),
         ("npmrc/auth-token", ".npmrc _authToken → bunfig.toml [install.scopes]"),

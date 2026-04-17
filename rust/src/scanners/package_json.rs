@@ -70,6 +70,20 @@ const ECOSYSTEM_GUIDES: &[(&str, &str, &str, &str)] = &[
     ("@bunli/core",        "bunli",           "https://bunli.dev/docs",                          "Bunli core"),
     ("commander",          "commander",       "https://github.com/tj/commander.js",              "Commander — marche sous Bun (envisager Bunli pour Bun-native)"),
     ("yargs",              "yargs",           "https://github.com/yargs/yargs",                  "yargs — marche sous Bun (envisager util.parseArgs natif ou Bunli)"),
+    // --- Rspack / Rstack ecosystem (Rust-based bundlers) ---
+    ("@rspack/core",       "rspack",          "https://rspack.rs/",                              "Rspack (bundler Rust, webpack-compatible)"),
+    ("@rspack/cli",        "rspack",          "https://rspack.rs/",                              "Rspack CLI"),
+    ("next-rspack",        "next-rspack",     "https://rspack.rs/guide/tech/next",               "next-rspack (Next.js backed by Rspack)"),
+    ("@rsbuild/core",      "rsbuild",         "https://rsbuild.rs/",                             "Rsbuild (build tool Rust pour web apps)"),
+    ("rsbuild",            "rsbuild",         "https://rsbuild.rs/",                             "Rsbuild"),
+    ("@rslib/core",        "rslib",           "https://lib.rsbuild.rs/",                         "Rslib (build libs Rust-powered)"),
+    ("rslib",              "rslib",           "https://lib.rsbuild.rs/",                         "Rslib"),
+    ("rsdoctor",           "rsdoctor",        "https://rsdoctor.rs/",                            "Rsdoctor (build analyzer pour Rspack/webpack)"),
+    ("@rsdoctor/rspack-plugin", "rsdoctor",   "https://rsdoctor.rs/",                            "Rsdoctor plugin"),
+    ("rspress",            "rspress",         "https://rspress.rs/",                             "Rspress (static site generator Rust-powered)"),
+    ("rsbuild-plugin-react", "rsbuild",       "https://rsbuild.rs/",                             "Rsbuild React plugin"),
+    // Note : Yew/Leptos/Dioxus/Sycamore et autres frameworks Rust→WASM sont
+    // détectés par scanners/cargo_toml.rs (ils vivent dans Cargo.toml).
 ];
 
 static JEST_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\bjest(?:\s|$)").unwrap());
