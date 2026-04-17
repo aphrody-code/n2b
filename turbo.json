@@ -1,0 +1,50 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "globalDependencies": [
+    "bun.lock",
+    "Cargo.lock",
+    "tsconfig.base.json",
+    "biome.json"
+  ],
+  "globalEnv": ["NODE_ENV", "CI", "RUSTFLAGS", "CARGO_HOME"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "bin/**",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+    "build:compile": {
+      "dependsOn": ["^build"],
+      "inputs": ["bin/**", "src/**", "package.json"],
+      "outputs": ["dist/node2bun", "dist/node2bun.js"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "inputs": ["src/**", "bin/**", "biome.json"],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "bin/**", "tsconfig.json"],
+      "outputs": ["*.tsbuildinfo"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "test/**", "tests/**"],
+      "outputs": ["coverage/**"]
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

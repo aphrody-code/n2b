@@ -1,0 +1,39 @@
+# Cargo workspace n2b — unifie le CLI Rust (rust/) et le plugin natif (native/)
+# sous un seul target/ partagé.
+#
+# Layout :
+#   rust/     → crate `n2b` (binaire CLI principal, /usr/local/bin/n2b)
+#   native/   → crate `node2bun-native` (cdylib plugin Bun via NAPI/FFI)
+#
+# Le workspace virtuel permet :
+#   - `cargo build --workspace` : construit les 2 crates en une commande
+#   - Cache `target/` unique, plus rapide entre builds
+#   - Dépendances partagées via [workspace.dependencies]
+#   - Profile release unique propagé à tous les members
+
+[workspace]
+resolver = "2"
+members = ["rust", "native"]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+repository = "https://github.com/aphrody-code/n2b"
+authors = ["Yohan Pierre <contact@aphrody-code.dev>"]
+
+[workspace.dependencies]
+# Dépendances partagées entre crates — déclarer ici, inherit via `.workspace = true`.
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+anyhow = "1"
+regex = "1"
+once_cell = "1"
+memchr = "2"
+
+# Profile unique propagé à rust/ et native/.
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = 3

@@ -4,3 +4,7 @@ target/
 .bun/
 .bun-cache/
 *.log
+.turbo/
+packages/*/dist/
+packages/*/.turbo/
+packages/*/node_modules/

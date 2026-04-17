@@ -1,14 +1,14 @@
+import { basename, extname, join } from "node:path";
 import { Glob } from "bun";
-import { join, basename, extname } from "node:path";
-import type { FileFix, RunOptions } from "./types";
+import { RIVAL_LOCKFILES, checkLockfile } from "./scanners/lockfile";
 import { scanPackageJson } from "./scanners/package-json";
-import { scanWorkflow } from "./scanners/workflows";
-import { scanSource } from "./scanners/source";
 import { scanShell } from "./scanners/shell";
-import { checkLockfile, RIVAL_LOCKFILES } from "./scanners/lockfile";
+import { scanSource } from "./scanners/source";
+import { scanWorkflow } from "./scanners/workflows";
+import type { FileFix, RunOptions } from "./types";
 
 const SOURCE_EXTS = new Set([".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs", ".mts", ".cts"]);
-const SHELL_EXTS  = new Set([".sh", ".bash", ".zsh"]);
+const SHELL_EXTS = new Set([".sh", ".bash", ".zsh"]);
 const SHELL_NAMES = new Set(["Dockerfile", "Makefile", "Justfile"]);
 
 const DEFAULT_IGNORE = [
@@ -73,17 +73,28 @@ async function processFile(rel: string, opts: RunOptions): Promise<FileFix | nul
   let after = before;
 
   try {
-    if (isPkgJson)       ({ findings, content: after } = scanPackageJson(rel, before));
+    if (isPkgJson) ({ findings, content: after } = scanPackageJson(rel, before));
     else if (isWorkflow) ({ findings, content: after } = scanWorkflow(rel, before));
-    else if (isSource)   ({ findings, content: after } = scanSource(rel, before, opts));
-    else if (isShell)    ({ findings, content: after } = scanShell(rel, before));
+    else if (isSource) ({ findings, content: after } = scanSource(rel, before, opts));
+    else if (isShell) ({ findings, content: after } = scanShell(rel, before));
   } catch (err) {
-    return { file: rel, before, after: before, findings: [{
-      file: rel, line: 1, col: 1,
-      ruleId: "internal/error", severity: "error",
-      message: `erreur interne : ${(err as Error).message}`,
-      original: "", autofix: false,
-    }] };
+    return {
+      file: rel,
+      before,
+      after: before,
+      findings: [
+        {
+          file: rel,
+          line: 1,
+          col: 1,
+          ruleId: "internal/error",
+          severity: "error",
+          message: `erreur interne : ${(err as Error).message}`,
+          original: "",
+          autofix: false,
+        },
+      ],
+    };
   }
 
   if (findings.length === 0 && before === after) return null;

@@ -1,32 +1,44 @@
 {
-  "name": "node2bun",
-  "version": "0.1.0",
-  "description": "Analyse un package Node.js et corrige les incompatibilités avec Bun : CLI, imports, APIs.",
+  "name": "n2b-monorepo",
+  "version": "0.2.0",
+  "private": true,
+  "description": "n2b monorepo — Bun workspaces + Cargo workspace + Turborepo orchestrateur",
   "type": "module",
-  "bin": {
-    "node2bun": "./bin/node2bun.ts"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./plugin": "./src/plugin.ts"
-  },
-  "main": "./src/index.ts",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "bun run bin/node2bun.ts",
-    "build:native": "cargo build --release --manifest-path native/Cargo.toml",
-    "build": "bun run build:native && bun build bin/node2bun.ts --target=bun --outfile=dist/node2bun.js --minify",
-    "build:compile": "bun run build:native && bun build bin/node2bun.ts --compile --minify --bytecode --target=bun --outfile=dist/node2bun",
-    "install:local": "bun run build:compile && sudo install -m755 dist/node2bun /usr/local/bin/node2bun",
-    "test": "bun test",
-    "check-self": "bun run bin/node2bun.ts ."
+    "build": "turbo run build",
+    "build:native": "cargo build --release --workspace",
+    "build:native:cli": "cargo build --release -p n2b",
+    "build:native:plugin": "cargo build --release -p node2bun-native",
+    "build:compile": "turbo run build:compile",
+    "install:cli:rust": "cargo build --release -p n2b && sudo install -m755 target/release/n2b /usr/local/bin/n2b",
+    "install:cli:ts": "bun run --filter @n2b/cli build:compile && sudo install -m755 packages/n2b-cli/dist/node2bun /usr/local/bin/node2bun",
+    "test": "turbo run test",
+    "test:rust": "cargo test --workspace",
+    "lint": "turbo run lint",
+    "lint:fix": "bunx --bun @biomejs/biome check --write .",
+    "format": "bunx --bun @biomejs/biome format --write .",
+    "typecheck": "turbo run typecheck",
+    "check-self": "bun run --filter @n2b/cli start .",
+    "cargo:build": "cargo build --workspace --release",
+    "cargo:check": "cargo check --workspace",
+    "cargo:test": "cargo test --workspace",
+    "cargo:clippy": "cargo clippy --workspace --all-targets",
+    "clean": "rm -rf node_modules/.cache .turbo target packages/*/dist packages/*/node_modules"
   },
-  "keywords": ["bun", "node", "migration", "codemod", "cli"],
+  "keywords": ["bun", "node", "migration", "codemod", "cli", "monorepo", "turborepo"],
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
     "@types/bun": "latest",
+    "turbo": "^2.0.0",
     "typescript": "^5.6.0"
   },
   "engines": {
     "bun": ">=1.2.0"
-  }
+  },
+  "packageManager": "bun@1.3.12",
+  "trustedDependencies": ["@biomejs/biome"]
 }

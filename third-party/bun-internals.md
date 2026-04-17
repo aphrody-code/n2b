@@ -3,7 +3,7 @@
 Référence pour n2b : quels composants Bun assemble, où ils vivent, ce que n2b
 peut ou ne peut pas détecter.
 
-**Sources upstream** (clones non committés localement dans `/home/ubuntu/gnu-rust/bun-internals/` quand présents) :
+**Sources upstream** (cloner localement à la demande via `git clone --depth 1`) :
 
 - [oven-sh/bun](https://github.com/oven-sh/bun) — runtime principal
 - [oven-sh/zig](https://github.com/oven-sh/zig) — fork Zig 0.15.x + patches Bun (cherry-picks depuis 0.14.1)

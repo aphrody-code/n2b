@@ -1,0 +1,30 @@
+{
+  "name": "@n2b/core",
+  "version": "0.1.0",
+  "description": "n2b core library — scan + rules + plugin hooks for Bun",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./plugin": "./src/plugin.ts",
+    "./report": "./src/report.ts",
+    "./native": "./src/native.ts",
+    "./types": "./src/types.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "build": "bunx --bun tsc -b",
+    "dev": "bun --watch src/index.ts",
+    "typecheck": "bunx --bun tsc --noEmit",
+    "lint": "bunx --bun @biomejs/biome check src"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "bun": ">=1.2.0"
+  },
+  "sideEffects": false
+}

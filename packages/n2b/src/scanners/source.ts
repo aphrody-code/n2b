@@ -1,6 +1,6 @@
-import type { Finding, RunOptions } from "../types";
-import { applyNodeImportRules } from "../rules/node-imports";
 import { applyBunApiRules } from "../rules/bun-apis";
+import { applyNodeImportRules } from "../rules/node-imports";
+import type { Finding, RunOptions } from "../types";
 import { scanShebang } from "./shebang";
 
 /**

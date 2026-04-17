@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 import { resolve } from "node:path";
-import { run } from "../src/index";
-import { renderJson, renderMarkdown, renderText } from "../src/report";
-import type { RunOptions } from "../src/types";
+import { run } from "@n2b/core";
+import { renderJson, renderMarkdown, renderText } from "@n2b/core/report";
+import type { FileFix, RunOptions } from "@n2b/core/types";
 
 const USAGE = `\
 node2bun — analyse un package et corrige les incompatibilités avec Bun.
@@ -41,22 +41,40 @@ function parseArgs(argv: string[]): { root: string; opts: RunOptions } {
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
-    if (a === "-h" || a === "--help") { console.log(USAGE); process.exit(0); }
+    if (a === "-h" || a === "--help") {
+      console.log(USAGE);
+      process.exit(0);
+    }
     if (a === "-v" || a === "--version") {
       const pkg = require("../package.json");
-      console.log(`node2bun ${pkg.version}`); process.exit(0);
+      console.log(`node2bun ${pkg.version}`);
+      process.exit(0);
     }
-    if (a === "--fix") { mode = "fix"; continue; }
-    if (a === "--aggressive") { mode = "aggressive"; continue; }
-    if (a === "--quiet") { quiet = true; continue; }
+    if (a === "--fix") {
+      mode = "fix";
+      continue;
+    }
+    if (a === "--aggressive") {
+      mode = "aggressive";
+      continue;
+    }
+    if (a === "--quiet") {
+      quiet = true;
+      continue;
+    }
     if (a.startsWith("--report=")) {
       const v = a.slice("--report=".length);
       if (v === "text" || v === "json" || v === "md" || v === "markdown") {
         report = v === "md" ? "markdown" : (v as any);
-      } else { fail(`valeur --report invalide: ${v}`); }
+      } else {
+        fail(`valeur --report invalide: ${v}`);
+      }
       continue;
     }
-    if (a.startsWith("--ignore=")) { ignore.push(a.slice("--ignore=".length)); continue; }
+    if (a.startsWith("--ignore=")) {
+      ignore.push(a.slice("--ignore=".length));
+      continue;
+    }
     if (a.startsWith("-")) fail(`option inconnue: ${a}`);
     root = a;
   }
@@ -84,8 +102,8 @@ async function main() {
     } else if (!opts.quiet) {
       console.log(renderText(fixes, opts));
     }
-    const hasErrors = fixes.some((f) => f.findings.some((x) => x.severity === "error"));
-    const hasFindings = fixes.some((f) => f.findings.length > 0);
+    const hasErrors = fixes.some((f: FileFix) => f.findings.some((x) => x.severity === "error"));
+    const hasFindings = fixes.some((f: FileFix) => f.findings.length > 0);
     process.exit(hasErrors ? 2 : opts.mode === "check" && hasFindings ? 1 : 0);
   } catch (err) {
     console.error(`node2bun a échoué : ${(err as Error).stack || err}`);

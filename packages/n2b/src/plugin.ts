@@ -1,6 +1,6 @@
 import type { BunPlugin } from "bun";
-import { applyNodeImportRules } from "./rules/node-imports";
 import { applyBunApiRules } from "./rules/bun-apis";
+import { applyNodeImportRules } from "./rules/node-imports";
 import type { Finding } from "./types";
 import { colors as c } from "./util";
 
@@ -68,8 +68,8 @@ export function node2bunPlugin(opts: Node2BunPluginOptions = {}): BunPlugin {
         }
 
         const nodeImp = applyNodeImportRules(path, source, aggressive);
-        const bunApi  = applyBunApiRules(path, nodeImp.content, aggressive);
-        const all     = [...nodeImp.findings, ...bunApi.findings];
+        const bunApi = applyBunApiRules(path, nodeImp.content, aggressive);
+        const all = [...nodeImp.findings, ...bunApi.findings];
 
         if (all.length > 0) {
           accumulated.push({ path, findings: all });
@@ -77,8 +77,8 @@ export function node2bunPlugin(opts: Node2BunPluginOptions = {}): BunPlugin {
           if (!quiet) {
             const rel = toRel(path);
             for (const f of all) {
-              const loc  = `${c.dim}${rel}:${f.line}:${f.col}${c.reset}`;
-              const tag  = `${c.cyan}${f.ruleId}${c.reset}`;
+              const loc = `${c.dim}${rel}:${f.line}:${f.col}${c.reset}`;
+              const tag = `${c.cyan}${f.ruleId}${c.reset}`;
               const repl = f.replacement
                 ? ` ${c.dim}→${c.reset} ${c.green}${ellipsis(f.replacement, 60)}${c.reset}`
                 : "";
@@ -102,7 +102,8 @@ export function node2bunPlugin(opts: Node2BunPluginOptions = {}): BunPlugin {
       build.onEnd(() => {
         const total = accumulated.reduce((n, a) => n + a.findings.length, 0);
         if (total === 0) {
-          if (!quiet) console.log(`${c.green}[node2bun]${c.reset} aucune incompatibilité Node→Bun détectée`);
+          if (!quiet)
+            console.log(`${c.green}[node2bun]${c.reset} aucune incompatibilité Node→Bun détectée`);
           return;
         }
 
@@ -115,14 +116,13 @@ export function node2bunPlugin(opts: Node2BunPluginOptions = {}): BunPlugin {
         if (!quiet) {
           console.warn(
             `${c.dim}Conseil : ajouter node2bunPlugin({ transform: true }) pour appliquer les rewrites sûrs,` +
-            ` ou lancer \`node2bun . --fix\` sur le projet.${c.reset}`,
+              ` ou lancer \`node2bun . --fix\` sur le projet.${c.reset}`,
           );
         }
 
         if (onFindings === "error") {
           throw new Error(
-            `[node2bun] ${total} incompatibilité(s) Node→Bun — ` +
-            `corriger avant de builder (ou passer onFindings: "warn" pour ignorer)`,
+            `[node2bun] ${total} incompatibilité(s) Node→Bun — corriger avant de builder (ou passer onFindings: "warn" pour ignorer)`,
           );
         }
       });
@@ -139,16 +139,22 @@ function toRel(abs: string): string {
 }
 
 function ellipsis(s: string, n: number): string {
-  return s.length > n ? s.slice(0, n - 1) + "…" : s;
+  return s.length > n ? `${s.slice(0, n - 1)}…` : s;
 }
 
-function extToLoader(ext: string): import("bun").BuildConfig["target"] extends infer _ ? any : never {
+function extToLoader(
+  ext: string,
+): import("bun").BuildConfig["target"] extends infer _ ? any : never {
   switch (ext) {
-    case "tsx": return "tsx";
-    case "jsx": return "jsx";
+    case "tsx":
+      return "tsx";
+    case "jsx":
+      return "jsx";
     case "ts":
     case "mts":
-    case "cts": return "ts";
-    default:    return "js";
+    case "cts":
+      return "ts";
+    default:
+      return "js";
   }
 }

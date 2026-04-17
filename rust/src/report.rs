@@ -2,7 +2,7 @@ use crate::ai::{
     byte_offset, category, confidence, context_lines, docs_url, Context, SCHEMA_URL,
     SCHEMA_VERSION,
 };
-use crate::types::{FileFix, Finding, Mode, Report, RunOptions, Severity};
+use crate::types::{FileFix, Finding, Mode, RunOptions, Severity};
 use crate::util::line_offsets;
 use colored::Colorize;
 use serde::Serialize;

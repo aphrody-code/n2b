@@ -1,0 +1,27 @@
+{
+  "name": "@n2b/cli",
+  "version": "0.1.0",
+  "description": "n2b CLI (JS/TS wrapper) — alternative TS au binaire Rust n2b",
+  "type": "module",
+  "bin": {
+    "node2bun": "./bin/node2bun.ts",
+    "n2b-ts": "./bin/node2bun.ts"
+  },
+  "scripts": {
+    "start": "bun run bin/node2bun.ts",
+    "build": "bun build bin/node2bun.ts --target=bun --outfile=dist/node2bun.js --minify",
+    "build:compile": "bun build bin/node2bun.ts --compile --minify --bytecode --target=bun --outfile=dist/node2bun",
+    "typecheck": "bunx --bun tsc --noEmit",
+    "lint": "bunx --bun @biomejs/biome check bin"
+  },
+  "dependencies": {
+    "@n2b/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "bun": ">=1.2.0"
+  }
+}
