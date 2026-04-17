@@ -36,6 +36,15 @@ const RUST_ECOSYSTEM: &[(&str, &str, &str, &str)] = &[
     ("bevy",           "bevy",           "https://bevyengine.org/",               "Bevy (game engine, WASM-capable)"),
     // MDX / build helpers
     ("mdxjs",          "mdxjs-rs",       "https://github.com/wooorm/mdxjs-rs",    "mdxjs-rs"),
+    // Windows APIs
+    ("windows",        "windows-rs",     "https://github.com/microsoft/windows-rs", "windows-rs (Win32 + WinRT)"),
+    ("windows-sys",    "windows-rs",     "https://github.com/microsoft/windows-rs", "windows-sys (raw bindings)"),
+    ("windows-targets","windows-rs",     "https://github.com/microsoft/windows-rs", "windows-targets"),
+    // libc / cross-platform
+    ("libc",           "libc",           "https://github.com/rust-lang/libc",     "libc (POSIX + Windows CRT)"),
+    ("nix",            "nix-rs",         "https://github.com/nix-rust/nix",       "nix (POSIX APIs idiomatic)"),
+    // CSS
+    ("lightningcss",   "lightningcss",   "https://lightningcss.dev/",             "lightningcss (CSS bundler Rust)"),
 ];
 
 pub fn scan_cargo_toml(path: &str, content: &str) -> (Vec<Finding>, String) {

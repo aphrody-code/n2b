@@ -407,7 +407,7 @@ import {{ add, getpid }} from "./ffi.ts";
 import {{ answer }} from "./cc.ts";
 import {{ $ }} from "bun";
 
-console.log(`[${name}]`);
+console.log("[{name}]");
 console.log("  Rust FFI add(2,3) =", add(2, 3));
 console.log("  Rust FFI getpid() =", getpid());
 console.log("  C inline answer() =", answer());
