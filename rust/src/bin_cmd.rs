@@ -19,6 +19,12 @@ pub enum BinFlavor {
     Wasm,
     /// Module Rust+wgpu compilé en WASM, compute shader WebGPU côté Bun.
     WebGpu,
+    /// Plugin Bun natif qui compile/minifie CSS via lightningcss.
+    /// Utile pour Tailwind v4, CSS nesting, transpilation color-mix, etc.
+    LightningCss,
+    /// Plugin Bun JS wrappant @tailwindcss/postcss (Tailwind v4 Oxide via N-API).
+    /// Zéro compile Rust — utilise le binding npm officiel.
+    Tailwind,
 }
 
 impl BinFlavor {
@@ -28,6 +34,8 @@ impl BinFlavor {
             "mdx" => Some(Self::Mdx),
             "wasm" => Some(Self::Wasm),
             "webgpu" | "wgpu" | "gpu" => Some(Self::WebGpu),
+            "lightningcss" | "css" | "css-lightning" => Some(Self::LightningCss),
+            "tailwind" | "tailwindcss" | "tw" => Some(Self::Tailwind),
             _ => None,
         }
     }
@@ -59,6 +67,8 @@ pub fn run_bin(opts: BinOpts) -> Result<()> {
         BinFlavor::Mdx => scaffold_mdx(&target_dir, &opts.name, opts.quiet)?,
         BinFlavor::Wasm => scaffold_wasm(&target_dir, &opts.name, opts.quiet)?,
         BinFlavor::WebGpu => scaffold_webgpu(&target_dir, &opts.name, opts.quiet)?,
+        BinFlavor::LightningCss => scaffold_lightningcss(&target_dir, &opts.name, opts.quiet)?,
+        BinFlavor::Tailwind => scaffold_tailwind(&target_dir, &opts.name, opts.quiet)?,
     }
 
     if !opts.quiet {
@@ -92,6 +102,57 @@ fn scaffold_native_plugin(dir: &std::path::Path, name: &str, quiet: bool) -> Res
     write_file(dir.join(".cargo/config.toml"), CARGO_CONFIG, quiet)?;
     write_file(dir.join("README.md"), &render_readme(name, "Plugin natif Bun (Rust → .node)"), quiet)?;
     write_file(dir.join("index.ts"), INDEX_TS_NATIVE, quiet)?;
+    write_file(dir.join(".gitignore"), GITIGNORE, quiet)?;
+    Ok(())
+}
+
+fn scaffold_tailwind(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
+    write_file(
+        dir.join("package.json"),
+        &render_tailwind_package_json(name),
+        quiet,
+    )?;
+    write_file(dir.join("plugin.ts"), TAILWIND_PLUGIN_TS, quiet)?;
+    write_file(dir.join("build.ts"), TAILWIND_BUILD_TS, quiet)?;
+    write_file(dir.join("postcss.config.mjs"), TAILWIND_POSTCSS_CONFIG, quiet)?;
+    write_file(dir.join("src/app.css"), TAILWIND_APP_CSS, quiet)?;
+    write_file(dir.join("src/index.html"), TAILWIND_INDEX_HTML, quiet)?;
+    write_file(
+        dir.join("README.md"),
+        &render_readme(
+            name,
+            "Plugin Bun JS wrapping @tailwindcss/postcss (Tailwind v4 Oxide via N-API)",
+        ),
+        quiet,
+    )?;
+    write_file(dir.join(".gitignore"), GITIGNORE_WASM, quiet)?;
+    Ok(())
+}
+
+fn scaffold_lightningcss(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
+    write_file(
+        dir.join("Cargo.toml"),
+        &render_lightningcss_cargo_toml(name),
+        quiet,
+    )?;
+    write_file(dir.join("src/lib.rs"), LIGHTNINGCSS_LIB_RS, quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_package_json(name, false),
+        quiet,
+    )?;
+    write_file(dir.join("build.rs"), BUILD_RS, quiet)?;
+    write_file(dir.join(".cargo/config.toml"), CARGO_CONFIG, quiet)?;
+    write_file(
+        dir.join("README.md"),
+        &render_readme(
+            name,
+            "Plugin Bun natif : minify/transpile CSS via lightningcss (Rust)",
+        ),
+        quiet,
+    )?;
+    write_file(dir.join("index.ts"), INDEX_TS_LIGHTNINGCSS, quiet)?;
+    write_file(dir.join("example.css"), EXAMPLE_CSS, quiet)?;
     write_file(dir.join(".gitignore"), GITIGNORE, quiet)?;
     Ok(())
 }
@@ -673,6 +734,264 @@ export async function double(buf: Uint32Array): Promise<Uint32Array> {
   const out = await wasm.double_u32(buf);
   return new Uint32Array(out);
 }
+"#;
+
+fn render_lightningcss_cargo_toml(name: &str) -> String {
+    format!(
+        r#"[package]
+name = "{name}"
+version = "0.1.0"
+edition = "2021"
+description = "Bun native CSS plugin — lightningcss (minify, transpile, nesting)"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+bun-native-plugin = "0.0.1"
+napi = {{ version = "2", features = ["napi8"] }}
+napi-derive = "2"
+lightningcss = "1.0.0-alpha.71"
+parcel_sourcemap = "2"
+
+[build-dependencies]
+napi-build = "2"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = "symbols"
+"#,
+    )
+}
+
+const LIGHTNINGCSS_LIB_RS: &str = r#"//! Plugin Bun natif : minify + transpile CSS via lightningcss.
+//!
+//! Supporte :
+//!   - CSS Nesting (spec moderne)
+//!   - color-mix(), @layer, light-dark(), @container
+//!   - Minification plus rapide qu'esbuild (pure Rust, SIMD-friendly)
+//!   - Tailwind v4 (Tailwind Oxide utilise lightningcss en sortie)
+//!
+//! Docs :
+//!   - https://lightningcss.dev/
+//!   - https://docs.rs/lightningcss
+//!   - https://bun.sh/docs/bundler/css
+
+use bun_native_plugin::{sys, BunLoader, OnBeforeParse};
+use lightningcss::stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet};
+use lightningcss::targets::Targets;
+use napi_derive::napi;
+
+#[napi]
+pub fn register_bun_plugin() -> String {
+    "lightningcss".to_string()
+}
+
+/// Hook onBeforeParse sur les .css : parse → minify → transpile → retourne le CSS.
+#[no_mangle]
+pub extern "C" fn on_before_parse_plugin_impl(
+    args: *const sys::OnBeforeParseArguments,
+    result: *mut sys::OnBeforeParseResult,
+) {
+    let args = unsafe { &*args };
+    let result = unsafe { &mut *result };
+
+    let mut handle = match OnBeforeParse::from_raw(args, result) {
+        Ok(h) => h,
+        Err(_) => return,
+    };
+
+    let source = match handle.input_source_code() {
+        Ok(s) => s,
+        Err(_) => {
+            handle.log_error("lightningcss: failed to read source");
+            return;
+        }
+    };
+
+    let mut stylesheet = match StyleSheet::parse(&source, ParserOptions::default()) {
+        Ok(ss) => ss,
+        Err(e) => {
+            handle.log_error(&format!("lightningcss parse: {e}"));
+            return;
+        }
+    };
+
+    if let Err(e) = stylesheet.minify(MinifyOptions {
+        targets: Targets::default(),
+        ..Default::default()
+    }) {
+        handle.log_error(&format!("lightningcss minify: {e}"));
+        return;
+    }
+
+    match stylesheet.to_css(PrinterOptions {
+        minify: true,
+        ..Default::default()
+    }) {
+        Ok(out) => handle.set_output_source_code(out.code, BunLoader::Css),
+        Err(e) => handle.log_error(&format!("lightningcss print: {e}")),
+    }
+}
+"#;
+
+const INDEX_TS_LIGHTNINGCSS: &str = r#"// Register the lightningcss plugin with Bun.build.
+
+import { type BunPlugin } from "bun";
+
+// @ts-expect-error — generated by napi at build time
+import native from "./index.node";
+
+export const plugin: BunPlugin = {
+  name: "lightningcss",
+  async setup(build) {
+    build.onLoad({ filter: /\.css$/ }, async (args) => {
+      const input = await Bun.file(args.path).text();
+      const { code } = native.onBeforeParse(input);
+      return { contents: code, loader: "css" };
+    });
+  },
+};
+
+// Usage :
+//   await Bun.build({
+//     entrypoints: ["./src/app.css"],
+//     plugins: [plugin],
+//     outdir: "./dist",
+//   });
+"#;
+
+const EXAMPLE_CSS: &str = r#"/* Modern CSS that lightningcss will transpile/minify. */
+
+@layer base {
+  :root {
+    --brand: light-dark(oklch(0.5 0.2 250), oklch(0.7 0.2 250));
+  }
+
+  body {
+    color: var(--brand);
+
+    /* Native nesting */
+    & a {
+      color: color-mix(in oklab, var(--brand), white 20%);
+    }
+
+    & .card {
+      container-type: inline-size;
+
+      @container (min-width: 400px) {
+        padding: 2rem;
+      }
+    }
+  }
+}
+"#;
+
+fn render_tailwind_package_json(name: &str) -> String {
+    format!(
+        r#"{{
+  "name": "{name}",
+  "version": "0.1.0",
+  "description": "Bun.build + Tailwind v4 integration",
+  "type": "module",
+  "scripts": {{
+    "build": "bun run build.ts",
+    "dev": "bun --watch build.ts"
+  }},
+  "dependencies": {{
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.0"
+  }},
+  "devDependencies": {{
+    "@types/bun": "latest"
+  }},
+  "engines": {{
+    "bun": ">=1.2.0"
+  }}
+}}
+"#,
+    )
+}
+
+const TAILWIND_PLUGIN_TS: &str = r#"// Bun.build plugin : applique @tailwindcss/postcss sur chaque .css import.
+// Utilise le binding N-API officiel Tailwind v4 Oxide (Rust under the hood).
+//
+// Refs :
+//   - https://tailwindcss.com/docs/installation/using-postcss
+//   - https://bun.sh/docs/bundler/plugins
+
+import { type BunPlugin } from "bun";
+import postcss from "postcss";
+import tailwindcss from "@tailwindcss/postcss";
+
+const processor = postcss([tailwindcss()]);
+
+export const plugin: BunPlugin = {
+  name: "tailwindcss",
+  async setup(build) {
+    build.onLoad({ filter: /\.css$/ }, async (args) => {
+      const source = await Bun.file(args.path).text();
+      const result = await processor.process(source, {
+        from: args.path,
+        to: args.path,
+      });
+      return { contents: result.css, loader: "css" };
+    });
+  },
+};
+"#;
+
+const TAILWIND_BUILD_TS: &str = r#"// Minimal build script using Bun.build + Tailwind v4 plugin.
+// Run : `bun run build`.
+
+import { plugin } from "./plugin.ts";
+
+await Bun.build({
+  entrypoints: ["./src/app.css", "./src/index.html"],
+  outdir: "./dist",
+  plugins: [plugin],
+  minify: true,
+});
+
+console.log("✓ built to ./dist");
+"#;
+
+const TAILWIND_POSTCSS_CONFIG: &str = r#"// PostCSS config for Tailwind v4.
+// Loaded automatically if you run `postcss` CLI; the plugin.ts above imports
+// @tailwindcss/postcss directly so this file is optional.
+
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+"#;
+
+const TAILWIND_APP_CSS: &str = r#"/* Tailwind v4 : single import, Oxide-powered. */
+@import "tailwindcss";
+
+/* Custom layer on top */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600;
+  }
+}
+"#;
+
+const TAILWIND_INDEX_HTML: &str = r#"<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tailwind v4 + Bun</title>
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body class="bg-gray-50 p-8">
+    <h1 class="text-3xl font-bold">Hello Tailwind v4</h1>
+    <button class="btn mt-4">Click</button>
+  </body>
+</html>
 "#;
 
 const WASM_LIB_RS: &str = r#"//! WASM module for Bun — generated by n2b bin.
