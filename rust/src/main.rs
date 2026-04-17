@@ -1,5 +1,6 @@
 mod ai;
 mod analyze;
+mod app_cmd;
 mod audit;
 mod bin_cmd;
 mod github;
@@ -148,6 +149,17 @@ enum Cmd {
         report: ReportArg,
     },
 
+    /// Scaffolde des apps Bun : CLI, TUI (Ink React), GUI (Electrobun),
+    /// ou executable standalone (`bun build --compile` cross-target).
+    ///
+    ///   n2b app init <name> [--flavor cli|tui|gui|exe]
+    ///   n2b app build <entry.ts> [--target bun-linux-x64] [--outfile path]
+    ///   n2b app doctor
+    App {
+        #[command(subcommand)]
+        sub: AppSub,
+    },
+
     /// Scaffolde des projets Bun + Windows bas-niveau (Win32).
     /// FFI Rust (windows-rs → bun:ffi dlopen .dll), inline C (<windows.h>
     /// + TinyCC), Bun Shell + PowerShell 7. Cross-compile supporté (cargo-xwin
@@ -292,6 +304,41 @@ fn parse_bin_flavor(s: &str) -> Result<bin_cmd::BinFlavor, String> {
 fn parse_wasm_template(s: &str) -> Result<wasm_cmd::WasmTemplate, String> {
     wasm_cmd::WasmTemplate::parse(s)
         .ok_or_else(|| format!("template inconnu '{s}' (valeurs : basic, game-of-life, wgpu)"))
+}
+
+#[derive(Subcommand, Debug)]
+enum AppSub {
+    /// Scaffold une app dans le flavor choisi.
+    Init {
+        name: String,
+        #[arg(long, default_value = "cli", value_parser = parse_app_flavor)]
+        flavor: app_cmd::AppFlavor,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// `bun build --compile` wrapper cross-target.
+    Build {
+        entry: PathBuf,
+        #[arg(long)]
+        outfile: Option<PathBuf>,
+        /// Cibles : bun-linux-x64, bun-linux-arm64, bun-darwin-x64,
+        /// bun-darwin-arm64, bun-windows-x64.
+        #[arg(long)]
+        target: Option<String>,
+        #[arg(long, default_value_t = false)]
+        minify: bool,
+        #[arg(long, default_value_t = false)]
+        sourcemap: bool,
+    },
+    /// Vérifie que bun / tsc / upx sont installés + liste les cibles bun build.
+    Doctor,
+}
+
+fn parse_app_flavor(s: &str) -> Result<app_cmd::AppFlavor, String> {
+    app_cmd::AppFlavor::parse(s)
+        .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : cli, tui, gui, exe)"))
 }
 
 #[derive(Subcommand, Debug)]
@@ -443,6 +490,19 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
+        }
+        Some(Cmd::App { sub }) => {
+            let cmd = match sub {
+                AppSub::Init { name, flavor, dir, force } => app_cmd::AppCmd::Init {
+                    name, flavor, dir, force,
+                },
+                AppSub::Build { entry, outfile, target, minify, sourcemap } => {
+                    app_cmd::AppCmd::Build { entry, outfile, target, minify, sourcemap }
+                }
+                AppSub::Doctor => app_cmd::AppCmd::Doctor,
+            };
+            app_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Win32 { sub }) => {
             let cmd = match sub {
