@@ -12,6 +12,7 @@ mod scanners;
 mod types;
 mod util;
 mod wasm_cmd;
+mod win32_cmd;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand, ValueEnum};
@@ -147,6 +148,21 @@ enum Cmd {
         report: ReportArg,
     },
 
+    /// Scaffolde des projets Bun + Windows bas-niveau (Win32).
+    /// FFI Rust (windows-rs → bun:ffi dlopen .dll), inline C (<windows.h>
+    /// + TinyCC), Bun Shell + PowerShell 7. Cross-compile supporté (cargo-xwin
+    /// ou mingw-w64).
+    ///
+    ///   n2b win32 init <name>        # projet complet (FFI + CC + PowerShell)
+    ///   n2b win32 ffi <name>         # Rust cdylib (windows-rs) + bun:ffi
+    ///   n2b win32 cc <name>          # inline C avec <windows.h> via bun:ffi cc
+    ///   n2b win32 pwsh <name>        # scripts Bun Shell + PowerShell
+    ///   n2b win32 doctor             # check rustc/cl.exe/pwsh/cargo-xwin/mingw
+    Win32 {
+        #[command(subcommand)]
+        sub: Win32Sub,
+    },
+
     /// Scaffolde des projets Bun + Linux bas-niveau :
     /// FFI Rust (bun:ffi dlopen), inline C (bun:ffi cc, TinyCC), Bun Shell.
     ///
@@ -279,6 +295,44 @@ fn parse_wasm_template(s: &str) -> Result<wasm_cmd::WasmTemplate, String> {
 }
 
 #[derive(Subcommand, Debug)]
+enum Win32Sub {
+    /// Projet complet : FFI + CC + PowerShell dans un même repo.
+    Init {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffold Rust cdylib (windows-rs) + bun:ffi dlopen.
+    Ffi {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffold inline C avec <windows.h> compilé par TinyCC.
+    Cc {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Scaffold scripts Bun Shell invoquant PowerShell 7 pour ops Windows.
+    Pwsh {
+        name: String,
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
+    /// Vérifie rustc, cl.exe, clang-cl, pwsh, cargo-xwin, mingw-w64.
+    Doctor,
+}
+
+#[derive(Subcommand, Debug)]
 enum LinuxSub {
     /// Projet complet : FFI + CC + Shell dans un même repo.
     Init {
@@ -389,6 +443,25 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
+        }
+        Some(Cmd::Win32 { sub }) => {
+            let cmd = match sub {
+                Win32Sub::Init { name, dir, force } => win32_cmd::Win32Cmd::Init {
+                    name, dir, force,
+                },
+                Win32Sub::Ffi { name, dir, force } => win32_cmd::Win32Cmd::Ffi {
+                    name, dir, force,
+                },
+                Win32Sub::Cc { name, dir, force } => win32_cmd::Win32Cmd::Cc {
+                    name, dir, force,
+                },
+                Win32Sub::Pwsh { name, dir, force } => win32_cmd::Win32Cmd::Pwsh {
+                    name, dir, force,
+                },
+                Win32Sub::Doctor => win32_cmd::Win32Cmd::Doctor,
+            };
+            win32_cmd::run(cmd, cli.quiet)?;
+            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Linux { sub }) => {
             let cmd = match sub {
@@ -861,6 +934,10 @@ fn run_rules(report: Report) -> Result<ExitCode> {
         ("ecosystem/tauri-rs", "tauri (Cargo.toml)"),
         ("ecosystem/bevy", "bevy (Cargo.toml) → game engine"),
         ("ecosystem/mdxjs-rs", "mdxjs-rs (Cargo.toml)"),
+        ("ecosystem/windows-rs", "windows / windows-sys (Cargo.toml) → Win32"),
+        ("ecosystem/libc", "libc (Cargo.toml) → POSIX + CRT"),
+        ("ecosystem/nix-rs", "nix (Cargo.toml) → POSIX idiomatic"),
+        ("ecosystem/lightningcss", "lightningcss (Cargo.toml) → CSS bundler"),
         // --- .npmrc / .yarnrc / .pnpmrc → bunfig.toml ---
         ("npmrc/registry", ".npmrc registry → bunfig.toml [install].registry"),
         ("npmrc/auth-token", ".npmrc _authToken → bunfig.toml [install.scopes]"),
