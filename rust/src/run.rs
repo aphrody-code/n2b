@@ -25,10 +25,8 @@ use once_cell::sync::Lazy;
 use rayon::prelude::*;
 use std::path::{Path, PathBuf};
 
-static SOURCE_EXTS: Lazy<Vec<&'static str>> = Lazy::new(|| {
-    vec!["js", "jsx", "ts", "tsx", "mjs", "cjs", "mts", "cts"]
-});
-static SHELL_EXTS: Lazy<Vec<&'static str>> = Lazy::new(|| vec!["sh", "bash", "zsh"]);
+const SOURCE_EXTS: &[&str] = &["js", "jsx", "ts", "tsx", "mjs", "cjs", "mts", "cts"];
+const SHELL_EXTS: &[&str] = &["sh", "bash", "zsh"];
 const SHELL_NAMES: &[&str] = &["Dockerfile", "Makefile", "Justfile"];
 const DEFAULT_IGNORE: &[&str] = &[
     "**/node_modules/**",

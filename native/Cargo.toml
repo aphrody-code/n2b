@@ -8,11 +8,5 @@ publish = false
 name = "node2bun_native"
 crate-type = ["cdylib"]
 
-[profile.release]
-lto = true
-codegen-units = 1
-strip = true
-opt-level = 3
-
 [dependencies]
 memchr = "2"

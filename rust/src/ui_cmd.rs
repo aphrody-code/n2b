@@ -850,6 +850,7 @@ dist/
 // M3 REGISTRY (shadcn-m3) — composants Material Design 3 via Tailwind v4
 // ============================================================================
 
+#[allow(dead_code)]
 fn render_m3_package_json(name: &str) -> String {
     format!(
         r#"{{
@@ -973,6 +974,7 @@ fn render_m3_registry_json(name: &str) -> String {
     )
 }
 
+#[allow(dead_code)]
 const M3_COMPONENTS_JSON: &str = r#"{
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "new-york",
@@ -996,6 +998,7 @@ const M3_COMPONENTS_JSON: &str = r#"{
 }
 "#;
 
+#[allow(dead_code)]
 fn render_m3_layout_tsx(name: &str) -> String {
     format!(
         r#"import type {{ Metadata }} from "next";
@@ -1021,6 +1024,7 @@ export default function RootLayout({{ children }}: {{ children: React.ReactNode 
     )
 }
 
+#[allow(dead_code)]
 const M3_GLOBALS_CSS: &str = r#"@import "tailwindcss";
 @import "../../registry/new-york/lib/m3-tokens.css";
 
@@ -1771,6 +1775,7 @@ fn main() -> Result<()> {
 }
 "#;
 
+#[allow(dead_code)]
 fn render_m3_readme(name: &str) -> String {
     format!(
         r#"# {name}

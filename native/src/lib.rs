@@ -15,7 +15,7 @@ use memchr::memchr_iter;
 /// `out` n'est que partiellement rempli et l'appelant doit rappeler avec
 /// un buffer plus grand.
 ///
-/// # Sûreté
+/// # Safety
 /// - `buf` doit pointer sur `byte_len` octets valides et alignés sur 2.
 /// - `out_ptr` doit pointer sur `out_cap` `u32` valides et alignés.
 #[no_mangle]
