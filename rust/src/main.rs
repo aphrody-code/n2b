@@ -1,6 +1,7 @@
 mod ai;
 mod analyze;
 mod audit;
+mod bin_cmd;
 mod github;
 mod patch;
 mod report;
@@ -144,6 +145,29 @@ enum Cmd {
         report: ReportArg,
     },
 
+    /// Scaffold un projet binaire natif : plugin Rust pour Bun.build
+    /// (bun-native-plugin), exemple MDX→JSX, ou module WASM.
+    ///
+    ///   n2b bin myplugin                → plugin natif NAPI
+    ///   n2b bin mdx-rs --flavor mdx     → plugin MDX→JSX
+    ///   n2b bin fast-math --flavor wasm → module wasm-bindgen
+    Bin {
+        /// Nom du package/dossier à créer.
+        name: String,
+
+        /// Type de projet à scaffolder.
+        #[arg(long, default_value = "native", value_parser = parse_bin_flavor)]
+        flavor: bin_cmd::BinFlavor,
+
+        /// Dossier parent (le projet sera créé dans <dir>/<name>).
+        #[arg(long)]
+        dir: Option<PathBuf>,
+
+        /// Écraser le dossier existant.
+        #[arg(long)]
+        force: bool,
+    },
+
     /// Génère ou applique des patches. Deux modes :
     ///   · `n2b patch <pkg>`  → wrapper `bun patch` : applique les règles n2b
     ///                            sur node_modules/<pkg>, puis `bun patch --commit`.
@@ -221,6 +245,11 @@ enum ApplyArg {
     Aggressive,
 }
 
+fn parse_bin_flavor(s: &str) -> Result<bin_cmd::BinFlavor, String> {
+    bin_cmd::BinFlavor::parse(s)
+        .ok_or_else(|| format!("flavor inconnu '{s}' (valeurs : native, mdx, wasm)"))
+}
+
 impl From<ApplyArg> for Mode {
     fn from(a: ApplyArg) -> Self {
         match a {
@@ -257,6 +286,16 @@ fn real_main() -> Result<ExitCode> {
         }
         Some(Cmd::Audit { root, terms, state, limit, report }) => {
             return run_audit(root, terms, state.into(), limit, report.into());
+        }
+        Some(Cmd::Bin { name, flavor, dir, force }) => {
+            bin_cmd::run_bin(bin_cmd::BinOpts {
+                name,
+                flavor,
+                dir,
+                force,
+                quiet: cli.quiet,
+            })?;
+            return Ok(ExitCode::SUCCESS);
         }
         Some(Cmd::Patch {
             package,
