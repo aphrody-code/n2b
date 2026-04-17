@@ -77,9 +77,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
     // 4. Absence de turbopack: (flag ou config) — Next 16 l'active par défaut,
     //    mais l'absence de mention explicite quand on porte est worth noting.
     //    On ne flaggue que si `webpack` custom est présent (sinon silencieux).
-    if WEBPACK_FN.is_match(content)
-        && !Regex::new(r"\bturbopack\s*:").unwrap().is_match(content)
-    {
+    static TURBOPACK_FN: Lazy<Regex> = Lazy::new(|| Regex::new(r"\bturbopack\s*:").unwrap());
+    if WEBPACK_FN.is_match(content) && !TURBOPACK_FN.is_match(content) {
         findings.push(make_finding(
             path,
             &[],

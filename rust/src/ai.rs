@@ -122,7 +122,6 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         "api/execSync" | "api/exec" | "api/child-process-spawn" => {
             "https://bun.sh/guides/process/spawn"
         }
-        "api/execa-call" => "https://bun.sh/guides/process/spawn",
         "api/fs-readFileSync" | "api/fs-readFile-utf8" | "api/fs-readFile-promise" => {
             "https://bun.sh/guides/read-file/string"
         }
@@ -131,14 +130,12 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         "api/json-parse-readFileSync" => "https://bun.sh/guides/read-file/json",
         "api/crypto-createHash" => "https://bun.sh/docs/api/hashing",
         "api/util-inspect" => "https://bun.sh/reference/bun/inspect",
-        "api/crypto-randomBytes" => "https://developer.mozilla.org/docs/Web/API/Crypto/getRandomValues",
         "api/eventsource-new" => "https://bun.sh/reference/bun/EventSource",
         "api/cookie-parse" | "api/cookie-serialize" => "https://bun.sh/reference/bun/Cookie",
         "api/aws-sdk-s3-client" => "https://bun.sh/reference/bun/S3Client",
         "api/file-based-routing" => "https://bun.sh/reference/bun/FileSystemRouter",
         "api/chalk-call" => "https://bun.sh/reference/bun/color",
         "api/process-hrtime-bigint" => "https://bun.sh/reference/bun/nanoseconds",
-        "api/execa-call" => "https://bun.sh/docs/runtime/shell",
         "bunfig/registry-npmjs" | "bunfig/option-note" | "bunfig/unknown-option" => {
             "https://bun.sh/docs/runtime/bunfig"
         }
@@ -169,10 +166,7 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         | "api/new-url-import-meta" | "api/path-join-dirname" => {
             "https://bun.sh/docs/api/import-meta"
         }
-        "api/crypto-createHash" => "https://bun.sh/docs/api/hashing",
-        "api/uuid-v4" => "https://bun.sh/docs/api/utils#bun-randomuuidv7",
         "api/performance-now" => "https://bun.sh/docs/api/utils#bun-nanoseconds",
-        "api/util-inspect" => "https://bun.sh/docs/api/utils#bun-inspect",
         "api/util-promisify" | "api/set-immediate" => "https://bun.sh/docs/runtime/nodejs-apis",
         "api/semver" => "https://bun.sh/docs/api/semver",
         "api/process-stdout-write" | "api/process-stderr-write" => {

@@ -390,9 +390,19 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
         for mat in r.re.captures_iter(source) {
             let whole = mat.get(0).unwrap();
             let index = whole.start();
-            let original = whole.as_str().to_string();
+
+            // Bug fix : api/exec matche aussi regex.exec() et string.exec() (accès membre).
+            // Ne garder que les appels child_process → soit `child_process.exec(` explicite,
+            // soit `exec(` en position d'appel directe (pas précédé d'un `.`).
+            // Early continue pour éviter toute allocation inutile.
+            if (r.id == "api/exec" || r.id == "api/execSync") && is_member_exec_call(source, index) {
+                continue;
+            }
+
+            let original = whole.as_str();
+            let original_len = original.len();
             let replacement = match &r.replace {
-                ReplaceKind::None => Option::<String>::None,
+                ReplaceKind::None => None,
                 ReplaceKind::Static(s) => Some((*s).to_string()),
                 ReplaceKind::Template(t) => Some(expand(&mat, t)),
             };
@@ -406,17 +416,12 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
                     looks_like_dir_context(source, index, arg)
                 });
 
-            // Bug fix : api/exec matche aussi regex.exec() et string.exec() (accès membre).
-            // Ne garder que les appels child_process → soit `child_process.exec(` explicite,
-            // soit `exec(` en position d'appel directe (pas précédé d'un `.`).
-            if r.id == "api/exec" && is_member_exec_call(source, index) {
-                continue;
-            }
-            if r.id == "api/execSync" && is_member_exec_call(source, index) {
-                continue;
-            }
-
             let has_repl = replacement.is_some() && !skip_autofix;
+            let replacement_for_edit = if aggressive && r.aggressive && !skip_autofix {
+                replacement.clone()
+            } else {
+                None
+            };
             findings.push(make_finding(
                 path,
                 &offsets,
@@ -427,18 +432,16 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
                 } else {
                     r.message.to_string()
                 },
-                original.clone(),
-                if skip_autofix { None } else { replacement.clone() },
+                original.to_string(),
+                if skip_autofix { None } else { replacement },
                 MakeFindingOpts {
                     autofix: Some(has_repl),
                     aggressive: if r.aggressive { Some(true) } else { None },
                     severity: Some(r.severity),
                 },
             ));
-            if aggressive && r.aggressive && !skip_autofix {
-                if let Some(repl) = replacement {
-                    edits.push(Edit { index, len: original.len(), replacement: repl });
-                }
+            if let Some(repl) = replacement_for_edit {
+                edits.push(Edit { index, len: original_len, replacement: repl });
             }
         }
     }
@@ -459,7 +462,7 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
                 kept.push(e);
             }
         }
-        kept.sort_by(|a, b| b.index.cmp(&a.index));
+        kept.sort_unstable_by_key(|e| std::cmp::Reverse(e.index));
         for e in kept {
             out.replace_range(e.index..e.index + e.len, &e.replacement);
         }

@@ -88,7 +88,7 @@ pub fn scan_husky(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     let mut out = content.to_string();
     if !edits.is_empty() {
-        edits.sort_by(|a, b| b.index.cmp(&a.index));
+        edits.sort_unstable_by_key(|e| std::cmp::Reverse(e.index));
         for e in edits {
             out.replace_range(e.index..e.index + e.len, &e.replacement);
         }

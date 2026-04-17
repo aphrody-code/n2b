@@ -58,6 +58,7 @@ pub struct RunOptions {
     pub quiet: bool,
     pub ignore: Vec<String>,
     /// Mode agent : pas de couleurs, logs sur stderr uniquement, stdout réservé au payload.
+    #[allow(dead_code)]
     pub agent: bool,
     /// Dry-run : applique les transformations en mémoire mais n'écrit rien
     /// sur le disque. Utilisé par `n2b patch --self`.

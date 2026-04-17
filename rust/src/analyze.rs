@@ -178,9 +178,11 @@ fn analyze_one(
     };
     let fixes = run::run(&run_opts).with_context(|| format!("scan {}", path.display()))?;
 
-    let mut summary = Summary::default();
-    summary.files_scanned = fixes.len();
-    summary.files_with_findings = fixes.iter().filter(|f| !f.findings.is_empty()).count();
+    let mut summary = Summary {
+        files_scanned: fixes.len(),
+        files_with_findings: fixes.iter().filter(|f| !f.findings.is_empty()).count(),
+        ..Summary::default()
+    };
     let mut findings_by_rule: BTreeMap<String, usize> = BTreeMap::new();
     for fx in &fixes {
         for f in &fx.findings {

@@ -240,7 +240,7 @@ pub fn apply_node_import_rules(
                 kept.push(e);
             }
         }
-        kept.sort_by(|a, b| b.index.cmp(&a.index));
+        kept.sort_unstable_by_key(|e| std::cmp::Reverse(e.index));
         for e in kept {
             out.replace_range(e.index..e.index + e.len, &e.replacement);
         }

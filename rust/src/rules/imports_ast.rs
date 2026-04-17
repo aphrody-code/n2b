@@ -58,10 +58,8 @@ impl<'a> Visit<'a> for Collect {
             _ => false,
         };
         if is_require {
-            if let Some(first) = it.arguments.first() {
-                if let oxc_ast::ast::Argument::StringLiteral(lit) = first {
-                    self.push_string_literal(lit);
-                }
+            if let Some(oxc_ast::ast::Argument::StringLiteral(lit)) = it.arguments.first() {
+                self.push_string_literal(lit);
             }
         }
         oxc_ast_visit::walk::walk_call_expression(self, it);

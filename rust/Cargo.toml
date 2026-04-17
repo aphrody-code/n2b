@@ -33,8 +33,3 @@ oxc_ast = "0.126"
 oxc_ast_visit = "0.126"
 oxc_span = "0.126"
 
-[profile.release]
-lto = true
-codegen-units = 1
-strip = true
-opt-level = 3
