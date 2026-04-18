@@ -26,6 +26,9 @@
     "cargo:check": "cargo check --workspace",
     "cargo:test": "cargo test --workspace",
     "cargo:clippy": "cargo clippy --workspace --all-targets",
+    "codegen:schema": "bun run scripts/generate-schema-types.ts",
+    "codegen:schema:check": "bun run scripts/generate-schema-types.ts --check",
+    "baseline:compare": "tests/compare-baseline.sh",
     "clean": "rm -rf node_modules/.cache .turbo target packages/*/dist packages/*/node_modules"
   },
   "keywords": ["bun", "node", "migration", "codemod", "cli", "monorepo", "turborepo"],
