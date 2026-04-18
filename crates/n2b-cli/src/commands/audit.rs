@@ -6,8 +6,8 @@ use std::process::ExitCode;
 
 use anyhow::Result;
 
-use crate::audit;
-use crate::types::Report;
+use n2b_core::audit;
+use n2b_core::types::Report;
 
 pub fn run_audit(
     root: PathBuf,

@@ -1,8 +1,8 @@
 use clap::{Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
 
-use crate::audit;
-use crate::types::{Mode, Report};
+use n2b_core::audit;
+use n2b_core::types::{Mode, Report};
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum ReportArg {

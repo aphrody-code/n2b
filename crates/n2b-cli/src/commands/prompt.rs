@@ -4,8 +4,8 @@ use std::process::ExitCode;
 
 use anyhow::Result;
 
-use crate::types::{Mode, Report, RunOptions, Severity};
-use crate::{report, run};
+use n2b_core::types::{Mode, Report, RunOptions, Severity};
+use n2b_core::{report, run};
 
 pub fn run_prompt(
     root: PathBuf,

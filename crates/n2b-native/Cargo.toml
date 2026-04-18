@@ -1,0 +1,12 @@
+[package]
+name = "node2bun-native"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+
+[lib]
+name = "node2bun_native"
+crate-type = ["cdylib"]
+
+[dependencies]
+memchr = { workspace = true }

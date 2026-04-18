@@ -2,8 +2,8 @@ use anyhow::{anyhow, Context, Result};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use crate::run;
-use crate::types::{Mode, Report, RunOptions};
+use n2b_core::run;
+use n2b_core::types::{Mode, Report, RunOptions};
 
 pub struct PatchOpts {
     pub package: Option<String>,
