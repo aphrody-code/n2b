@@ -19,11 +19,12 @@ use crate::scanners::{
 };
 use crate::types::{FileFix, Mode, RunOptions};
 use anyhow::Result;
-use globset::{Glob, GlobSetBuilder};
-use ignore::WalkBuilder;
+use crossbeam_channel::unbounded;
+use globset::{Glob, GlobSet, GlobSetBuilder};
+use ignore::{WalkBuilder, WalkState};
 use once_cell::sync::Lazy;
-use rayon::prelude::*;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 const SOURCE_EXTS: &[&str] = &["js", "jsx", "ts", "tsx", "mjs", "cjs", "mts", "cts"];
 const SHELL_EXTS: &[&str] = &["sh", "bash", "zsh"];
@@ -52,50 +53,78 @@ fn is_workflow(rel: &str) -> bool {
 
 pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
     // Build matcher for default + user ignore globs.
-    let mut builder = GlobSetBuilder::new();
+    let mut gsb = GlobSetBuilder::new();
     for p in DEFAULT_IGNORE.iter().copied() {
         if let Ok(g) = Glob::new(p) {
-            builder.add(g);
+            gsb.add(g);
         }
     }
     for p in opts.ignore.iter() {
         if let Ok(g) = Glob::new(p) {
-            builder.add(g);
+            gsb.add(g);
         }
     }
-    let ignore_set = builder.build()?;
+    let ignore_set: Arc<GlobSet> = Arc::new(gsb.build()?);
 
-    // Collect candidates.
-    let mut candidates: Vec<(PathBuf, String)> = Vec::new();
-    let walker = WalkBuilder::new(&opts.root)
+    // Shared opts fields needed inside the worker closure.
+    let root: Arc<PathBuf> = Arc::new(opts.root.clone());
+    let opts_arc: Arc<RunOptions> = Arc::new(opts.clone());
+
+    let (tx, rx) = unbounded::<FileFix>();
+
+    WalkBuilder::new(opts.root.clone())
         .hidden(false)
         .git_ignore(false)
         .git_global(false)
         .git_exclude(false)
         .parents(false)
-        .build();
-    for entry in walker.flatten() {
-        if !entry.file_type().map(|t| t.is_file()).unwrap_or(false) {
-            continue;
-        }
-        let abs = entry.into_path();
-        let rel = abs
-            .strip_prefix(&opts.root)
-            .unwrap_or(&abs)
-            .to_string_lossy()
-            .into_owned();
-        if ignore_set.is_match(&rel) {
-            continue;
-        }
-        candidates.push((abs, rel));
-    }
+        // 0 = auto-detect from available parallelism
+        .threads(0)
+        .build_parallel()
+        .run(|| {
+            // Factory: called once per worker thread, returns the per-entry closure.
+            let tx = tx.clone();
+            let ignore_set = Arc::clone(&ignore_set);
+            let root = Arc::clone(&root);
+            let opts = Arc::clone(&opts_arc);
 
-    // Process in parallel.
-    let fixes: Vec<FileFix> = candidates
-        .par_iter()
-        .filter_map(|(abs, rel)| process_file(abs, rel, opts).transpose())
-        .filter_map(|r| r.ok())
-        .collect();
+            Box::new(move |result| {
+                let entry = match result {
+                    Ok(e) => e,
+                    Err(_) => return WalkState::Continue,
+                };
+
+                // Skip non-files immediately.
+                if !entry.file_type().map(|t| t.is_file()).unwrap_or(false) {
+                    return WalkState::Continue;
+                }
+
+                let abs = entry.into_path();
+                let rel = abs
+                    .strip_prefix(root.as_ref())
+                    .unwrap_or(&abs)
+                    .to_string_lossy()
+                    .into_owned();
+
+                if ignore_set.is_match(&rel) {
+                    return WalkState::Continue;
+                }
+
+                if let Ok(Some(fix)) = process_file(&abs, &rel, &opts) {
+                    // Send never fails while rx is alive (it lives until after run() returns).
+                    let _ = tx.send(fix);
+                }
+
+                WalkState::Continue
+            })
+        });
+
+    // Drop the last sender so the receiver iterator terminates.
+    drop(tx);
+
+    let mut fixes: Vec<FileFix> = rx.into_iter().collect();
+    // Restore deterministic order (parallel walk produces non-deterministic order).
+    fixes.sort_unstable_by(|a, b| a.file.cmp(&b.file));
 
     Ok(fixes)
 }
@@ -177,7 +206,7 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
     } else if is_workflow {
         scan_workflow(rel, &before)
     } else if is_source {
-        scan_source(rel, &before, opts)
+        scan_source(rel, &before, &opts)
     } else if is_dockerfile {
         scan_dockerfile(rel, &before)
     } else if is_nvmrc {

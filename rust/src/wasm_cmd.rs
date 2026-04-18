@@ -7,8 +7,71 @@
 //!   - https://rust-lang.org/what/wasm/
 
 use anyhow::{anyhow, Context, Result};
+use clap::ValueEnum;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+
+/// Cibles de sortie wasm-pack (`--target`).
+///
+/// Correspond aux valeurs officiellement supportées par wasm-pack :
+/// <https://rustwasm.github.io/wasm-pack/book/commands/build.html#target>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum WasmTarget {
+    /// Sortie compatible bundler JS (Webpack, Rollup, Vite…) — défaut wasm-pack.
+    Bundler,
+    /// Module ES natif chargeable depuis un `<script type="module">`.
+    Web,
+    /// Module CommonJS pour Node.js.
+    #[value(name = "nodejs")]
+    NodeJs,
+    /// UMD sans modules — compatibilité maximale navigateur (legacy).
+    #[value(name = "no-modules")]
+    NoModules,
+    /// Module ES pour Deno.
+    Deno,
+}
+
+impl WasmTarget {
+    /// Retourne la valeur string attendue par `wasm-pack --target`.
+    #[must_use]
+    pub fn as_wasm_pack_flag(self) -> &'static str {
+        match self {
+            Self::Bundler => "bundler",
+            Self::Web => "web",
+            Self::NodeJs => "nodejs",
+            Self::NoModules => "no-modules",
+            Self::Deno => "deno",
+        }
+    }
+}
+
+/// Profil de compilation wasm-pack (`--dev` / `--profiling` / `--release`).
+///
+/// Correspond aux flags de profil officiels :
+/// <https://rustwasm.github.io/wasm-pack/book/commands/build.html#profile>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, ValueEnum)]
+pub enum BuildProfile {
+    /// Build rapide sans optimisation — idéal pour l'itération locale.
+    Dev,
+    /// Symboles de debug conservés + optimisations — pour profiler.
+    Profiling,
+    /// Optimisations maximales — défaut recommandé pour la production.
+    #[default]
+    Release,
+}
+
+impl BuildProfile {
+    /// Retourne le flag CLI wasm-pack correspondant (ou `None` pour release,
+    /// qui est le défaut implicite de wasm-pack).
+    #[must_use]
+    pub fn as_wasm_pack_flag(self) -> Option<&'static str> {
+        match self {
+            Self::Dev => Some("--dev"),
+            Self::Profiling => Some("--profiling"),
+            Self::Release => None,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub enum WasmTemplate {
@@ -43,12 +106,18 @@ pub enum WasmCmd {
     },
     Doctor,
     Build {
-        /// Répertoire du projet à builder (défaut: cwd).
+        /// Répertoire du projet à builder (défaut : répertoire courant).
         root: PathBuf,
-        /// Target wasm-pack : web, bundler, nodejs, no-modules.
-        target: String,
-        /// Mode release (true) ou dev.
-        release: bool,
+        /// Cible de sortie wasm-pack.
+        target: WasmTarget,
+        /// Profil de compilation.
+        profile: BuildProfile,
+        /// Répertoire de sortie du paquet wasm-pack (défaut : `pkg`).
+        out_dir: Option<PathBuf>,
+        /// Préfixe des fichiers de sortie (défaut : nom du crate).
+        out_name: Option<String>,
+        /// Scope npm (`@scope/package`).
+        scope: Option<String>,
     },
     Opt {
         /// Chemin du .wasm à optimiser (écrit en place).
@@ -62,15 +131,57 @@ pub enum WasmCmd {
         /// Nombre de symboles top à afficher.
         top: usize,
     },
+    Spec(WasmSpecCmd),
+}
+
+/// Sous-commandes de `n2b wasm spec`.
+pub enum WasmSpecCmd {
+    /// Lance un sous-ensemble de la testsuite WebAssembly officielle.
+    Testsuite {
+        /// Chemin vers la racine du clone WebAssembly/spec.
+        path: PathBuf,
+        /// Filtre : `core`, `simd`, `gc`, `threads`, `bulk-memory`, `exceptions`, `relaxed-simd`, …
+        filter: Option<String>,
+        /// Runtime cible (`bun` ou `wasmtime`).
+        runtime: String,
+        /// Timeout par fichier `.wast` en secondes.
+        timeout_secs: u64,
+    },
+    /// Analyse un binaire `.wasm` et liste les propositions WebAssembly utilisées.
+    Features {
+        /// Chemin du binaire `.wasm` à analyser.
+        path: PathBuf,
+    },
+    /// Affiche la table de référence des opcodes WebAssembly.
+    Opcodes {
+        /// Filtre par proposition : `mvp`, `bulk-memory`, `simd`, `gc`, `threads`, …
+        proposal: Option<String>,
+        /// Format : `text` | `md` | `json`.
+        report: String,
+    },
+}
+
+/// Options rassemblées pour `WasmCmd::Build` — évite la liste de 8 paramètres.
+struct BuildOpts {
+    root: PathBuf,
+    target: WasmTarget,
+    profile: BuildProfile,
+    out_dir: Option<PathBuf>,
+    out_name: Option<String>,
+    scope: Option<String>,
+    quiet: bool,
 }
 
 pub fn run(cmd: WasmCmd, quiet: bool) -> Result<()> {
     match cmd {
         WasmCmd::Init { name, template, dir, force } => init(name, template, dir, force, quiet),
         WasmCmd::Doctor => doctor(quiet),
-        WasmCmd::Build { root, target, release } => build(root, target, release, quiet),
+        WasmCmd::Build { root, target, profile, out_dir, out_name, scope } => {
+            build(BuildOpts { root, target, profile, out_dir, out_name, scope, quiet })
+        }
         WasmCmd::Opt { path, level } => opt(path, level, quiet),
         WasmCmd::Size { path, top } => size(path, top, quiet),
+        WasmCmd::Spec(spec_cmd) => crate::wasm_spec::run_spec(spec_cmd, quiet),
     }
 }
 
@@ -142,20 +253,47 @@ fn doctor(quiet: bool) -> Result<()> {
     Ok(())
 }
 
-fn build(root: PathBuf, target: String, release: bool, quiet: bool) -> Result<()> {
+fn build(opts: BuildOpts) -> Result<()> {
+    let BuildOpts { root, target, profile, out_dir, out_name, scope, quiet } = opts;
+
     if which("wasm-pack").is_err() {
         anyhow::bail!("wasm-pack introuvable — `cargo install wasm-pack` ou `n2b wasm doctor`");
     }
-    let mut args: Vec<String> =
-        vec!["build".into(), "--target".into(), target];
-    if release {
-        args.push("--release".into());
-    } else {
-        args.push("--dev".into());
+
+    // Ordre officiel : wasm-pack build [--dev|--profiling] --target <t>
+    //                  [--out-dir <d>] [--out-name <n>] [--scope <s>] <root>
+    let mut args: Vec<String> = vec!["build".into()];
+
+    if let Some(flag) = profile.as_wasm_pack_flag() {
+        args.push(flag.into());
     }
+
+    args.push("--target".into());
+    args.push(target.as_wasm_pack_flag().into());
+
+    if let Some(dir) = &out_dir {
+        args.push("--out-dir".into());
+        args.push(dir.to_string_lossy().into_owned());
+    }
+
+    if let Some(name) = &out_name {
+        args.push("--out-name".into());
+        args.push(name.clone());
+    }
+
+    if let Some(s) = &scope {
+        args.push("--scope".into());
+        args.push(s.clone());
+    }
+
     if !quiet {
-        eprintln!("[wasm build] wasm-pack {}", args.join(" "));
+        eprintln!(
+            "[wasm build] wasm-pack {} {}",
+            args[1..].join(" "),
+            root.display()
+        );
     }
+
     let status = Command::new("wasm-pack")
         .args(&args)
         .current_dir(&root)
