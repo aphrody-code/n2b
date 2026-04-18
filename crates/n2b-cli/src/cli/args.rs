@@ -47,7 +47,9 @@ impl From<StateArg> for audit::ItemState {
 #[command(
     name = "n2b",
     version,
-    about = "n2b — analyse un package et corrige les incompatibilités avec Bun."
+    about = "n2b — outils de dev Rust + migration Node → Bun.",
+    long_about = "n2b : scaffold Rust (bin/lib/axum/discord/cdylib/workspace…), \
+                  migration Node → Bun, WASM, MUI → MD3, llmstxt, analyse GitHub."
 )]
 pub struct Cli {
     #[command(subcommand)]
@@ -337,6 +339,66 @@ pub enum Cmd {
         export_sitemap: bool,
     },
 
+    /// Migre un projet Next.js / React de MUI v9 (@mui/material + @mui/x-*)
+    /// vers @md3-ui/core (Material Design 3 scaffoldé par md3-ui).
+    ///
+    ///   n2b mui-to-md3 ./rpb-dashboard               # dry-run rapport text
+    ///   n2b mui-to-md3 ./rpb-dashboard --write       # applique les rewrites
+    ///   n2b mui-to-md3 . --only Button --dry-run
+    ///   n2b mui-to-md3 . --write --stage-atomic      # 1 commit par composant
+    ///   n2b mui-to-md3 . --report md > migration.md
+    ///
+    /// Règles : `rules/mui-to-md3.yaml` (schéma docs/RULES_MUI_TO_MD3.md).
+    MuiToMd3 {
+        /// Racine du projet Next.js / React à migrer.
+        #[arg(default_value = ".")]
+        root: PathBuf,
+
+        /// Applique les rewrites sur le filesystem (sinon dry-run).
+        #[arg(long)]
+        write: bool,
+
+        /// 1 commit git par composant migré (Button, Card, …). Requiert un
+        /// working tree clean.
+        #[arg(long)]
+        stage_atomic: bool,
+
+        /// Filtre : n'applique que les règles dont l'id correspond (sans
+        /// préfixe `mui-`, ex : `Button` ou `button`).
+        #[arg(long, value_name = "COMPONENT")]
+        only: Vec<String>,
+
+        /// Réécrit aussi la prop `sx` en classes Tailwind (best-effort).
+        #[arg(long)]
+        rewrite_sx: bool,
+
+        /// Glob(s) à exclure (cumulable).
+        #[arg(long)]
+        ignore: Vec<String>,
+
+        /// Chemin vers un YAML de règles custom (override du bundled).
+        #[arg(long)]
+        rules: Option<PathBuf>,
+
+        /// Format du rapport.
+        #[arg(long, value_enum, default_value = "text")]
+        report: ReportArg,
+    },
+
+    /// Outils de développement Rust : scaffold, check, deps, doctor.
+    ///
+    ///   n2b rust new myapp --flavor axum       # serveur Axum
+    ///   n2b rust new mybot --flavor discord     # bot Discord (serenity + poise)
+    ///   n2b rust new mycrate --flavor cli       # CLI clap full
+    ///   n2b rust new myffi --flavor cdylib      # cdylib pour bun:ffi
+    ///   n2b rust check [path]                   # cargo check + clippy
+    ///   n2b rust deps [path]                    # cargo outdated + audit
+    ///   n2b rust doctor                         # vérifie la toolchain
+    Rust {
+        #[command(subcommand)]
+        sub: RustSub,
+    },
+
     /// Scan + audit + crosslink ML (embeddings) sur un ou plusieurs repos.
     Analyze {
         /// Chemins à analyser (défaut: discord.js/discordx/nextjs détectés dans cwd).
@@ -382,6 +444,49 @@ impl From<ApplyArg> for Mode {
             ApplyArg::Aggressive => Mode::Aggressive,
         }
     }
+}
+
+#[derive(Subcommand, Debug)]
+pub enum RustSub {
+    /// Scaffold un nouveau projet Rust avec un template opinioné.
+    ///
+    /// Flavors disponibles : bin, lib, cdylib, proc-macro, workspace, axum, discord, cli, tauri, leptos, tui, bevy, grpc.
+    New {
+        /// Nom du projet (= nom du dossier créé).
+        name: String,
+        /// Template de projet.
+        #[arg(long, default_value = "bin", value_parser = parse_rust_flavor)]
+        flavor: crate::rust_cmd::RustFlavor,
+        /// Dossier parent (le projet sera dans <dir>/<name>).
+        #[arg(long)]
+        dir: Option<PathBuf>,
+        /// Écraser le dossier si existant.
+        #[arg(long)]
+        force: bool,
+    },
+    /// `cargo check` puis `cargo clippy -W clippy::all -W clippy::pedantic`.
+    Check {
+        /// Racine du crate à analyser.
+        #[arg(default_value = ".")]
+        root: PathBuf,
+    },
+    /// `cargo outdated` + `cargo audit` en rapport unifié.
+    Deps {
+        /// Racine du crate à analyser.
+        #[arg(default_value = ".")]
+        root: PathBuf,
+    },
+    /// Vérifie l'installation de la toolchain Rust (rustc, clippy, wasm-pack, just…).
+    Doctor,
+}
+
+pub fn parse_rust_flavor(s: &str) -> Result<crate::rust_cmd::RustFlavor, String> {
+    crate::rust_cmd::RustFlavor::parse(s).ok_or_else(|| {
+        format!(
+            "flavor inconnu '{s}' (valeurs : {})",
+            crate::rust_cmd::RustFlavor::variants()
+        )
+    })
 }
 
 pub fn parse_bin_flavor(s: &str) -> Result<crate::bin_cmd::BinFlavor, String> {
