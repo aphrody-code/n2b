@@ -181,7 +181,7 @@ pub fn run(cmd: WasmCmd, quiet: bool) -> Result<()> {
         }
         WasmCmd::Opt { path, level } => opt(path, level, quiet),
         WasmCmd::Size { path, top } => size(path, top, quiet),
-        WasmCmd::Spec(spec_cmd) => crate::wasm_spec::run_spec(spec_cmd, quiet),
+        WasmCmd::Spec(spec_cmd) => crate::commands::wasm_spec::run_spec(spec_cmd, quiet),
     }
 }
 

@@ -10,7 +10,6 @@ mod subprocess;
 #[cfg(test)]
 mod schema_test;
 mod wasm_cmd;
-mod wasm_spec;
 mod win32_cmd;
 
 use std::process::ExitCode;
