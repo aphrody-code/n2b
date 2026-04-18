@@ -154,7 +154,7 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
             sitemap,
             export_sitemap,
         }) => {
-            crate::llmstxt::run(&crate::llmstxt::LlmstxtOpts {
+            n2b_core::llmstxt::run(&n2b_core::llmstxt::LlmstxtOpts {
                 url,
                 out,
                 max_depth,

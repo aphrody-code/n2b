@@ -2010,11 +2010,24 @@ dependencies = [
  "anyhow",
  "clap",
  "colored",
- "crossbeam-channel",
  "fastembed",
- "futures",
+ "n2b-core",
+ "once_cell",
+ "regex",
+ "serde",
+ "serde_json",
+ "similar",
+ "tokio",
+]
+
+[[package]]
+name = "n2b-core"
+version = "0.2.0"
+dependencies = [
+ "anyhow",
+ "colored",
+ "crossbeam-channel",
  "globset",
- "http",
  "ignore",
  "memchr",
  "octocrab",
@@ -2029,7 +2042,6 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml",
- "similar",
  "tokio",
  "url",
  "walkdir",

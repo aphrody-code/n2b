@@ -12,7 +12,7 @@
 //   TypeScript: json-schema-to-typescript (bunx, no install needed).
 //
 // Output paths:
-//   Rust: rust/src/schema.rs  (moves to crates/n2b-core/src/schema.rs in step 3)
+//   Rust: crates/n2b-core/src/schema.rs
 //   TS:   packages/n2b/src/schema.ts
 
 import { $ } from "bun";
@@ -20,7 +20,7 @@ import { join, resolve } from "node:path";
 
 const REPO = resolve(import.meta.dir, "..");
 const SCHEMA = join(REPO, "schema", "v2.json");
-const RUST_OUT = join(REPO, "rust", "src", "schema.rs");
+const RUST_OUT = join(REPO, "crates", "n2b-core", "src", "schema.rs");
 const TS_OUT = join(REPO, "packages", "n2b", "src", "schema.ts");
 
 const HEADER_RUST = `// @generated — DO NOT EDIT MANUALLY.
@@ -78,7 +78,7 @@ async function writeOrCheck(path: string, content: string, label: string): Promi
 }
 
 const [rustCode, tsCode] = await Promise.all([genRust(), genTs()]);
-const rustOk = await writeOrCheck(RUST_OUT, rustCode, "rust/src/schema.rs");
+const rustOk = await writeOrCheck(RUST_OUT, rustCode, "crates/n2b-core/src/schema.rs");
 const tsOk = await writeOrCheck(TS_OUT, tsCode, "packages/n2b/src/schema.ts");
 
 if (!rustOk || !tsOk) process.exit(1);

@@ -11,7 +11,7 @@ use std::path::PathBuf;
 use anyhow::{Context, Result};
 
 use crate::subprocess::bun::{self, BackupGuard};
-use crate::types::FileFix;
+use n2b_core::types::FileFix;
 
 pub fn run_migrate_side_effects(
     root: &PathBuf,
@@ -28,7 +28,7 @@ pub fn run_migrate_side_effects(
     let root_pkg = root.join("package.json");
 
     // Collect rival lockfiles that exist.
-    let rivals: Vec<PathBuf> = crate::scanners::lockfile::RIVAL_LOCKFILES
+    let rivals: Vec<PathBuf> = n2b_core::scanners::lockfile::RIVAL_LOCKFILES
         .iter()
         .map(|name| root.join(name))
         .filter(|p| p.exists())
@@ -46,7 +46,7 @@ pub fn run_migrate_side_effects(
     if pnpm_ws.exists() && root_pkg.exists() {
         let pnpm_content = std::fs::read_to_string(&pnpm_ws)?;
         if let Some(info) =
-            crate::scanners::pnpm_workspace::parse_pnpm_workspace(&pnpm_content)
+            n2b_core::scanners::pnpm_workspace::parse_pnpm_workspace(&pnpm_content)
         {
             let pkg_content = std::fs::read_to_string(&root_pkg)?;
             let mut pkg: serde_json::Value = serde_json::from_str(&pkg_content)?;

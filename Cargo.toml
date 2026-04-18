@@ -13,7 +13,7 @@
 
 [workspace]
 resolver = "2"
-members = ["rust", "native"]
+members = ["crates/*"]
 
 [workspace.package]
 edition = "2021"

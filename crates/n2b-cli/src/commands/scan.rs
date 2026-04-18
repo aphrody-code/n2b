@@ -4,8 +4,8 @@ use std::process::ExitCode;
 use anyhow::Result;
 
 use crate::cli::args::{Cli, ReportArg};
-use crate::types::{Mode, Report, RunOptions, Severity};
-use crate::{report, run};
+use n2b_core::types::{Mode, Report, RunOptions, Severity};
+use n2b_core::{report, run};
 
 pub fn run(cli: &Cli) -> Result<ExitCode> {
     let mode = if cli.migrate || cli.aggressive {

@@ -5,7 +5,7 @@ use anyhow::Result;
 use colored::Colorize;
 use serde_json::json;
 
-use crate::types::Report;
+use n2b_core::types::Report;
 
 pub fn run_rules(report: Report) -> Result<ExitCode> {
     // Liste statique des IDs de règles. Plus simple et stable qu'une
@@ -361,10 +361,10 @@ pub fn run_rules(report: Report) -> Result<ExitCode> {
                 .map(|(id, desc)| {
                     json!({
                         "id": id,
-                        "category": crate::ai::category(id),
+                        "category": n2b_core::ai::category(id),
                         "description": desc,
-                        "docs_url": crate::ai::docs_url(id),
-                        "confidence": crate::ai::confidence(id, true),
+                        "docs_url": n2b_core::ai::docs_url(id),
+                        "confidence": n2b_core::ai::confidence(id, true),
                     })
                 })
                 .collect();
@@ -375,7 +375,7 @@ pub fn run_rules(report: Report) -> Result<ExitCode> {
             let mut by_cat: std::collections::BTreeMap<&str, Vec<&(&str, &str)>> =
                 Default::default();
             for r in rules {
-                by_cat.entry(crate::ai::category(r.0)).or_default().push(r);
+                by_cat.entry(n2b_core::ai::category(r.0)).or_default().push(r);
             }
             for (cat, rs) in by_cat {
                 println!("\n{}", cat.cyan().bold());
