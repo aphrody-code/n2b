@@ -6,7 +6,7 @@
       "tool": {
         "driver": {
           "name": "node2bun",
-          "version": "0.2.0",
+          "version": "0.3.0",
           "informationUri": "https://github.com/aphrody-code/n2b",
           "rules": [
             {
