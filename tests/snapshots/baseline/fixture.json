@@ -1,0 +1,1238 @@
+{
+  "schema_version": 2,
+  "$schema": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json",
+  "tool": "node2bun",
+  "version": "0.2.0",
+  "mode": "check",
+  "root": "/home/ubuntu/rsbun/n2b/test/fixture",
+  "files_scanned": 5,
+  "findings_total": 46,
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "changed": true,
+      "findings": [
+        {
+          "rule_id": "ci/setup-node",
+          "category": "ci",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "actions/setup-node → oven-sh/setup-bun@v2",
+          "line": 8,
+          "col": 9,
+          "start_byte": 114,
+          "end_byte": 141,
+          "original": "uses: actions/setup-node@v4",
+          "replacement": "uses: oven-sh/setup-bun@v2",
+          "autofix": true,
+          "docs_url": "https://github.com/oven-sh/setup-bun",
+          "context": {
+            "before": [
+              "    runs-on: ubuntu-latest",
+              "    steps:",
+              "      - uses: actions/checkout@v4"
+            ],
+            "line": "      - uses: actions/setup-node@v4",
+            "after": [
+              "        with:",
+              "          node-version: '20'",
+              "          cache: 'npm'"
+            ]
+          }
+        },
+        {
+          "rule_id": "ci/node-version",
+          "category": "ci",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "remplacer 'node-version' par 'bun-version: latest'",
+          "line": 10,
+          "col": 11,
+          "start_byte": 166,
+          "end_byte": 184,
+          "original": "node-version: '20'",
+          "replacement": "bun-version: latest",
+          "autofix": true,
+          "docs_url": "https://github.com/oven-sh/setup-bun",
+          "context": {
+            "before": [
+              "      - uses: actions/checkout@v4",
+              "      - uses: actions/setup-node@v4",
+              "        with:"
+            ],
+            "line": "          node-version: '20'",
+            "after": [
+              "          cache: 'npm'",
+              "      - run: npm ci",
+              "      - run: npm run build"
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-ci",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm ci → bun install --frozen-lockfile",
+          "line": 11,
+          "col": 14,
+          "start_byte": 198,
+          "end_byte": 204,
+          "original": "npm ci",
+          "replacement": "bun install --frozen-lockfile",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "      - uses: actions/setup-node@v4",
+              "        with:",
+              "          node-version: '20'"
+            ],
+            "line": "          cache: 'npm'",
+            "after": [
+              "      - run: npm ci",
+              "      - run: npm run build",
+              "      - run: npm test"
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-run",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm run → bun run",
+          "line": 12,
+          "col": 14,
+          "start_byte": 221,
+          "end_byte": 229,
+          "original": "npm run ",
+          "replacement": "bun run ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "        with:",
+              "          node-version: '20'",
+              "          cache: 'npm'"
+            ],
+            "line": "      - run: npm ci",
+            "after": [
+              "      - run: npm run build",
+              "      - run: npm test",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-test",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm test → bun test",
+          "line": 13,
+          "col": 14,
+          "start_byte": 241,
+          "end_byte": 249,
+          "original": "npm test",
+          "replacement": "bun test",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "          node-version: '20'",
+              "          cache: 'npm'",
+              "      - run: npm ci"
+            ],
+            "line": "      - run: npm run build",
+            "after": [
+              "      - run: npm test",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "package-lock.json",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "lock/rival",
+          "category": "lockfile",
+          "severity": "warn",
+          "confidence": 1.0,
+          "message": "lockfile concurrent 'package-lock.json' présent — exécuter 'bun install' puis supprimer ce fichier",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 17,
+          "original": "package-lock.json",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/install/lockfile",
+          "context": {
+            "before": [],
+            "line": "",
+            "after": []
+          }
+        }
+      ]
+    },
+    {
+      "path": "package.json",
+      "changed": true,
+      "findings": [
+        {
+          "rule_id": "cli/npm-run",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm run → bun run",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 8,
+          "original": "npm run ",
+          "replacement": "bun run ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npx",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npx → bunx",
+          "line": 1,
+          "col": 18,
+          "start_byte": 17,
+          "end_byte": 21,
+          "original": "npx ",
+          "replacement": "bunx ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-test",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm test → bun test",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 8,
+          "original": "npm test",
+          "replacement": "bun test",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-i",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm i → bun install",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 5,
+          "original": "npm i",
+          "replacement": "bun install",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-run",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm run → bun run",
+          "line": 1,
+          "col": 16,
+          "start_byte": 15,
+          "end_byte": 23,
+          "original": "npm run ",
+          "replacement": "bun run ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npm-ci",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm ci → bun install --frozen-lockfile",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 6,
+          "original": "npm ci",
+          "replacement": "bun install --frozen-lockfile",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/yarn-run",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "yarn run → bun run",
+          "line": 1,
+          "col": 34,
+          "start_byte": 33,
+          "end_byte": 42,
+          "original": "yarn run ",
+          "replacement": "bun run ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/pnpm-add-D",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "pnpm add -D → bun add --dev",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 11,
+          "original": "pnpm add -D",
+          "replacement": "bun add --dev",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/pnpm-dlx",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "pnpm dlx → bunx",
+          "line": 1,
+          "col": 25,
+          "start_byte": 24,
+          "end_byte": 33,
+          "original": "pnpm dlx ",
+          "replacement": "bunx ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/package-manager",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "packageManager='pnpm@9.0.0' — remplacer par 'bun@<version>' ou supprimer",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 10,
+          "original": "pnpm@9.0.0",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/engines-pm",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "engines.{npm,pnpm,yarn} est superflu avec Bun — utiliser 'engines.bun'",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 28,
+          "original": "{\"node\":\">=20\",\"npm\":\">=10\"}",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/redundant-dep",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "dépendance 'dotenv' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 6,
+          "original": "dotenv",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/redundant-dep",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "dépendance 'node-fetch' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 10,
+          "original": "node-fetch",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/express",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "Express détecté — guide d'intégration Bun : https://bun.sh/guides/ecosystem/express",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 7,
+          "original": "express",
+          "replacement": "https://bun.sh/guides/ecosystem/express",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/redundant-dep",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "dépendance 'better-sqlite3' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 14,
+          "original": "better-sqlite3",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/redundant-dep",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "dépendance 'uuid' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 4,
+          "original": "uuid",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/redundant-dep",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "dépendance 'ts-node' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 7,
+          "original": "ts-node",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        },
+        {
+          "rule_id": "pkg/redundant-dep",
+          "category": "package",
+          "severity": "warn",
+          "confidence": 0.8999999761581421,
+          "message": "dépendance 'rimraf' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 6,
+          "original": "rimraf",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/cli/install",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"fixture\",",
+              "  \"version\": \"1.0.0\",",
+              "  \"type\": \"module\","
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "scripts/install.sh",
+      "changed": true,
+      "findings": [
+        {
+          "rule_id": "cli/npm-install",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npm install → bun install",
+          "line": 4,
+          "col": 1,
+          "start_byte": 40,
+          "end_byte": 51,
+          "original": "npm install",
+          "replacement": "bun install",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "#!/bin/bash",
+              "set -e",
+              "# install everything"
+            ],
+            "line": "npm install",
+            "after": [
+              "npx prisma migrate deploy",
+              "yarn add --dev eslint",
+              "pnpm dlx shadcn-ui init"
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/npx",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "npx → bunx",
+          "line": 5,
+          "col": 1,
+          "start_byte": 52,
+          "end_byte": 56,
+          "original": "npx ",
+          "replacement": "bunx ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "set -e",
+              "# install everything",
+              "npm install"
+            ],
+            "line": "npx prisma migrate deploy",
+            "after": [
+              "yarn add --dev eslint",
+              "pnpm dlx shadcn-ui init",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/pnpm-dlx",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "pnpm dlx → bunx",
+          "line": 7,
+          "col": 1,
+          "start_byte": 100,
+          "end_byte": 109,
+          "original": "pnpm dlx ",
+          "replacement": "bunx ",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "npm install",
+              "npx prisma migrate deploy",
+              "yarn add --dev eslint"
+            ],
+            "line": "pnpm dlx shadcn-ui init",
+            "after": [
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "cli/yarn-add-dev",
+          "category": "cli",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "yarn add --dev → bun add --dev",
+          "line": 6,
+          "col": 1,
+          "start_byte": 78,
+          "end_byte": 92,
+          "original": "yarn add --dev",
+          "replacement": "bun add --dev",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run",
+          "context": {
+            "before": [
+              "# install everything",
+              "npm install",
+              "npx prisma migrate deploy"
+            ],
+            "line": "yarn add --dev eslint",
+            "after": [
+              "pnpm dlx shadcn-ui init",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "src/server.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "shebang/node",
+          "category": "shebang",
+          "severity": "warn",
+          "confidence": 1.0,
+          "message": "shebang 'node' → 'bun'",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 19,
+          "original": "#!/usr/bin/env node",
+          "replacement": "#!/usr/bin/env bun",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/cli/run#shebangs",
+          "context": {
+            "before": [],
+            "line": "#!/usr/bin/env node",
+            "after": [
+              "import fs from \"fs\";",
+              "import { readFileSync } from \"fs\";",
+              "import path from \"path\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/bun-native",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.800000011920929,
+          "message": "remplacer 'uuid' par Bun.randomUUIDv7 — utiliser Bun.randomUUIDv7() ou crypto.randomUUID()",
+          "line": 9,
+          "col": 31,
+          "start_byte": 268,
+          "end_byte": 272,
+          "original": "uuid",
+          "replacement": "Bun.randomUUIDv7",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/runtime/modules",
+          "context": {
+            "before": [
+              "import fetch from \"node-fetch\";",
+              "import crypto from \"crypto\";",
+              "import Database from \"better-sqlite3\";"
+            ],
+            "line": "import { v4 as uuidv4 } from \"uuid\";",
+            "after": [
+              "import express from \"express\";",
+              "",
+              "const __filename = fileURLToPath(import.meta.url);"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/node-prefix",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "préfixer 'path' avec 'node:' (recommandé)",
+          "line": 4,
+          "col": 19,
+          "start_byte": 94,
+          "end_byte": 98,
+          "original": "path",
+          "replacement": "node:path",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+          "context": {
+            "before": [
+              "#!/usr/bin/env node",
+              "import fs from \"fs\";",
+              "import { readFileSync } from \"fs\";"
+            ],
+            "line": "import path from \"path\";",
+            "after": [
+              "import { fileURLToPath } from \"url\";",
+              "import fetch from \"node-fetch\";",
+              "import crypto from \"crypto\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/node-prefix",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "préfixer 'url' avec 'node:' (recommandé)",
+          "line": 5,
+          "col": 32,
+          "start_byte": 132,
+          "end_byte": 135,
+          "original": "url",
+          "replacement": "node:url",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+          "context": {
+            "before": [
+              "import fs from \"fs\";",
+              "import { readFileSync } from \"fs\";",
+              "import path from \"path\";"
+            ],
+            "line": "import { fileURLToPath } from \"url\";",
+            "after": [
+              "import fetch from \"node-fetch\";",
+              "import crypto from \"crypto\";",
+              "import Database from \"better-sqlite3\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/bun-native",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.800000011920929,
+          "message": "remplacer 'node-fetch' par <global fetch> — fetch est global dans Bun — supprimer l'import",
+          "line": 6,
+          "col": 20,
+          "start_byte": 157,
+          "end_byte": 167,
+          "original": "node-fetch",
+          "replacement": "<global fetch>",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/runtime/modules",
+          "context": {
+            "before": [
+              "import { readFileSync } from \"fs\";",
+              "import path from \"path\";",
+              "import { fileURLToPath } from \"url\";"
+            ],
+            "line": "import fetch from \"node-fetch\";",
+            "after": [
+              "import crypto from \"crypto\";",
+              "import Database from \"better-sqlite3\";",
+              "import { v4 as uuidv4 } from \"uuid\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/node-prefix",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "préfixer 'fs' avec 'node:' (recommandé)",
+          "line": 2,
+          "col": 17,
+          "start_byte": 36,
+          "end_byte": 38,
+          "original": "fs",
+          "replacement": "node:fs",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+          "context": {
+            "before": [
+              "#!/usr/bin/env node"
+            ],
+            "line": "import fs from \"fs\";",
+            "after": [
+              "import { readFileSync } from \"fs\";",
+              "import path from \"path\";",
+              "import { fileURLToPath } from \"url\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/node-prefix",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.949999988079071,
+          "message": "préfixer 'crypto' avec 'node:' (recommandé)",
+          "line": 7,
+          "col": 21,
+          "start_byte": 190,
+          "end_byte": 196,
+          "original": "crypto",
+          "replacement": "node:crypto",
+          "autofix": true,
+          "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+          "context": {
+            "before": [
+              "import path from \"path\";",
+              "import { fileURLToPath } from \"url\";",
+              "import fetch from \"node-fetch\";"
+            ],
+            "line": "import crypto from \"crypto\";",
+            "after": [
+              "import Database from \"better-sqlite3\";",
+              "import { v4 as uuidv4 } from \"uuid\";",
+              "import express from \"express\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "imports/bun-native",
+          "category": "imports",
+          "severity": "warn",
+          "confidence": 0.800000011920929,
+          "message": "remplacer 'better-sqlite3' par bun:sqlite — préférer bun:sqlite (API similaire)",
+          "line": 8,
+          "col": 23,
+          "start_byte": 221,
+          "end_byte": 235,
+          "original": "better-sqlite3",
+          "replacement": "bun:sqlite",
+          "autofix": false,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/runtime/modules",
+          "context": {
+            "before": [
+              "import { fileURLToPath } from \"url\";",
+              "import fetch from \"node-fetch\";",
+              "import crypto from \"crypto\";"
+            ],
+            "line": "import Database from \"better-sqlite3\";",
+            "after": [
+              "import { v4 as uuidv4 } from \"uuid\";",
+              "import express from \"express\";",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "api/fs-readFileSync",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.8500000238418579,
+          "message": "remplacer fs.readFileSync(path, 'utf8') par await Bun.file(path).text()",
+          "line": 15,
+          "col": 16,
+          "start_byte": 438,
+          "end_byte": 478,
+          "original": "fs.readFileSync(\"./config.json\", \"utf8\")",
+          "replacement": "await Bun.file(\"./config.json\").text()",
+          "autofix": true,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/guides/read-file/string",
+          "context": {
+            "before": [
+              "const __filename = fileURLToPath(import.meta.url);",
+              "const __dirname = path.dirname(fileURLToPath(import.meta.url));",
+              ""
+            ],
+            "line": "const config = fs.readFileSync(\"./config.json\", \"utf8\");",
+            "after": [
+              "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now() }));",
+              "",
+              "const hash = crypto.createHash(\"sha256\").update(\"hello\").digest(\"hex\");"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/fs-writeFileSync",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.8500000238418579,
+          "message": "remplacer fs.writeFileSync(path, data) par await Bun.write(path, data)",
+          "line": 16,
+          "col": 1,
+          "start_byte": 480,
+          "end_byte": 544,
+          "original": "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now()",
+          "replacement": "await Bun.write(\"./last.json\", JSON.stringify({ run: Date.now()",
+          "autofix": true,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/guides/write-file/basic",
+          "context": {
+            "before": [
+              "const __dirname = path.dirname(fileURLToPath(import.meta.url));",
+              "",
+              "const config = fs.readFileSync(\"./config.json\", \"utf8\");"
+            ],
+            "line": "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now() }));",
+            "after": [
+              "",
+              "const hash = crypto.createHash(\"sha256\").update(\"hello\").digest(\"hex\");",
+              "const id = uuidv4();"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 23,
+          "col": 12,
+          "start_byte": 740,
+          "end_byte": 756,
+          "original": "process.env.PORT",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "",
+              "const app = express();",
+              "app.get(\"/\", (req, res) => res.send(`hello ${id} ${hash}`));"
+            ],
+            "line": "app.listen(process.env.PORT || 3000);",
+            "after": [
+              "",
+              "const res = await fetch(\"https://example.com\");",
+              "console.log(res.status, __dirname, __filename);"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/dirname-esm",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.8500000238418579,
+          "message": "dans un ESM Bun, utiliser directement import.meta.dir (ou import.meta.dirname)",
+          "line": 13,
+          "col": 1,
+          "start_byte": 358,
+          "end_byte": 420,
+          "original": "const __dirname = path.dirname(fileURLToPath(import.meta.url))",
+          "replacement": "const __dirname = import.meta.dir",
+          "autofix": true,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/api/import-meta",
+          "context": {
+            "before": [
+              "import express from \"express\";",
+              "",
+              "const __filename = fileURLToPath(import.meta.url);"
+            ],
+            "line": "const __dirname = path.dirname(fileURLToPath(import.meta.url));",
+            "after": [
+              "",
+              "const config = fs.readFileSync(\"./config.json\", \"utf8\");",
+              "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now() }));"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/filename-esm",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.8500000238418579,
+          "message": "dans un ESM Bun, utiliser import.meta.path (ou import.meta.filename)",
+          "line": 12,
+          "col": 1,
+          "start_byte": 307,
+          "end_byte": 356,
+          "original": "const __filename = fileURLToPath(import.meta.url)",
+          "replacement": "const __filename = import.meta.path",
+          "autofix": true,
+          "aggressive": true,
+          "docs_url": "https://bun.sh/docs/api/import-meta",
+          "context": {
+            "before": [
+              "import { v4 as uuidv4 } from \"uuid\";",
+              "import express from \"express\";",
+              ""
+            ],
+            "line": "const __filename = fileURLToPath(import.meta.url);",
+            "after": [
+              "const __dirname = path.dirname(fileURLToPath(import.meta.url));",
+              "",
+              "const config = fs.readFileSync(\"./config.json\", \"utf8\");"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/crypto-createHash",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.hash / Bun.CryptoHasher est plus rapide (voir runtime/hashing)",
+          "line": 18,
+          "col": 14,
+          "start_byte": 564,
+          "end_byte": 591,
+          "original": "crypto.createHash(\"sha256\")",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/hashing",
+          "context": {
+            "before": [
+              "const config = fs.readFileSync(\"./config.json\", \"utf8\");",
+              "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now() }));",
+              ""
+            ],
+            "line": "const hash = crypto.createHash(\"sha256\").update(\"hello\").digest(\"hex\");",
+            "after": [
+              "const id = uuidv4();",
+              "",
+              "const app = express();"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/fileURLToPath",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.fileURLToPath() est équivalent (ou utiliser import.meta.dir/path)",
+          "line": 12,
+          "col": 20,
+          "start_byte": 326,
+          "end_byte": 340,
+          "original": "fileURLToPath(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/import-meta",
+          "context": {
+            "before": [
+              "import { v4 as uuidv4 } from \"uuid\";",
+              "import express from \"express\";",
+              ""
+            ],
+            "line": "const __filename = fileURLToPath(import.meta.url);",
+            "after": [
+              "const __dirname = path.dirname(fileURLToPath(import.meta.url));",
+              "",
+              "const config = fs.readFileSync(\"./config.json\", \"utf8\");"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/fileURLToPath",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.fileURLToPath() est équivalent (ou utiliser import.meta.dir/path)",
+          "line": 13,
+          "col": 32,
+          "start_byte": 389,
+          "end_byte": 403,
+          "original": "fileURLToPath(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/import-meta",
+          "context": {
+            "before": [
+              "import express from \"express\";",
+              "",
+              "const __filename = fileURLToPath(import.meta.url);"
+            ],
+            "line": "const __dirname = path.dirname(fileURLToPath(import.meta.url));",
+            "after": [
+              "",
+              "const config = fs.readFileSync(\"./config.json\", \"utf8\");",
+              "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now() }));"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/uuid-v4",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "crypto.randomUUID() (global) ou Bun.randomUUIDv7() évite la dépendance uuid",
+          "line": 19,
+          "col": 12,
+          "start_byte": 634,
+          "end_byte": 642,
+          "original": "uuidv4()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/reference/bun/randomUUIDv7",
+          "context": {
+            "before": [
+              "fs.writeFileSync(\"./last.json\", JSON.stringify({ run: Date.now() }));",
+              "",
+              "const hash = crypto.createHash(\"sha256\").update(\"hello\").digest(\"hex\");"
+            ],
+            "line": "const id = uuidv4();",
+            "after": [
+              "",
+              "const app = express();",
+              "app.get(\"/\", (req, res) => res.send(`hello ${id} ${hash}`));"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/express-app",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.5,
+          "message": "Bun.serve() est un serveur HTTP natif zéro-config (fetch-based, routing intégré)",
+          "line": 21,
+          "col": 1,
+          "start_byte": 645,
+          "end_byte": 666,
+          "original": "const app = express()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem/express",
+          "context": {
+            "before": [
+              "const hash = crypto.createHash(\"sha256\").update(\"hello\").digest(\"hex\");",
+              "const id = uuidv4();",
+              ""
+            ],
+            "line": "const app = express();",
+            "after": [
+              "app.get(\"/\", (req, res) => res.send(`hello ${id} ${hash}`));",
+              "app.listen(process.env.PORT || 3000);",
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

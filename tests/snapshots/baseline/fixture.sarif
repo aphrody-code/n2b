@@ -1,0 +1,2363 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "node2bun",
+          "version": "0.2.0",
+          "informationUri": "https://github.com/aphrody-code/n2b",
+          "rules": [
+            {
+              "id": "api/crypto-createHash",
+              "name": "api/crypto-createHash",
+              "shortDescription": {
+                "text": "api/crypto-createHash"
+              },
+              "helpUri": "https://bun.sh/docs/api/hashing",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/dirname-esm",
+              "name": "api/dirname-esm",
+              "shortDescription": {
+                "text": "api/dirname-esm"
+              },
+              "helpUri": "https://bun.sh/docs/api/import-meta",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/express-app",
+              "name": "api/express-app",
+              "shortDescription": {
+                "text": "api/express-app"
+              },
+              "helpUri": "https://bun.sh/guides/ecosystem/express",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/fileURLToPath",
+              "name": "api/fileURLToPath",
+              "shortDescription": {
+                "text": "api/fileURLToPath"
+              },
+              "helpUri": "https://bun.sh/docs/api/import-meta",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/filename-esm",
+              "name": "api/filename-esm",
+              "shortDescription": {
+                "text": "api/filename-esm"
+              },
+              "helpUri": "https://bun.sh/docs/api/import-meta",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/fs-readFileSync",
+              "name": "api/fs-readFileSync",
+              "shortDescription": {
+                "text": "api/fs-readFileSync"
+              },
+              "helpUri": "https://bun.sh/guides/read-file/string",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/fs-writeFileSync",
+              "name": "api/fs-writeFileSync",
+              "shortDescription": {
+                "text": "api/fs-writeFileSync"
+              },
+              "helpUri": "https://bun.sh/guides/write-file/basic",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/process-env",
+              "name": "api/process-env",
+              "shortDescription": {
+                "text": "api/process-env"
+              },
+              "helpUri": "https://bun.sh/docs/runtime/env",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "api/uuid-v4",
+              "name": "api/uuid-v4",
+              "shortDescription": {
+                "text": "api/uuid-v4"
+              },
+              "helpUri": "https://bun.sh/reference/bun/randomUUIDv7",
+              "properties": {
+                "category": "api"
+              }
+            },
+            {
+              "id": "ci/node-version",
+              "name": "ci/node-version",
+              "shortDescription": {
+                "text": "ci/node-version"
+              },
+              "helpUri": "https://github.com/oven-sh/setup-bun",
+              "properties": {
+                "category": "ci"
+              }
+            },
+            {
+              "id": "ci/setup-node",
+              "name": "ci/setup-node",
+              "shortDescription": {
+                "text": "ci/setup-node"
+              },
+              "helpUri": "https://github.com/oven-sh/setup-bun",
+              "properties": {
+                "category": "ci"
+              }
+            },
+            {
+              "id": "cli/npm-ci",
+              "name": "cli/npm-ci",
+              "shortDescription": {
+                "text": "cli/npm-ci"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/npm-i",
+              "name": "cli/npm-i",
+              "shortDescription": {
+                "text": "cli/npm-i"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/npm-install",
+              "name": "cli/npm-install",
+              "shortDescription": {
+                "text": "cli/npm-install"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/npm-run",
+              "name": "cli/npm-run",
+              "shortDescription": {
+                "text": "cli/npm-run"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/npm-test",
+              "name": "cli/npm-test",
+              "shortDescription": {
+                "text": "cli/npm-test"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/npx",
+              "name": "cli/npx",
+              "shortDescription": {
+                "text": "cli/npx"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/pnpm-add-D",
+              "name": "cli/pnpm-add-D",
+              "shortDescription": {
+                "text": "cli/pnpm-add-D"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/pnpm-dlx",
+              "name": "cli/pnpm-dlx",
+              "shortDescription": {
+                "text": "cli/pnpm-dlx"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/yarn-add-dev",
+              "name": "cli/yarn-add-dev",
+              "shortDescription": {
+                "text": "cli/yarn-add-dev"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "cli/yarn-run",
+              "name": "cli/yarn-run",
+              "shortDescription": {
+                "text": "cli/yarn-run"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run",
+              "properties": {
+                "category": "cli"
+              }
+            },
+            {
+              "id": "ecosystem/express",
+              "name": "ecosystem/express",
+              "shortDescription": {
+                "text": "ecosystem/express"
+              },
+              "helpUri": "https://bun.sh/guides/ecosystem",
+              "properties": {
+                "category": "ecosystem"
+              }
+            },
+            {
+              "id": "imports/bun-native",
+              "name": "imports/bun-native",
+              "shortDescription": {
+                "text": "imports/bun-native"
+              },
+              "helpUri": "https://bun.sh/docs/runtime/modules",
+              "properties": {
+                "category": "imports"
+              }
+            },
+            {
+              "id": "imports/node-prefix",
+              "name": "imports/node-prefix",
+              "shortDescription": {
+                "text": "imports/node-prefix"
+              },
+              "helpUri": "https://bun.sh/docs/runtime/nodejs-apis",
+              "properties": {
+                "category": "imports"
+              }
+            },
+            {
+              "id": "lock/rival",
+              "name": "lock/rival",
+              "shortDescription": {
+                "text": "lock/rival"
+              },
+              "helpUri": "https://bun.sh/docs/install/lockfile",
+              "properties": {
+                "category": "lockfile"
+              }
+            },
+            {
+              "id": "pkg/engines-pm",
+              "name": "pkg/engines-pm",
+              "shortDescription": {
+                "text": "pkg/engines-pm"
+              },
+              "helpUri": "https://bun.sh/docs/cli/install",
+              "properties": {
+                "category": "package"
+              }
+            },
+            {
+              "id": "pkg/package-manager",
+              "name": "pkg/package-manager",
+              "shortDescription": {
+                "text": "pkg/package-manager"
+              },
+              "helpUri": "https://bun.sh/docs/cli/install",
+              "properties": {
+                "category": "package"
+              }
+            },
+            {
+              "id": "pkg/redundant-dep",
+              "name": "pkg/redundant-dep",
+              "shortDescription": {
+                "text": "pkg/redundant-dep"
+              },
+              "helpUri": "https://bun.sh/docs/cli/install",
+              "properties": {
+                "category": "package"
+              }
+            },
+            {
+              "id": "shebang/node",
+              "name": "shebang/node",
+              "shortDescription": {
+                "text": "shebang/node"
+              },
+              "helpUri": "https://bun.sh/docs/cli/run#shebangs",
+              "properties": {
+                "category": "shebang"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "ci/setup-node",
+          "level": "warning",
+          "message": {
+            "text": "actions/setup-node → oven-sh/setup-bun@v2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 9,
+                  "byteOffset": 114,
+                  "byteLength": 27
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "ci",
+            "confidence": 0.8999999761581421,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: uses: oven-sh/setup-bun@v2"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": ".github/workflows/ci.yml"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 114,
+                        "byteLength": 27
+                      },
+                      "insertedContent": {
+                        "text": "uses: oven-sh/setup-bun@v2"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "ci/node-version",
+          "level": "warning",
+          "message": {
+            "text": "remplacer 'node-version' par 'bun-version: latest'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 11,
+                  "byteOffset": 166,
+                  "byteLength": 18
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "ci",
+            "confidence": 0.8999999761581421,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun-version: latest"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": ".github/workflows/ci.yml"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 166,
+                        "byteLength": 18
+                      },
+                      "insertedContent": {
+                        "text": "bun-version: latest"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-ci",
+          "level": "warning",
+          "message": {
+            "text": "npm ci → bun install --frozen-lockfile"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 14,
+                  "byteOffset": 198,
+                  "byteLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun install --frozen-lockfile"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": ".github/workflows/ci.yml"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 198,
+                        "byteLength": 6
+                      },
+                      "insertedContent": {
+                        "text": "bun install --frozen-lockfile"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-run",
+          "level": "warning",
+          "message": {
+            "text": "npm run → bun run"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 14,
+                  "byteOffset": 221,
+                  "byteLength": 8
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun run "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": ".github/workflows/ci.yml"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 221,
+                        "byteLength": 8
+                      },
+                      "insertedContent": {
+                        "text": "bun run "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-test",
+          "level": "warning",
+          "message": {
+            "text": "npm test → bun test"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 14,
+                  "byteOffset": 241,
+                  "byteLength": 8
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun test"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": ".github/workflows/ci.yml"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 241,
+                        "byteLength": 8
+                      },
+                      "insertedContent": {
+                        "text": "bun test"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "lock/rival",
+          "level": "warning",
+          "message": {
+            "text": "lockfile concurrent 'package-lock.json' présent — exécuter 'bun install' puis supprimer ce fichier"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package-lock.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 17
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "lockfile",
+            "confidence": 1.0,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "cli/npm-run",
+          "level": "warning",
+          "message": {
+            "text": "npm run → bun run"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 8
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun run "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 8
+                      },
+                      "insertedContent": {
+                        "text": "bun run "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npx",
+          "level": "warning",
+          "message": {
+            "text": "npx → bunx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 18,
+                  "byteOffset": 17,
+                  "byteLength": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bunx "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 17,
+                        "byteLength": 4
+                      },
+                      "insertedContent": {
+                        "text": "bunx "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-test",
+          "level": "warning",
+          "message": {
+            "text": "npm test → bun test"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 8
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun test"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 8
+                      },
+                      "insertedContent": {
+                        "text": "bun test"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-i",
+          "level": "warning",
+          "message": {
+            "text": "npm i → bun install"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun install"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 5
+                      },
+                      "insertedContent": {
+                        "text": "bun install"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-run",
+          "level": "warning",
+          "message": {
+            "text": "npm run → bun run"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 16,
+                  "byteOffset": 15,
+                  "byteLength": 8
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun run "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 15,
+                        "byteLength": 8
+                      },
+                      "insertedContent": {
+                        "text": "bun run "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npm-ci",
+          "level": "warning",
+          "message": {
+            "text": "npm ci → bun install --frozen-lockfile"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun install --frozen-lockfile"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 6
+                      },
+                      "insertedContent": {
+                        "text": "bun install --frozen-lockfile"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/yarn-run",
+          "level": "warning",
+          "message": {
+            "text": "yarn run → bun run"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 34,
+                  "byteOffset": 33,
+                  "byteLength": 9
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun run "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 33,
+                        "byteLength": 9
+                      },
+                      "insertedContent": {
+                        "text": "bun run "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/pnpm-add-D",
+          "level": "warning",
+          "message": {
+            "text": "pnpm add -D → bun add --dev"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 11
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun add --dev"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "bun add --dev"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/pnpm-dlx",
+          "level": "warning",
+          "message": {
+            "text": "pnpm dlx → bunx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 25,
+                  "byteOffset": 24,
+                  "byteLength": 9
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bunx "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 24,
+                        "byteLength": 9
+                      },
+                      "insertedContent": {
+                        "text": "bunx "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "pkg/package-manager",
+          "level": "warning",
+          "message": {
+            "text": "packageManager='pnpm@9.0.0' — remplacer par 'bun@<version>' ou supprimer"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 10
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "pkg/engines-pm",
+          "level": "warning",
+          "message": {
+            "text": "engines.{npm,pnpm,yarn} est superflu avec Bun — utiliser 'engines.bun'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 28
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "pkg/redundant-dep",
+          "level": "warning",
+          "message": {
+            "text": "dépendance 'dotenv' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "pkg/redundant-dep",
+          "level": "warning",
+          "message": {
+            "text": "dépendance 'node-fetch' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 10
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "ecosystem/express",
+          "level": "note",
+          "message": {
+            "text": "Express détecté — guide d'intégration Bun : https://bun.sh/guides/ecosystem/express"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "ecosystem",
+            "confidence": 0.75,
+            "autofix": false
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: https://bun.sh/guides/ecosystem/express"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "package.json"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 7
+                      },
+                      "insertedContent": {
+                        "text": "https://bun.sh/guides/ecosystem/express"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "pkg/redundant-dep",
+          "level": "warning",
+          "message": {
+            "text": "dépendance 'better-sqlite3' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 14
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "pkg/redundant-dep",
+          "level": "warning",
+          "message": {
+            "text": "dépendance 'uuid' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "pkg/redundant-dep",
+          "level": "warning",
+          "message": {
+            "text": "dépendance 'ts-node' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "pkg/redundant-dep",
+          "level": "warning",
+          "message": {
+            "text": "dépendance 'rimraf' redondante avec Bun (voir Bun.file / Bun.env / fetch global / bun:sqlite / bun test)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "package",
+            "confidence": 0.8999999761581421,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "cli/npm-install",
+          "level": "warning",
+          "message": {
+            "text": "npm install → bun install"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/install.sh"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "byteOffset": 40,
+                  "byteLength": 11
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun install"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "scripts/install.sh"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 40,
+                        "byteLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "bun install"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/npx",
+          "level": "warning",
+          "message": {
+            "text": "npx → bunx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/install.sh"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "byteOffset": 52,
+                  "byteLength": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bunx "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "scripts/install.sh"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 52,
+                        "byteLength": 4
+                      },
+                      "insertedContent": {
+                        "text": "bunx "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/pnpm-dlx",
+          "level": "warning",
+          "message": {
+            "text": "pnpm dlx → bunx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/install.sh"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "byteOffset": 100,
+                  "byteLength": 9
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bunx "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "scripts/install.sh"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 100,
+                        "byteLength": 9
+                      },
+                      "insertedContent": {
+                        "text": "bunx "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "cli/yarn-add-dev",
+          "level": "warning",
+          "message": {
+            "text": "yarn add --dev → bun add --dev"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/install.sh"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "byteOffset": 78,
+                  "byteLength": 14
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "cli",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun add --dev"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "scripts/install.sh"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 78,
+                        "byteLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "bun add --dev"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "shebang/node",
+          "level": "warning",
+          "message": {
+            "text": "shebang 'node' → 'bun'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "byteOffset": 0,
+                  "byteLength": 19
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "shebang",
+            "confidence": 1.0,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: #!/usr/bin/env bun"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 0,
+                        "byteLength": 19
+                      },
+                      "insertedContent": {
+                        "text": "#!/usr/bin/env bun"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/bun-native",
+          "level": "warning",
+          "message": {
+            "text": "remplacer 'uuid' par Bun.randomUUIDv7 — utiliser Bun.randomUUIDv7() ou crypto.randomUUID()"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 31,
+                  "byteOffset": 268,
+                  "byteLength": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.800000011920929,
+            "autofix": false
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: Bun.randomUUIDv7"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 268,
+                        "byteLength": 4
+                      },
+                      "insertedContent": {
+                        "text": "Bun.randomUUIDv7"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/node-prefix",
+          "level": "warning",
+          "message": {
+            "text": "préfixer 'path' avec 'node:' (recommandé)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 19,
+                  "byteOffset": 94,
+                  "byteLength": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: node:path"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 94,
+                        "byteLength": 4
+                      },
+                      "insertedContent": {
+                        "text": "node:path"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/node-prefix",
+          "level": "warning",
+          "message": {
+            "text": "préfixer 'url' avec 'node:' (recommandé)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 32,
+                  "byteOffset": 132,
+                  "byteLength": 3
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: node:url"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 132,
+                        "byteLength": 3
+                      },
+                      "insertedContent": {
+                        "text": "node:url"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/bun-native",
+          "level": "warning",
+          "message": {
+            "text": "remplacer 'node-fetch' par <global fetch> — fetch est global dans Bun — supprimer l'import"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 20,
+                  "byteOffset": 157,
+                  "byteLength": 10
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.800000011920929,
+            "autofix": false
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: <global fetch>"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 157,
+                        "byteLength": 10
+                      },
+                      "insertedContent": {
+                        "text": "<global fetch>"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/node-prefix",
+          "level": "warning",
+          "message": {
+            "text": "préfixer 'fs' avec 'node:' (recommandé)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 17,
+                  "byteOffset": 36,
+                  "byteLength": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: node:fs"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 36,
+                        "byteLength": 2
+                      },
+                      "insertedContent": {
+                        "text": "node:fs"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/node-prefix",
+          "level": "warning",
+          "message": {
+            "text": "préfixer 'crypto' avec 'node:' (recommandé)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 21,
+                  "byteOffset": 190,
+                  "byteLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.949999988079071,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: node:crypto"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 190,
+                        "byteLength": 6
+                      },
+                      "insertedContent": {
+                        "text": "node:crypto"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "imports/bun-native",
+          "level": "warning",
+          "message": {
+            "text": "remplacer 'better-sqlite3' par bun:sqlite — préférer bun:sqlite (API similaire)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 23,
+                  "byteOffset": 221,
+                  "byteLength": 14
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "imports",
+            "confidence": 0.800000011920929,
+            "autofix": false
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: bun:sqlite"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 221,
+                        "byteLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "bun:sqlite"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "api/fs-readFileSync",
+          "level": "warning",
+          "message": {
+            "text": "remplacer fs.readFileSync(path, 'utf8') par await Bun.file(path).text()"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 16,
+                  "byteOffset": 438,
+                  "byteLength": 40
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.8500000238418579,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: await Bun.file(\"./config.json\").text()"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 438,
+                        "byteLength": 40
+                      },
+                      "insertedContent": {
+                        "text": "await Bun.file(\"./config.json\").text()"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "api/fs-writeFileSync",
+          "level": "warning",
+          "message": {
+            "text": "remplacer fs.writeFileSync(path, data) par await Bun.write(path, data)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 1,
+                  "byteOffset": 480,
+                  "byteLength": 64
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.8500000238418579,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: await Bun.write(\"./last.json\", JSON.stringify({ run: Date.now()"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 480,
+                        "byteLength": 64
+                      },
+                      "insertedContent": {
+                        "text": "await Bun.write(\"./last.json\", JSON.stringify({ run: Date.now()"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "api/process-env",
+          "level": "note",
+          "message": {
+            "text": "Bun.env est un alias plus court de process.env (préférence stylistique)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 12,
+                  "byteOffset": 740,
+                  "byteLength": 16
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.30000001192092896,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "api/dirname-esm",
+          "level": "warning",
+          "message": {
+            "text": "dans un ESM Bun, utiliser directement import.meta.dir (ou import.meta.dirname)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1,
+                  "byteOffset": 358,
+                  "byteLength": 62
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.8500000238418579,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: const __dirname = import.meta.dir"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 358,
+                        "byteLength": 62
+                      },
+                      "insertedContent": {
+                        "text": "const __dirname = import.meta.dir"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "api/filename-esm",
+          "level": "warning",
+          "message": {
+            "text": "dans un ESM Bun, utiliser import.meta.path (ou import.meta.filename)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 1,
+                  "byteOffset": 307,
+                  "byteLength": 49
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.8500000238418579,
+            "autofix": true
+          },
+          "fixes": [
+            {
+              "description": {
+                "text": "Replace with: const __filename = import.meta.path"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/server.ts"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "byteOffset": 307,
+                        "byteLength": 49
+                      },
+                      "insertedContent": {
+                        "text": "const __filename = import.meta.path"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "api/crypto-createHash",
+          "level": "warning",
+          "message": {
+            "text": "Bun.hash / Bun.CryptoHasher est plus rapide (voir runtime/hashing)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 14,
+                  "byteOffset": 564,
+                  "byteLength": 27
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.5,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "api/fileURLToPath",
+          "level": "warning",
+          "message": {
+            "text": "Bun.fileURLToPath() est équivalent (ou utiliser import.meta.dir/path)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 20,
+                  "byteOffset": 326,
+                  "byteLength": 14
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.5,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "api/fileURLToPath",
+          "level": "warning",
+          "message": {
+            "text": "Bun.fileURLToPath() est équivalent (ou utiliser import.meta.dir/path)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 32,
+                  "byteOffset": 389,
+                  "byteLength": 14
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.5,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "api/uuid-v4",
+          "level": "warning",
+          "message": {
+            "text": "crypto.randomUUID() (global) ou Bun.randomUUIDv7() évite la dépendance uuid"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 12,
+                  "byteOffset": 634,
+                  "byteLength": 8
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.5,
+            "autofix": false
+          }
+        },
+        {
+          "ruleId": "api/express-app",
+          "level": "note",
+          "message": {
+            "text": "Bun.serve() est un serveur HTTP natif zéro-config (fetch-based, routing intégré)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/server.ts"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 1,
+                  "byteOffset": 645,
+                  "byteLength": 21
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "api",
+            "confidence": 0.5,
+            "autofix": false
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "workingDirectory": {
+            "uri": "/home/ubuntu/rsbun/n2b/test/fixture"
+          }
+        }
+      ]
+    }
+  ]
+}
