@@ -1,0 +1,166 @@
+{
+  "version": 2,
+  "plugins": {
+    "commit-commands@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/commit-commands/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-17T14:35:37.276Z"
+      }
+    ],
+    "context7@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/context7/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-18T21:38:58.422Z"
+      }
+    ],
+    "discord@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rpb-dashboard",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/discord/0.0.4",
+        "version": "0.0.4",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-11T09:56:09.080Z"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rg",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-12T19:33:12.472Z"
+      }
+    ],
+    "agent-sdk-dev@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rg",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/agent-sdk-dev/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-12T19:33:12.472Z"
+      }
+    ],
+    "claude-code-setup@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rsbun",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/claude-code-setup/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-18T16:59:30.664Z"
+      },
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rsbun/n2b",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/claude-code-setup/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-18T08:25:35.069Z",
+        "lastUpdated": "2026-04-18T08:25:35.069Z"
+      }
+    ],
+    "typescript-lsp@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rpb-dashboard",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/typescript-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T09:56:09.080Z",
+        "lastUpdated": "2026-04-11T09:56:09.080Z"
+      }
+    ],
+    "github@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/github/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-11T14:02:14.630Z",
+        "lastUpdated": "2026-04-18T21:38:58.422Z"
+      },
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/gnu-rust/nextjs",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/github/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-17T01:03:33.960Z",
+        "lastUpdated": "2026-04-17T01:03:33.960Z"
+      }
+    ],
+    "clangd-lsp@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rg",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/clangd-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T14:02:14.630Z",
+        "lastUpdated": "2026-04-11T14:02:14.630Z"
+      }
+    ],
+    "claude-md-management@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rg",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/claude-md-management/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T14:02:14.630Z",
+        "lastUpdated": "2026-04-11T14:02:14.630Z"
+      }
+    ],
+    "csharp-lsp@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rg",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/csharp-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T14:02:14.630Z",
+        "lastUpdated": "2026-04-11T14:02:14.630Z"
+      }
+    ],
+    "rust-analyzer-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T17:09:18.459Z",
+        "lastUpdated": "2026-04-17T14:35:37.276Z"
+      }
+    ],
+    "web3d-agent@custom-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/custom-plugins/web3d-agent/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-16T15:41:00.008Z",
+        "lastUpdated": "2026-04-17T14:35:37.276Z"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rsbun",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/claude-plugins-official/frontend-design/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-17T01:11:19.662Z",
+        "lastUpdated": "2026-04-18T20:12:07.654Z"
+      }
+    ],
+    "bun-agent@custom-plugins": [
+      {
+        "scope": "project",
+        "projectPath": "/home/ubuntu/rpb-dashboard",
+        "installPath": "/home/ubuntu/.claude/plugins/cache/custom-plugins/bun-agent/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-17T05:51:04.893Z",
+        "lastUpdated": "2026-04-17T05:51:04.893Z"
+      }
+    ]
+  }
+}
