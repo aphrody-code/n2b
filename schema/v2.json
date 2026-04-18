@@ -1,41 +1,53 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json",
-  "title": "n2b Report Schema v2",
-  "description": "Payload schema for n2b scan results (JSON / JSONL / JSON reports).",
+  "title": "N2bReport",
+  "description": "Payload schema for n2b scan results (JSON reports). Mirrors the JSON produced by `n2b --report=json`. JSONL mode wraps each object with a `type` discriminator (\"meta\" for the header, \"finding\" for subsequent lines).",
   "type": "object",
-  "required": ["version", "mode", "root", "files"],
+  "required": [
+    "schema_version",
+    "tool",
+    "version",
+    "mode",
+    "root",
+    "files_scanned",
+    "findings_total",
+    "files"
+  ],
+  "additionalProperties": false,
   "properties": {
-    "version": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to this schema."
+    },
+    "schema_version": {
       "type": "integer",
-      "const": 2,
-      "description": "Schema version — bumped on breaking changes."
+      "enum": [2],
+      "description": "Schema version, bumped on breaking changes."
     },
     "tool": {
       "type": "string",
-      "const": "n2b"
+      "description": "Tool name (historically \"node2bun\")."
     },
-    "tool_version": {
+    "version": {
       "type": "string",
-      "description": "n2b binary version (semver)."
+      "description": "n2b binary semver."
     },
     "mode": {
-      "type": "string",
-      "enum": ["check", "fix", "aggressive"]
+      "$ref": "#/definitions/Mode"
     },
     "root": {
       "type": "string",
       "description": "Absolute path of the scanned root."
     },
-    "summary": {
-      "type": "object",
-      "properties": {
-        "files_scanned": { "type": "integer" },
-        "files_modified": { "type": "integer" },
-        "errors": { "type": "integer" },
-        "warns": { "type": "integer" },
-        "infos": { "type": "integer" }
-      }
+    "files_scanned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "findings_total": {
+      "type": "integer",
+      "minimum": 0
     },
     "files": {
       "type": "array",
@@ -43,75 +55,118 @@
     }
   },
   "definitions": {
+    "Mode": {
+      "type": "string",
+      "enum": ["check", "fix", "aggressive"]
+    },
     "Severity": {
       "type": "string",
       "enum": ["error", "warn", "info"]
     },
+    "FileFix": {
+      "type": "object",
+      "required": ["path", "changed", "findings"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Relative path to the scanned root."
+        },
+        "changed": {
+          "type": "boolean",
+          "description": "True if the file content differs from its pre-scan state (only in --fix / --aggressive / --migrate modes)."
+        },
+        "findings": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Finding" }
+        }
+      }
+    },
     "Finding": {
       "type": "object",
-      "required": ["ruleId", "severity", "message", "line", "col", "autofix"],
+      "required": [
+        "rule_id",
+        "category",
+        "severity",
+        "confidence",
+        "message",
+        "line",
+        "col",
+        "start_byte",
+        "end_byte",
+        "original",
+        "autofix",
+        "docs_url",
+        "context"
+      ],
+      "additionalProperties": false,
       "properties": {
-        "file": { "type": "string" },
-        "line": { "type": "integer", "minimum": 1 },
-        "col": { "type": "integer", "minimum": 1 },
-        "ruleId": {
+        "rule_id": {
           "type": "string",
-          "description": "Rule identifier — slash-separated category/name (e.g. 'api/fs-readFileSync')."
+          "description": "Rule identifier — slash-separated category/name (e.g. 'api/fs-readFileSync'). Immutable: consumers parse this."
         },
         "category": {
           "type": "string",
-          "description": "Top-level category derived from ruleId prefix."
+          "description": "Top-level category derived from rule_id prefix."
         },
         "severity": { "$ref": "#/definitions/Severity" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Heuristic confidence 0..1."
+        },
         "message": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "col": { "type": "integer", "minimum": 1 },
+        "start_byte": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Byte offset into the scanned file of the finding start (UTF-8)."
+        },
+        "end_byte": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Byte offset into the scanned file of the finding end (UTF-8)."
+        },
         "original": {
           "type": "string",
           "description": "Exact text that matched (from source)."
         },
         "replacement": {
-          "type": ["string", "null"],
-          "description": "Suggested replacement, when applicable."
+          "type": "string",
+          "description": "Suggested replacement. Omitted entirely when no replacement is known."
         },
         "autofix": {
           "type": "boolean",
           "description": "True when the rule can be auto-applied by --fix."
         },
         "aggressive": {
-          "type": ["boolean", "null"],
-          "description": "True when the rule is applied by --aggressive only."
+          "type": "boolean",
+          "description": "True when the rule is only applied by --aggressive. Omitted when false/unset."
         },
         "docs_url": {
           "type": "string",
           "format": "uri",
           "description": "Stable Bun (or external) docs URL for this rule."
         },
-        "confidence": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1,
-          "description": "Heuristic confidence 0.0..1.0."
-        },
-        "context": {
-          "type": "object",
-          "description": "3 lines before + line + 3 lines after, for AI consumers.",
-          "properties": {
-            "before": { "type": "array", "items": { "type": "string" } },
-            "line":   { "type": "string" },
-            "after":  { "type": "array", "items": { "type": "string" } }
-          }
-        }
+        "context": { "$ref": "#/definitions/Context" }
       }
     },
-    "FileFix": {
+    "Context": {
       "type": "object",
-      "required": ["file", "findings"],
+      "required": ["before", "line", "after"],
+      "additionalProperties": false,
+      "description": "Source context around a finding: up to 3 lines before, the finding's line, up to 3 lines after. Consumed by LLM/IDE integrations.",
       "properties": {
-        "file":     { "type": "string" },
-        "before":   { "type": "string" },
-        "after":    { "type": "string" },
-        "findings": {
+        "before": {
           "type": "array",
-          "items": { "$ref": "#/definitions/Finding" }
+          "items": { "type": "string" }
+        },
+        "line": { "type": "string" },
+        "after": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     }

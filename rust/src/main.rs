@@ -12,6 +12,9 @@ mod report;
 mod rules;
 mod run;
 mod scanners;
+mod schema;
+#[cfg(test)]
+mod schema_test;
 mod types;
 mod util;
 mod wasm_cmd;
