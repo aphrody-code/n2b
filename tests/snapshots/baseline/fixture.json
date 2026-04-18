@@ -2,7 +2,7 @@
   "schema_version": 2,
   "$schema": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json",
   "tool": "node2bun",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "mode": "check",
   "root": "/home/ubuntu/rsbun/n2b/test/fixture",
   "files_scanned": 5,
