@@ -2,6 +2,7 @@ use anyhow::{bail, Context, Result};
 use colored::Colorize;
 use once_cell::sync::Lazy;
 use regex::Regex;
+use reqwest::StatusCode;
 use serde_json::Value;
 use std::path::Path;
 
@@ -161,6 +162,9 @@ pub struct AuditResult {
     pub issues: Vec<Hit>,
     pub pulls: Vec<Hit>,
     pub query_terms: Vec<String>,
+    /// Avertissements non-bloquants collectés pendant l'audit
+    /// (ex. : rate-limit épuisé, requête rejetée par l'API).
+    pub notes: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -202,6 +206,44 @@ pub async fn resolve_upstream(gh: &octocrab::Octocrab, repo: Repo) -> Repo {
     }
 }
 
+/// Vérifie le quota restant pour l'endpoint `search` (limite GitHub : 30/min
+/// avec token, 10/min sans). Retourne `Ok(remaining)`, ou `Ok(usize::MAX)` si
+/// l'appel échoue (on laisse la suite tenter sa chance plutôt que bloquer).
+async fn check_search_rate(gh: &octocrab::Octocrab) -> usize {
+    match gh.ratelimit().get().await {
+        Ok(rl) => rl.resources.search.remaining,
+        Err(_) => usize::MAX,
+    }
+}
+
+/// Classifie une erreur octocrab en catégorie exploitable sans paniquer.
+#[derive(Debug, PartialEq)]
+enum SearchError {
+    /// HTTP 403 — rate-limit épuisé ou accès interdit.
+    RateLimited,
+    /// HTTP 422 — requête mal formée ou syntaxe de recherche invalide.
+    UnprocessableEntity,
+    /// Toute autre erreur réseau ou API.
+    Other(String),
+}
+
+fn classify_octocrab_error(err: &anyhow::Error) -> SearchError {
+    // octocrab expose ses propres erreurs via la chaîne `source`. On traverse
+    // la chaîne avec `downcast_ref` sans consommer `err`.
+    if let Some(octo_err) = err.downcast_ref::<octocrab::Error>() {
+        if let octocrab::Error::GitHub { source, .. } = octo_err {
+            match source.status_code {
+                StatusCode::FORBIDDEN => return SearchError::RateLimited,
+                StatusCode::UNPROCESSABLE_ENTITY => {
+                    return SearchError::UnprocessableEntity;
+                }
+                _ => {}
+            }
+        }
+    }
+    SearchError::Other(err.to_string())
+}
+
 pub async fn run_audit(
     repo: Repo,
     terms: &[String],
@@ -210,6 +252,27 @@ pub async fn run_audit(
 ) -> Result<AuditResult> {
     let gh = github::client()?;
     let repo = resolve_upstream(&gh, repo).await;
+    let mut notes: Vec<String> = Vec::new();
+
+    // --- Vérification du quota search avant de lancer les requêtes ----------
+    // L'endpoint /search/issues coûte 1 quota par appel. On vérifie qu'il en
+    // reste au moins 2 (une pour issues, une pour PRs).
+    let remaining = check_search_rate(&gh).await;
+    if remaining < 2 {
+        let msg = format!(
+            "quota search GitHub épuisé ({remaining} restant) — audit ignoré pour {}",
+            repo.slug()
+        );
+        eprintln!("{} {}", "warning:".yellow().bold(), msg);
+        notes.push(msg);
+        return Ok(AuditResult {
+            repo,
+            issues: Vec::new(),
+            pulls: Vec::new(),
+            query_terms: terms.to_vec(),
+            notes,
+        });
+    }
 
     // `search/issues` accepte la syntaxe `repo:OWNER/NAME is:issue bun OR node`.
     let state_q = match state {
@@ -225,15 +288,61 @@ pub async fn run_audit(
         .join(" OR ");
     let base_q = format!("repo:{} in:title,body ({}) {}", repo.slug(), joined, state_q);
 
-    let issues = search(&gh, &format!("{base_q} is:issue"), limit, terms).await?;
-    let pulls = search(&gh, &format!("{base_q} is:pr"), limit, terms).await?;
+    let issues = search_tolerant(
+        &gh,
+        &format!("{base_q} is:issue"),
+        limit,
+        terms,
+        &mut notes,
+    )
+    .await;
+
+    let pulls = search_tolerant(
+        &gh,
+        &format!("{base_q} is:pr"),
+        limit,
+        terms,
+        &mut notes,
+    )
+    .await;
 
     Ok(AuditResult {
         repo,
         issues,
         pulls,
         query_terms: terms.to_vec(),
+        notes,
     })
+}
+
+/// Wrapper autour de [`search`] qui ne propage pas les erreurs : un 403 ou
+/// 422 génère un avertissement dans `notes` et retourne `Vec::new()`.
+async fn search_tolerant(
+    gh: &octocrab::Octocrab,
+    query: &str,
+    limit: usize,
+    terms: &[String],
+    notes: &mut Vec<String>,
+) -> Vec<Hit> {
+    match search(gh, query, limit, terms).await {
+        Ok(hits) => hits,
+        Err(err) => {
+            let note = match classify_octocrab_error(&err) {
+                SearchError::RateLimited => {
+                    format!("rate-limit GitHub (403) sur la requête : {query}")
+                }
+                SearchError::UnprocessableEntity => {
+                    format!("requête rejetée par GitHub (422 — syntaxe invalide) : {query}")
+                }
+                SearchError::Other(msg) => {
+                    format!("erreur GitHub sur la requête `{query}` : {msg}")
+                }
+            };
+            eprintln!("{} {}", "warning:".yellow().bold(), note);
+            notes.push(note);
+            Vec::new()
+        }
+    }
 }
 
 async fn search(
@@ -242,6 +351,11 @@ async fn search(
     limit: usize,
     terms: &[String],
 ) -> Result<Vec<Hit>> {
+    // Per-page plafonné à 100 (max GitHub). On ne pagine pas au-delà car :
+    //   1. chaque page supplémentaire coûte 1 quota search (limité à 30/min),
+    //   2. l'appelant contrôle déjà le volume via `limit`.
+    // Si limit > 100 et l'utilisateur veut vraiment tout récupérer, il lui
+    // appartient de paginer explicitement avec `all_pages` côté appelant.
     let per_page: u8 = limit.min(100) as u8;
     let page = gh
         .search()
@@ -308,10 +422,17 @@ pub fn render_text(res: &AuditResult) -> String {
         res.query_terms.join(", ").yellow()
     ));
     out.push_str(&format!(
-        "  issues: {}, PRs: {}\n\n",
+        "  issues: {}, PRs: {}\n",
         res.issues.len(),
         res.pulls.len()
     ));
+    if !res.notes.is_empty() {
+        out.push_str(&format!(
+            "  notes : {}\n",
+            res.notes.join("; ").dimmed()
+        ));
+    }
+    out.push('\n');
     render_section(&mut out, "Issues", &res.issues);
     render_section(&mut out, "Pull Requests", &res.pulls);
     out
@@ -358,6 +479,7 @@ pub fn render_json(res: &AuditResult) -> String {
             "upstream_of": res.repo.upstream_of,
         },
         "terms": res.query_terms,
+        "notes": res.notes,
         "issues": res.issues.iter().map(hit_json).collect::<Vec<_>>(),
         "pulls":  res.pulls .iter().map(hit_json).collect::<Vec<_>>(),
     });

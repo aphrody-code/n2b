@@ -15,6 +15,7 @@ mod scanners;
 mod types;
 mod util;
 mod wasm_cmd;
+mod wasm_spec;
 mod win32_cmd;
 
 use anyhow::Result;
@@ -70,27 +71,36 @@ struct Cli {
     cmd: Option<Cmd>,
 
     // Flags du scan par défaut (conservés au niveau racine pour compat).
+    /// Racine du package à analyser (défaut: répertoire courant).
     #[arg(default_value = ".")]
     root: PathBuf,
 
-    #[arg(long)]
+    /// Applique les corrections automatiques sûres (autofix = true).
+    /// Mutuellement exclusif avec --aggressive et --migrate.
+    #[arg(long, conflicts_with_all = ["aggressive", "migrate"])]
     fix: bool,
 
-    #[arg(long)]
+    /// Applique toutes les corrections, y compris celles marquées `aggressive`
+    /// (transformations plus invasives). Mutuellement exclusif avec --fix et --migrate.
+    #[arg(long, conflicts_with_all = ["fix", "migrate"])]
     aggressive: bool,
 
     /// Mode migration complète : applique --fix --aggressive ET exécute les
     /// side-effects (bun install, retrait pnpm-lock.yaml, migration
     /// pnpm-workspace.yaml → package.json, ajout @types/bun si requis).
-    #[arg(long)]
+    /// Mutuellement exclusif avec --fix et --aggressive.
+    #[arg(long, conflicts_with_all = ["fix", "aggressive"])]
     migrate: bool,
 
+    /// Format du rapport de sortie.
     #[arg(long, value_enum, default_value = "text")]
     report: ReportArg,
 
+    /// Glob(s) de chemins à exclure du scan (cumulable, ex: `--ignore "test/**"`).
     #[arg(long)]
     ignore: Vec<String>,
 
+    /// Supprime toute sortie sur stdout (le code de retour reste significatif).
     #[arg(long)]
     quiet: bool,
 
@@ -313,9 +323,9 @@ enum Cmd {
         #[arg(long = "exclude")]
         exclude: Vec<String>,
 
-        /// Générer aussi llms-full.txt.
-        #[arg(long, default_value_t = true)]
-        full: bool,
+        /// Désactive la génération de llms-full.txt (activée par défaut).
+        #[arg(long = "no-full")]
+        no_full: bool,
 
         /// Résumer les descriptions via Claude (ANTHROPIC_API_KEY requis).
         #[arg(long)]
@@ -413,9 +423,11 @@ enum AppSub {
         /// bun-darwin-arm64, bun-windows-x64.
         #[arg(long)]
         target: Option<String>,
-        #[arg(long, default_value_t = false)]
+        /// Active la minification du bundle de sortie.
+        #[arg(long)]
         minify: bool,
-        #[arg(long, default_value_t = false)]
+        /// Génère une source map à côté du bundle.
+        #[arg(long)]
         sourcemap: bool,
     },
     /// Vérifie que bun / tsc / upx sont installés + liste les cibles bun build.
@@ -554,13 +566,49 @@ enum WasmSub {
     /// Vérifie que wasm-pack / cargo-generate / wasm-opt / twiggy / wasm2wat sont installés.
     Doctor,
     /// Build via wasm-pack avec les bonnes options par défaut.
+    ///
+    /// Exemples :
+    ///   n2b wasm build                          # release + bundler (défauts)
+    ///   n2b wasm build --target web --dev       # dev, cible web
+    ///   n2b wasm build --profile profiling      # profiling
+    ///   n2b wasm build --out-dir dist/pkg --scope myorg
+    #[command(group(
+        clap::ArgGroup::new("profile_group")
+            .args(["profile", "dev", "release"])
+            .multiple(false)
+    ))]
     Build {
+        /// Répertoire racine du crate Rust à builder (défaut : répertoire courant).
         #[arg(default_value = ".")]
         root: PathBuf,
-        #[arg(long, default_value = "web")]
-        target: String,
-        #[arg(long, default_value_t = true)]
+
+        /// Cible de sortie wasm-pack.
+        #[arg(long, default_value = "bundler", value_enum)]
+        target: wasm_cmd::WasmTarget,
+
+        /// Profil de compilation (dev / profiling / release).
+        #[arg(long, value_enum, group = "profile_group")]
+        profile: Option<wasm_cmd::BuildProfile>,
+
+        /// Alias de --profile dev (compatibilité ascendante).
+        #[arg(long, group = "profile_group")]
+        dev: bool,
+
+        /// Alias de --profile release (compatibilité ascendante).
+        #[arg(long, group = "profile_group")]
         release: bool,
+
+        /// Répertoire de sortie du paquet wasm-pack (défaut : `pkg`).
+        #[arg(long)]
+        out_dir: Option<PathBuf>,
+
+        /// Préfixe des fichiers générés (défaut : nom du crate).
+        #[arg(long)]
+        out_name: Option<String>,
+
+        /// Scope npm pour le paquet publié (`@scope/package`).
+        #[arg(long)]
+        scope: Option<String>,
     },
     /// Passe wasm-opt (-Oz par défaut) sur un fichier .wasm, en place.
     Opt {
@@ -573,6 +621,71 @@ enum WasmSub {
         path: PathBuf,
         #[arg(long, default_value_t = 20)]
         top: usize,
+    },
+    /// Référence WebAssembly spec officielle : testsuite, feature detection, opcodes.
+    ///
+    /// Exemples :
+    ///   n2b wasm spec testsuite --path /path/to/spec
+    ///   n2b wasm spec testsuite --path /path/to/spec --filter simd
+    ///   n2b wasm spec features foo.wasm
+    ///   n2b wasm spec opcodes
+    ///   n2b wasm spec opcodes --proposal bulk-memory --report md
+    Spec {
+        #[command(subcommand)]
+        sub: WasmSpecSub,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum WasmSpecSub {
+    /// Lance la testsuite WebAssembly officielle (.wast) contre Bun ou wasmtime.
+    ///
+    /// Sans `wat2wasm` (apt install wabt) : mode count-only (compte les modules).
+    /// Avec `wat2wasm` + `bun` : valide chaque module via `new WebAssembly.Module(bytes)`.
+    Testsuite {
+        /// Chemin vers la racine du clone WebAssembly/spec
+        /// (doit contenir `test/core/`).
+        #[arg(long, default_value = "./spec")]
+        path: PathBuf,
+
+        /// Filtre par sous-proposition :
+        /// `core`, `simd`, `gc`, `threads`, `bulk-memory`, `exceptions`,
+        /// `memory64`, `multi-memory`, `relaxed-simd`.
+        #[arg(long)]
+        filter: Option<String>,
+
+        /// Runtime à utiliser (`bun` ou `wasmtime` — wasmtime prévu en V2).
+        #[arg(long, default_value = "bun")]
+        runtime: String,
+
+        /// Timeout par fichier `.wast` en secondes (réservé V2).
+        #[arg(long, default_value_t = 30)]
+        timeout: u64,
+    },
+
+    /// Analyse un binaire `.wasm` et liste les propositions WebAssembly utilisées.
+    ///
+    /// Détecte : bulk-memory, reference-types, tail-calls, SIMD (v128),
+    /// exception-handling, GC (structs/arrays), multi-memory, memory64, threads.
+    Features {
+        /// Chemin du binaire `.wasm` à analyser.
+        path: PathBuf,
+    },
+
+    /// Affiche la table de référence des opcodes WebAssembly.
+    ///
+    /// Par défaut : tous les opcodes. Filtrer avec `--proposal`.
+    Opcodes {
+        /// Proposition à filtrer :
+        /// `mvp`, `bulk-memory`, `reference-types`, `tail-calls`,
+        /// `exception-handling`, `simd`, `relaxed-simd`, `gc`,
+        /// `multi-memory`, `memory64`, `threads`.
+        #[arg(long)]
+        proposal: Option<String>,
+
+        /// Format de sortie : `text` | `md` | `json`.
+        #[arg(long, default_value = "text")]
+        report: String,
     },
 }
 
@@ -670,11 +783,55 @@ fn real_main() -> Result<ExitCode> {
                     name, template, dir, force,
                 },
                 WasmSub::Doctor => wasm_cmd::WasmCmd::Doctor,
-                WasmSub::Build { root, target, release } => wasm_cmd::WasmCmd::Build {
-                    root, target, release,
-                },
+                WasmSub::Build {
+                    root,
+                    target,
+                    profile,
+                    dev,
+                    release: _,
+                    out_dir,
+                    out_name,
+                    scope,
+                } => {
+                    // Résolution de priorité des flags de profil.
+                    // --profile > --dev > (--release ou défaut) = Release.
+                    let resolved_profile = if let Some(p) = profile {
+                        p
+                    } else if dev {
+                        wasm_cmd::BuildProfile::Dev
+                    } else {
+                        wasm_cmd::BuildProfile::Release
+                    };
+                    wasm_cmd::WasmCmd::Build {
+                        root,
+                        target,
+                        profile: resolved_profile,
+                        out_dir,
+                        out_name,
+                        scope,
+                    }
+                }
                 WasmSub::Opt { path, level } => wasm_cmd::WasmCmd::Opt { path, level },
                 WasmSub::Size { path, top } => wasm_cmd::WasmCmd::Size { path, top },
+                WasmSub::Spec { sub } => {
+                    let spec_cmd = match sub {
+                        WasmSpecSub::Testsuite { path, filter, runtime, timeout } => {
+                            wasm_cmd::WasmSpecCmd::Testsuite {
+                                path,
+                                filter,
+                                runtime,
+                                timeout_secs: timeout,
+                            }
+                        }
+                        WasmSpecSub::Features { path } => {
+                            wasm_cmd::WasmSpecCmd::Features { path }
+                        }
+                        WasmSpecSub::Opcodes { proposal, report } => {
+                            wasm_cmd::WasmSpecCmd::Opcodes { proposal, report }
+                        }
+                    };
+                    wasm_cmd::WasmCmd::Spec(spec_cmd)
+                }
             };
             wasm_cmd::run(cmd, cli.quiet)?;
             return Ok(ExitCode::SUCCESS);
@@ -689,7 +846,7 @@ fn real_main() -> Result<ExitCode> {
             user_agent,
             include,
             exclude,
-            full,
+            no_full,
             summarize,
             model,
             keep_intermediate,
@@ -707,7 +864,7 @@ fn real_main() -> Result<ExitCode> {
                 user_agent,
                 include,
                 exclude,
-                full,
+                full: !no_full,
                 summarize,
                 model,
                 keep_intermediate,

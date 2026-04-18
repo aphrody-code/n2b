@@ -106,7 +106,9 @@ pub struct RelatedIssue {
 pub struct AnalyzeOpts {
     pub paths: Vec<PathBuf>,
     pub issue_limit: usize,
+    #[cfg_attr(not(feature = "ai"), allow(dead_code))]
     pub top_k: usize,
+    #[cfg_attr(not(feature = "ai"), allow(dead_code))]
     pub threshold: f32,
     pub report: Report,
     pub apply: Option<Mode>,
@@ -238,6 +240,7 @@ fn analyze_one(
                     };
                     summary.issues = res.issues.len();
                     summary.prs = res.pulls.len();
+                    notes.extend(res.notes);
                     (Some(repo_info), res.issues, res.pulls)
                 }
                 Err(e) => {
@@ -440,6 +443,7 @@ fn crosslink(
     Ok((issues_enriched, prs_enriched, out))
 }
 
+#[cfg(feature = "ai")]
 fn enrich_hits(
     hits: &[Hit],
     rule_order: &[String],
@@ -471,6 +475,7 @@ fn enrich_hits(
         .collect()
 }
 
+#[cfg(feature = "ai")]
 fn top_matches(query: &[f32], pool: &[Vec<f32>], k: usize, threshold: f32) -> Vec<(usize, f32)> {
     let mut scored: Vec<(usize, f32)> = pool
         .iter()
@@ -483,6 +488,7 @@ fn top_matches(query: &[f32], pool: &[Vec<f32>], k: usize, threshold: f32) -> Ve
     scored
 }
 
+#[cfg(feature = "ai")]
 fn cosine(a: &[f32], b: &[f32]) -> f32 {
     let mut dot = 0f32;
     let mut na = 0f32;
@@ -498,6 +504,7 @@ fn cosine(a: &[f32], b: &[f32]) -> f32 {
     dot / (na.sqrt() * nb.sqrt())
 }
 
+#[cfg(feature = "ai")]
 fn round4(x: f32) -> f32 {
     (x * 10000.0).round() / 10000.0
 }
