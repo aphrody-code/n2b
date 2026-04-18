@@ -26,3 +26,12 @@ fastembed = { version = "5", optional = true }
 default = []
 # Active le crosslink ML dans `n2b analyze` (fastembed + AllMiniLML6V2).
 ai = ["dep:fastembed"]
+
+[dev-dependencies]
+# assert_cmd : tests d'intégration CLI-as-API. Rejoue les invocations
+# utilisées par rpb-dashboard (cf. tests/rpb-dashboard-baseline/INVOCATIONS.md).
+assert_cmd = "2"
+# jsonschema : valide la sortie JSON de n2b contre schema/v2.json.
+# Garantit que l'implémentation n'émet jamais une forme non-conforme.
+jsonschema = { version = "0.35", default-features = false }
+predicates = "3"
