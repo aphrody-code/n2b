@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  rust:
+    name: Rust — ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ matrix.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Fmt check
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --workspace
+
+      - name: Release build (produces target/release/n2b)
+        run: cargo build --release --workspace
+
+      - name: Baseline compare (rpb-dashboard skipped on CI — local only)
+        env:
+          N2B: ${{ github.workspace }}/target/release/n2b
+          RPB_ROOT: /nonexistent
+        run: bash tests/compare-baseline.sh
+
+  bun:
+    name: Bun — ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: rust
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Rust toolchain (for n2b binary)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build n2b binary
+        run: cargo build --release -p n2b
+
+      - name: Install bun deps
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck workspace
+        run: bun run typecheck
+
+      - name: Schema codegen drift check
+        run: bun run codegen:schema:check
+
+      - name: Bun tests
+        env:
+          PATH: ${{ github.workspace }}/target/release:${{ env.PATH }}
+        run: bun test packages/n2b/
