@@ -36,8 +36,7 @@ struct RespBlock {
 }
 
 pub fn run(site: &Site, model: &str) -> Result<()> {
-    let api_key =
-        std::env::var("ANTHROPIC_API_KEY").context("ANTHROPIC_API_KEY non défini")?;
+    let api_key = std::env::var("ANTHROPIC_API_KEY").context("ANTHROPIC_API_KEY non défini")?;
     let client = reqwest::blocking::Client::builder()
         .timeout(std::time::Duration::from_secs(60))
         .build()?;
@@ -73,12 +72,7 @@ pub fn run(site: &Site, model: &str) -> Result<()> {
             .send()
             .with_context(|| format!("POST {ANTHROPIC_ENDPOINT}"))?;
         if !res.status().is_success() {
-            eprintln!(
-                "  ! [{}] {} → {}",
-                page.title,
-                page.url,
-                res.status()
-            );
+            eprintln!("  ! [{}] {} → {}", page.title, page.url, res.status());
             continue;
         }
         let body: Resp = res.json()?;
@@ -94,10 +88,6 @@ fn needs_summary(desc: &str) -> bool {
 }
 
 fn first_n_chars(s: &str, n: usize) -> &str {
-    let byte_idx = s
-        .char_indices()
-        .nth(n)
-        .map(|(i, _)| i)
-        .unwrap_or(s.len());
+    let byte_idx = s.char_indices().nth(n).map(|(i, _)| i).unwrap_or(s.len());
     &s[..byte_idx]
 }

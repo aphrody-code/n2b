@@ -51,7 +51,11 @@ impl RequireCollect {
         // inner_start = après la quote ouvrante (1 char UTF-8 : ' " ou `)
         let inner_start = lit.span.start + 1;
         let inner_len = value.len() as u32;
-        self.out.push(Specifier { value, inner_start, inner_len });
+        self.out.push(Specifier {
+            value,
+            inner_start,
+            inner_len,
+        });
     }
 }
 
@@ -120,7 +124,11 @@ pub fn extract_specifiers(path: &str, source: &str) -> Vec<Specifier> {
             let inner_start = rm.span.start + 1;
             // Longueur brute dans la source (sans les deux quotes).
             let raw_len = rm.span.end.saturating_sub(rm.span.start).saturating_sub(2);
-            out.push(Specifier { value: value.clone(), inner_start, inner_len: raw_len });
+            out.push(Specifier {
+                value: value.clone(),
+                inner_start,
+                inner_len: raw_len,
+            });
         }
     }
 
@@ -138,7 +146,11 @@ pub fn extract_specifiers(path: &str, source: &str) -> Vec<Specifier> {
                 let value = std::str::from_utf8(value_bytes).unwrap_or("").to_string();
                 let inner_start = span.start + 1;
                 let inner_len = span.end.saturating_sub(span.start).saturating_sub(2);
-                out.push(Specifier { value, inner_start, inner_len });
+                out.push(Specifier {
+                    value,
+                    inner_start,
+                    inner_len,
+                });
             }
         }
     }

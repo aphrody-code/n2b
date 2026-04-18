@@ -4,9 +4,7 @@ use std::process::ExitCode;
 use anyhow::Result;
 use clap::Parser;
 
-use crate::cli::args::{
-    AppSub, BunppSub, Cli, Cmd, LinuxSub, WasmSpecSub, WasmSub, Win32Sub,
-};
+use crate::cli::args::{AppSub, BunppSub, Cli, Cmd, LinuxSub, WasmSpecSub, WasmSub, Win32Sub};
 use crate::commands;
 
 /// Point d'entrée principal après le parsing clap.
@@ -17,23 +15,46 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
     }
 
     match cli.cmd {
-        Some(Cmd::Rules { report }) => {
-            commands::rules::run_rules(report.into())
-        }
-        Some(Cmd::Prompt { root, max_findings, include_info, ignore }) => {
-            commands::prompt::run_prompt(root, max_findings, include_info, ignore, cli.agent)
-        }
-        Some(Cmd::Audit { root, terms, state, limit, report }) => {
-            commands::audit::run_audit(root, terms, state.into(), limit, report.into())
-        }
+        Some(Cmd::Rules { report }) => commands::rules::run_rules(report.into()),
+        Some(Cmd::Prompt {
+            root,
+            max_findings,
+            include_info,
+            ignore,
+        }) => commands::prompt::run_prompt(root, max_findings, include_info, ignore, cli.agent),
+        Some(Cmd::Audit {
+            root,
+            terms,
+            state,
+            limit,
+            report,
+        }) => commands::audit::run_audit(root, terms, state.into(), limit, report.into()),
         Some(Cmd::App { sub }) => {
             let cmd = match sub {
-                AppSub::Init { name, flavor, dir, force } => crate::app_cmd::AppCmd::Init {
-                    name, flavor, dir, force,
+                AppSub::Init {
+                    name,
+                    flavor,
+                    dir,
+                    force,
+                } => crate::app_cmd::AppCmd::Init {
+                    name,
+                    flavor,
+                    dir,
+                    force,
                 },
-                AppSub::Build { entry, outfile, target, minify, sourcemap } => {
-                    crate::app_cmd::AppCmd::Build { entry, outfile, target, minify, sourcemap }
-                }
+                AppSub::Build {
+                    entry,
+                    outfile,
+                    target,
+                    minify,
+                    sourcemap,
+                } => crate::app_cmd::AppCmd::Build {
+                    entry,
+                    outfile,
+                    target,
+                    minify,
+                    sourcemap,
+                },
                 AppSub::Doctor => crate::app_cmd::AppCmd::Doctor,
             };
             crate::app_cmd::run(cmd, cli.quiet)?;
@@ -41,18 +62,18 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
         }
         Some(Cmd::Win32 { sub }) => {
             let cmd = match sub {
-                Win32Sub::Init { name, dir, force } => crate::win32_cmd::Win32Cmd::Init {
-                    name, dir, force,
-                },
-                Win32Sub::Ffi { name, dir, force } => crate::win32_cmd::Win32Cmd::Ffi {
-                    name, dir, force,
-                },
-                Win32Sub::Cc { name, dir, force } => crate::win32_cmd::Win32Cmd::Cc {
-                    name, dir, force,
-                },
-                Win32Sub::Pwsh { name, dir, force } => crate::win32_cmd::Win32Cmd::Pwsh {
-                    name, dir, force,
-                },
+                Win32Sub::Init { name, dir, force } => {
+                    crate::win32_cmd::Win32Cmd::Init { name, dir, force }
+                }
+                Win32Sub::Ffi { name, dir, force } => {
+                    crate::win32_cmd::Win32Cmd::Ffi { name, dir, force }
+                }
+                Win32Sub::Cc { name, dir, force } => {
+                    crate::win32_cmd::Win32Cmd::Cc { name, dir, force }
+                }
+                Win32Sub::Pwsh { name, dir, force } => {
+                    crate::win32_cmd::Win32Cmd::Pwsh { name, dir, force }
+                }
                 Win32Sub::Doctor => crate::win32_cmd::Win32Cmd::Doctor,
             };
             crate::win32_cmd::run(cmd, cli.quiet)?;
@@ -60,18 +81,18 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
         }
         Some(Cmd::Linux { sub }) => {
             let cmd = match sub {
-                LinuxSub::Init { name, dir, force } => crate::linux_cmd::LinuxCmd::Init {
-                    name, dir, force,
-                },
-                LinuxSub::Ffi { name, dir, force } => crate::linux_cmd::LinuxCmd::Ffi {
-                    name, dir, force,
-                },
-                LinuxSub::Cc { name, dir, force } => crate::linux_cmd::LinuxCmd::Cc {
-                    name, dir, force,
-                },
-                LinuxSub::Shell { name, dir, force } => crate::linux_cmd::LinuxCmd::Shell {
-                    name, dir, force,
-                },
+                LinuxSub::Init { name, dir, force } => {
+                    crate::linux_cmd::LinuxCmd::Init { name, dir, force }
+                }
+                LinuxSub::Ffi { name, dir, force } => {
+                    crate::linux_cmd::LinuxCmd::Ffi { name, dir, force }
+                }
+                LinuxSub::Cc { name, dir, force } => {
+                    crate::linux_cmd::LinuxCmd::Cc { name, dir, force }
+                }
+                LinuxSub::Shell { name, dir, force } => {
+                    crate::linux_cmd::LinuxCmd::Shell { name, dir, force }
+                }
                 LinuxSub::Doctor => crate::linux_cmd::LinuxCmd::Doctor,
             };
             crate::linux_cmd::run(cmd, cli.quiet)?;
@@ -79,8 +100,16 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
         }
         Some(Cmd::Wasm { sub }) => {
             let cmd = match sub {
-                WasmSub::Init { name, template, dir, force } => crate::wasm_cmd::WasmCmd::Init {
-                    name, template, dir, force,
+                WasmSub::Init {
+                    name,
+                    template,
+                    dir,
+                    force,
+                } => crate::wasm_cmd::WasmCmd::Init {
+                    name,
+                    template,
+                    dir,
+                    force,
                 },
                 WasmSub::Doctor => crate::wasm_cmd::WasmCmd::Doctor,
                 WasmSub::Build {
@@ -115,14 +144,17 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
                 WasmSub::Size { path, top } => crate::wasm_cmd::WasmCmd::Size { path, top },
                 WasmSub::Spec { sub } => {
                     let spec_cmd = match sub {
-                        WasmSpecSub::Testsuite { path, filter, runtime, timeout } => {
-                            crate::wasm_cmd::WasmSpecCmd::Testsuite {
-                                path,
-                                filter,
-                                runtime,
-                                timeout_secs: timeout,
-                            }
-                        }
+                        WasmSpecSub::Testsuite {
+                            path,
+                            filter,
+                            runtime,
+                            timeout,
+                        } => crate::wasm_cmd::WasmSpecCmd::Testsuite {
+                            path,
+                            filter,
+                            runtime,
+                            timeout_secs: timeout,
+                        },
                         WasmSpecSub::Features { path } => {
                             crate::wasm_cmd::WasmSpecCmd::Features { path }
                         }
@@ -177,20 +209,33 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
         }
         Some(Cmd::Bunpp { sub }) => {
             let cmd = match sub {
-                BunppSub::Scaffold { module, root, force } => crate::bunpp_cmd::BunppCmd::Scaffold {
-                    module, root, force,
+                BunppSub::Scaffold {
+                    module,
+                    root,
+                    force,
+                } => crate::bunpp_cmd::BunppCmd::Scaffold {
+                    module,
+                    root,
+                    force,
                 },
-                BunppSub::ScaffoldAll { root, force } => crate::bunpp_cmd::BunppCmd::ScaffoldAll {
-                    root, force,
-                },
+                BunppSub::ScaffoldAll { root, force } => {
+                    crate::bunpp_cmd::BunppCmd::ScaffoldAll { root, force }
+                }
                 BunppSub::Status { root } => crate::bunpp_cmd::BunppCmd::Status { root },
-                BunppSub::Sync { root, dry_run } => crate::bunpp_cmd::BunppCmd::Sync { root, dry_run },
+                BunppSub::Sync { root, dry_run } => {
+                    crate::bunpp_cmd::BunppCmd::Sync { root, dry_run }
+                }
                 BunppSub::Doctor => crate::bunpp_cmd::BunppCmd::Doctor,
             };
             crate::bunpp_cmd::run(cmd, cli.quiet)?;
             Ok(ExitCode::SUCCESS)
         }
-        Some(Cmd::Bin { name, flavor, dir, force }) => {
+        Some(Cmd::Bin {
+            name,
+            flavor,
+            dir,
+            force,
+        }) => {
             crate::bin_cmd::run_bin(crate::bin_cmd::BinOpts {
                 name,
                 flavor,
@@ -223,7 +268,15 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
             })?;
             Ok(ExitCode::SUCCESS)
         }
-        Some(Cmd::Analyze { paths, issue_limit, top_k, threshold, report, ignore, apply }) => {
+        Some(Cmd::Analyze {
+            paths,
+            issue_limit,
+            top_k,
+            threshold,
+            report,
+            ignore,
+            apply,
+        }) => {
             let cwd = std::env::current_dir()?;
             let paths = if paths.is_empty() {
                 crate::analyze::resolve_default_paths(&cwd)

@@ -19,7 +19,11 @@ pub(super) fn scaffold_webgpu(dir: &std::path::Path, name: &str, quiet: bool) ->
     )?;
     write_file(dir.join("src/lib.rs"), WEBGPU_LIB_RS, quiet)?;
     write_file(dir.join("src/compute.wgsl"), COMPUTE_WGSL, quiet)?;
-    write_file(dir.join("package.json"), &render_webgpu_package_json(name), quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_webgpu_package_json(name),
+        quiet,
+    )?;
     write_file(dir.join("index.ts"), INDEX_TS_WEBGPU, quiet)?;
     write_file(
         dir.join("README.md"),

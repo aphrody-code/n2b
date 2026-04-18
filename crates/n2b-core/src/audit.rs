@@ -45,10 +45,10 @@ fn from_package_json(root: &Path) -> Result<Option<Repo>> {
     if !path.exists() {
         return Ok(None);
     }
-    let content = std::fs::read_to_string(&path)
-        .with_context(|| format!("lecture {}", path.display()))?;
-    let v: Value = serde_json::from_str(&content)
-        .with_context(|| format!("parse {}", path.display()))?;
+    let content =
+        std::fs::read_to_string(&path).with_context(|| format!("lecture {}", path.display()))?;
+    let v: Value =
+        serde_json::from_str(&content).with_context(|| format!("parse {}", path.display()))?;
     let url = match v.get("repository") {
         Some(Value::String(s)) => s.clone(),
         Some(Value::Object(o)) => match o.get("url").and_then(|x| x.as_str()) {
@@ -141,7 +141,7 @@ static GH_URL_RE: Lazy<Regex> = Lazy::new(|| {
     Regex::new(
         r"(?:github\.com|github[\w-]*)[:/]([A-Za-z0-9_.\-]+)/([A-Za-z0-9_.\-]+?)(?:\.git)?/?$",
     )
-    .unwrap()
+    .expect("invariant: GH_URL_RE regex literal is valid")
 });
 
 fn parse_github_url(url: &str) -> Option<(String, String)> {
@@ -227,6 +227,7 @@ enum SearchError {
     Other(String),
 }
 
+#[allow(clippy::collapsible_match)] // preexisting: nested if-let over octocrab error enum variants
 fn classify_octocrab_error(err: &anyhow::Error) -> SearchError {
     // octocrab expose ses propres erreurs via la chaîne `source`. On traverse
     // la chaîne avec `downcast_ref` sans consommer `err`.
@@ -286,25 +287,17 @@ pub async fn run_audit(
         .map(|t| format!("\"{t}\""))
         .collect::<Vec<_>>()
         .join(" OR ");
-    let base_q = format!("repo:{} in:title,body ({}) {}", repo.slug(), joined, state_q);
+    let base_q = format!(
+        "repo:{} in:title,body ({}) {}",
+        repo.slug(),
+        joined,
+        state_q
+    );
 
-    let issues = search_tolerant(
-        &gh,
-        &format!("{base_q} is:issue"),
-        limit,
-        terms,
-        &mut notes,
-    )
-    .await;
+    let issues =
+        search_tolerant(&gh, &format!("{base_q} is:issue"), limit, terms, &mut notes).await;
 
-    let pulls = search_tolerant(
-        &gh,
-        &format!("{base_q} is:pr"),
-        limit,
-        terms,
-        &mut notes,
-    )
-    .await;
+    let pulls = search_tolerant(&gh, &format!("{base_q} is:pr"), limit, terms, &mut notes).await;
 
     Ok(AuditResult {
         repo,
@@ -374,12 +367,8 @@ async fn search(
         .into_iter()
         .take(limit)
         .map(|it| {
-            let haystack = format!(
-                "{} {}",
-                it.title,
-                it.body.clone().unwrap_or_default()
-            )
-            .to_lowercase();
+            let haystack =
+                format!("{} {}", it.title, it.body.clone().unwrap_or_default()).to_lowercase();
             let matched: Vec<String> = lc_terms
                 .iter()
                 .filter(|t| haystack.contains(t.as_str()))
@@ -427,10 +416,7 @@ pub fn render_text(res: &AuditResult) -> String {
         res.pulls.len()
     ));
     if !res.notes.is_empty() {
-        out.push_str(&format!(
-            "  notes : {}\n",
-            res.notes.join("; ").dimmed()
-        ));
+        out.push_str(&format!("  notes : {}\n", res.notes.join("; ").dimmed()));
     }
     out.push('\n');
     render_section(&mut out, "Issues", &res.issues);
@@ -452,10 +438,7 @@ fn render_section(out: &mut String, title: &str, hits: &[Hit]) {
         let tags = if h.matched_terms.is_empty() {
             String::new()
         } else {
-            format!(
-                " [{}]",
-                h.matched_terms.join(",").yellow()
-            )
+            format!(" [{}]", h.matched_terms.join(",").yellow())
         };
         out.push_str(&format!(
             "  #{:<5} {} {}{}\n    {} {}\n",

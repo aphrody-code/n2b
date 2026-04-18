@@ -72,8 +72,11 @@ pub fn confidence(rule_id: &str, has_replacement: bool) -> f32 {
         _ if rule_id.starts_with("api/buffer-") => 0.75,
         _ if rule_id.starts_with("api/http-") => 0.6,
         "api/dirname-esm" | "api/filename-esm" => 0.85,
-        "api/process-env" | "api/new-url-import-meta" | "api/performance-now"
-        | "api/os-platform" | "api/os-homedir" => 0.3, // stylistique
+        "api/process-env"
+        | "api/new-url-import-meta"
+        | "api/performance-now"
+        | "api/os-platform"
+        | "api/os-homedir" => 0.3, // stylistique
         _ if rule_id.starts_with("workspace/") => 0.9,
         _ if rule_id.starts_with("husky/") => 0.95,
         _ if has_replacement => 0.75,
@@ -98,9 +101,7 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         "api/toml-parse" => "https://bun.sh/guides/runtime/import-toml",
         "api/marked-call" | "api/marked-parse" => "https://bun.sh/reference/bun/markdown",
         "api/escape-html" => "https://bun.sh/reference/bun/escapeHTML",
-        "api/strip-ansi" | "api/string-width" | "api/slice-ansi" => {
-            "https://bun.sh/reference/bun"
-        }
+        "api/strip-ansi" | "api/string-width" | "api/slice-ansi" => "https://bun.sh/reference/bun",
         "api/which-call" => "https://bun.sh/reference/bun/which",
         "api/cron-schedule" | "api/cronjob-new" => "https://bun.sh/reference/bun/cron",
         "api/fast-deep-equal" => "https://bun.sh/guides/util/deep-equals",
@@ -157,15 +158,17 @@ pub fn docs_url(rule_id: &str) -> &'static str {
         _ if rule_id.starts_with("api/exec") || rule_id.starts_with("api/child-process") => {
             "https://bun.sh/docs/api/spawn"
         }
-        "api/buffer-alloc" | "api/buffer-concat" | "api/buffer-from-string"
-        | "api/buffer-from-base64" | "api/buffer-byteLength" => {
-            "https://bun.sh/docs/api/binary-data"
-        }
+        "api/buffer-alloc"
+        | "api/buffer-concat"
+        | "api/buffer-from-string"
+        | "api/buffer-from-base64"
+        | "api/buffer-byteLength" => "https://bun.sh/docs/api/binary-data",
         "api/process-env" => "https://bun.sh/docs/runtime/env",
-        "api/dirname-esm" | "api/filename-esm" | "api/fileURLToPath"
-        | "api/new-url-import-meta" | "api/path-join-dirname" => {
-            "https://bun.sh/docs/api/import-meta"
-        }
+        "api/dirname-esm"
+        | "api/filename-esm"
+        | "api/fileURLToPath"
+        | "api/new-url-import-meta"
+        | "api/path-join-dirname" => "https://bun.sh/docs/api/import-meta",
         "api/performance-now" => "https://bun.sh/docs/api/utils#bun-nanoseconds",
         "api/util-promisify" | "api/set-immediate" => "https://bun.sh/docs/runtime/nodejs-apis",
         "api/semver" => "https://bun.sh/docs/api/semver",
@@ -206,15 +209,23 @@ pub struct Context {
 /// 3 lignes avant + ligne cible + 3 après. `line` est 1-based.
 pub fn context_lines(source: &str, line: u32) -> Context {
     let lines: Vec<&str> = source.split('\n').collect();
-    let i = (line as usize).saturating_sub(1).min(lines.len().saturating_sub(1));
+    let i = (line as usize)
+        .saturating_sub(1)
+        .min(lines.len().saturating_sub(1));
     let before_start = i.saturating_sub(3);
     let after_end = (i + 4).min(lines.len());
     let cur = lines.get(i).copied().unwrap_or("");
     Context {
-        before: lines[before_start..i].iter().map(|s| s.to_string()).collect(),
+        before: lines[before_start..i]
+            .iter()
+            .map(|s| s.to_string())
+            .collect(),
         line: cur.to_string(),
         after: if i + 1 < after_end {
-            lines[i + 1..after_end].iter().map(|s| s.to_string()).collect()
+            lines[i + 1..after_end]
+                .iter()
+                .map(|s| s.to_string())
+                .collect()
         } else {
             Vec::new()
         },

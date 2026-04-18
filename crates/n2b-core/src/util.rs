@@ -24,6 +24,7 @@ pub fn pos_from_index(offsets: &[u32], index: usize) -> (u32, u32) {
     }
 }
 
+#[allow(clippy::too_many_arguments)] // preexisting: builder pattern would require API churn
 pub fn make_finding(
     path: &str,
     offsets: &[u32],

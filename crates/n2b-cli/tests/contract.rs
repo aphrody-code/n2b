@@ -52,8 +52,9 @@ fn json_report_deserializes_into_typed_schema() {
     let (stdout, stderr, code) = run_n2b(&[&fixture, "--report=json"]);
     // Exit 0 (no findings) or 1 (findings in check mode) both acceptable.
     assert!(code == 0 || code == 1, "n2b exit {code}, stderr:\n{stderr}");
-    let _report: n2b_core::schema::N2bReport = serde_json::from_str(&stdout)
-        .unwrap_or_else(|e| panic!("JSON did not match schema/v2.json types: {e}\nstdout was: {stdout}"));
+    let _report: n2b_core::schema::N2bReport = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+        panic!("JSON did not match schema/v2.json types: {e}\nstdout was: {stdout}")
+    });
 }
 
 #[test]
@@ -89,7 +90,10 @@ fn rules_text_format_succeeds() {
 #[test]
 fn rules_json_format_is_array() {
     let (stdout, stderr, code) = run_n2b(&["rules", "--report=json"]);
-    assert_eq!(code, 0, "n2b rules --report=json exit {code}, stderr:\n{stderr}");
+    assert_eq!(
+        code, 0,
+        "n2b rules --report=json exit {code}, stderr:\n{stderr}"
+    );
     let v: serde_json::Value = serde_json::from_str(&stdout).expect("JSON output");
     assert!(v.is_array() || v.get("rules").is_some());
 }

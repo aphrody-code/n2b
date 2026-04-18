@@ -59,10 +59,7 @@ pub fn scan_export(md_dir: &Path, root_url: &str) -> Result<Site> {
     let root = url::Url::parse(root_url).with_context(|| format!("parse {root_url}"))?;
 
     if !md_dir.exists() {
-        anyhow::bail!(
-            "dossier export siteone introuvable : {}",
-            md_dir.display()
-        );
+        anyhow::bail!("dossier export siteone introuvable : {}", md_dir.display());
     }
 
     for entry in WalkDir::new(md_dir).into_iter().flatten() {
@@ -79,8 +76,8 @@ pub fn scan_export(md_dir: &Path, root_url: &str) -> Result<Site> {
             continue;
         }
 
-        let content = std::fs::read_to_string(path)
-            .with_context(|| format!("lire {}", path.display()))?;
+        let content =
+            std::fs::read_to_string(path).with_context(|| format!("lire {}", path.display()))?;
         let rel = path
             .strip_prefix(md_dir)
             .unwrap_or(path)
@@ -208,9 +205,7 @@ fn derive_section(rel: &str) -> String {
 }
 
 fn reconstruct_url(root: &url::Url, rel: &str) -> String {
-    let trimmed = rel
-        .trim_end_matches(".md")
-        .trim_end_matches(".html");
+    let trimmed = rel.trim_end_matches(".md").trim_end_matches(".html");
     let trimmed = trimmed.trim_start_matches('/');
     match root.join(trimmed) {
         Ok(u) => u.to_string(),

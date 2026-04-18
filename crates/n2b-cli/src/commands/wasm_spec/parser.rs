@@ -51,8 +51,8 @@ pub(super) fn collect_wast_files(core_dir: &Path, filter: Option<&str>) -> Resul
 
 /// Collecte récursivement les `.wast` dans un répertoire.
 pub(super) fn collect_wast_recursive(dir: &Path, out: &mut Vec<PathBuf>) -> Result<()> {
-    let entries = std::fs::read_dir(dir)
-        .with_context(|| format!("lecture de {}", dir.display()))?;
+    let entries =
+        std::fs::read_dir(dir).with_context(|| format!("lecture de {}", dir.display()))?;
     for entry in entries.flatten() {
         let path = entry.path();
         if path.is_dir() {
@@ -83,8 +83,8 @@ pub(super) fn process_wast_file(
     wat2wasm: Option<&Path>,
     bun: Option<&Path>,
 ) -> Result<WastResult> {
-    let src = std::fs::read_to_string(path)
-        .with_context(|| format!("lecture de {}", path.display()))?;
+    let src =
+        std::fs::read_to_string(path).with_context(|| format!("lecture de {}", path.display()))?;
 
     let modules = extract_modules(&src);
 
@@ -146,7 +146,11 @@ process.exit(0);"#
                 .output()
                 .map(|o| o.status.success())
                 .unwrap_or(false);
-            if validate_ok { passed += 1; } else { failed += 1; }
+            if validate_ok {
+                passed += 1;
+            } else {
+                failed += 1;
+            }
         } else {
             // Compilé avec succès, pas de validation Bun
             passed += 1;
@@ -235,7 +239,9 @@ pub(super) fn extract_modules(src: &str) -> Vec<String> {
                     continue;
                 }
                 match bytes[j] {
-                    b'(' => { depth += 1; }
+                    b'(' => {
+                        depth += 1;
+                    }
                     b')' => {
                         depth -= 1;
                         if depth == 0 {
@@ -275,8 +281,16 @@ pub(super) fn base64_encode(input: &[u8]) -> String {
         let n = (b0 << 16) | (b1 << 8) | b2;
         out.push(TABLE[((n >> 18) & 0x3f) as usize] as char);
         out.push(TABLE[((n >> 12) & 0x3f) as usize] as char);
-        out.push(if chunk.len() > 1 { TABLE[((n >> 6) & 0x3f) as usize] as char } else { '=' });
-        out.push(if chunk.len() > 2 { TABLE[(n & 0x3f) as usize] as char } else { '=' });
+        out.push(if chunk.len() > 1 {
+            TABLE[((n >> 6) & 0x3f) as usize] as char
+        } else {
+            '='
+        });
+        out.push(if chunk.len() > 2 {
+            TABLE[(n & 0x3f) as usize] as char
+        } else {
+            '='
+        });
     }
     out
 }

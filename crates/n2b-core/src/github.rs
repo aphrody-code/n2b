@@ -19,8 +19,8 @@ fn resolve_token() -> Result<String> {
     }
     let env_path = std::path::Path::new("/home/ubuntu/rsbun/.env");
     if env_path.exists() {
-        let content = std::fs::read_to_string(env_path)
-            .context("Lecture de /home/ubuntu/rsbun/.env")?;
+        let content =
+            std::fs::read_to_string(env_path).context("Lecture de /home/ubuntu/rsbun/.env")?;
         for line in content.lines() {
             let line = line.trim();
             let token = if let Some((_, v)) = line.split_once('=') {

@@ -52,8 +52,14 @@ pub fn run_siteone(cli: &LlmstxtOpts, md_dir: &Path, md_single: &Path) -> Result
     // besoin d'un fallback userland dans 99 % des cas.
     if cli.export_sitemap {
         let parent = md_dir.parent().unwrap_or(md_dir);
-        cmd.arg(format!("--sitemap-xml-file={}/sitemap.xml", parent.display()))
-            .arg(format!("--sitemap-txt-file={}/sitemap.txt", parent.display()));
+        cmd.arg(format!(
+            "--sitemap-xml-file={}/sitemap.xml",
+            parent.display()
+        ))
+        .arg(format!(
+            "--sitemap-txt-file={}/sitemap.txt",
+            parent.display()
+        ));
     }
 
     if cli.max_depth > 0 {

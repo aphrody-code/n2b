@@ -44,6 +44,9 @@ jobs:
       - name: Test
         run: cargo test --workspace
 
+      - name: Proptest (long run)
+        run: cargo test --workspace --tests -- proptest
+
       - name: Release build (produces target/release/n2b)
         run: cargo build --release --workspace
 

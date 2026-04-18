@@ -12,22 +12,66 @@ use std::path::PathBuf;
 
 pub(super) fn doctor(quiet: bool) -> Result<()> {
     let tools: &[(&str, &str, &str)] = &[
-        ("rustc",      "winget install Rustlang.Rust.MSVC",         "compilateur Rust (target x86_64-pc-windows-msvc)"),
-        ("cargo",      "(installé avec rustup)",                    "package manager Rust"),
-        ("cl",         "VS 2022 Community + workload C++",          "MSVC compiler (cl.exe)"),
-        ("link",       "VS 2022 Community",                         "MSVC linker (link.exe)"),
-        ("clang-cl",   "scoop install llvm",                        "clang drop-in pour MSVC ABI"),
-        ("cmake",      "winget install Kitware.CMake",              "build system"),
-        ("ninja",      "scoop install ninja",                       "ninja build backend"),
-        ("pwsh",       "winget install Microsoft.PowerShell",       "PowerShell 7 (pwsh.exe)"),
-        ("scoop",      "iwr -useb get.scoop.sh | iex",              "package manager Windows"),
-        ("x86_64-w64-mingw32-gcc", "sudo apt install mingw-w64",    "cross-compile Linux→Windows (GNU)"),
-        ("cargo-xwin", "cargo install cargo-xwin",                  "cross-compile Linux→Windows (MSVC)"),
+        (
+            "rustc",
+            "winget install Rustlang.Rust.MSVC",
+            "compilateur Rust (target x86_64-pc-windows-msvc)",
+        ),
+        ("cargo", "(installé avec rustup)", "package manager Rust"),
+        (
+            "cl",
+            "VS 2022 Community + workload C++",
+            "MSVC compiler (cl.exe)",
+        ),
+        ("link", "VS 2022 Community", "MSVC linker (link.exe)"),
+        (
+            "clang-cl",
+            "scoop install llvm",
+            "clang drop-in pour MSVC ABI",
+        ),
+        ("cmake", "winget install Kitware.CMake", "build system"),
+        ("ninja", "scoop install ninja", "ninja build backend"),
+        (
+            "pwsh",
+            "winget install Microsoft.PowerShell",
+            "PowerShell 7 (pwsh.exe)",
+        ),
+        (
+            "scoop",
+            "iwr -useb get.scoop.sh | iex",
+            "package manager Windows",
+        ),
+        (
+            "x86_64-w64-mingw32-gcc",
+            "sudo apt install mingw-w64",
+            "cross-compile Linux→Windows (GNU)",
+        ),
+        (
+            "cargo-xwin",
+            "cargo install cargo-xwin",
+            "cross-compile Linux→Windows (MSVC)",
+        ),
         // --- Unix CLI essentiels sur Windows via uutils (cross-platform Rust) ---
-        ("ls",         "cargo install coreutils",                    "uutils/coreutils (ls/cp/cat/… natifs Windows)"),
-        ("find",       "cargo install findutils",                    "uutils/findutils (find/xargs natifs Windows)"),
-        ("diff",       "cargo install diffutils",                    "uutils/diffutils (diff/cmp natifs Windows)"),
-        ("ps",         "cargo install procps",                       "uutils/procps (ps/top/watch natifs Windows)"),
+        (
+            "ls",
+            "cargo install coreutils",
+            "uutils/coreutils (ls/cp/cat/… natifs Windows)",
+        ),
+        (
+            "find",
+            "cargo install findutils",
+            "uutils/findutils (find/xargs natifs Windows)",
+        ),
+        (
+            "diff",
+            "cargo install diffutils",
+            "uutils/diffutils (diff/cmp natifs Windows)",
+        ),
+        (
+            "ps",
+            "cargo install procps",
+            "uutils/procps (ps/top/watch natifs Windows)",
+        ),
     ];
     let mut missing = 0;
     for (bin, install, desc) in tools {

@@ -91,27 +91,50 @@ pub fn run_bin(opts: BinOpts) -> Result<()> {
 }
 
 fn scaffold_native_plugin(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
-    write_file(dir.join("Cargo.toml"), &render_cargo_toml(name, false), quiet)?;
+    write_file(
+        dir.join("Cargo.toml"),
+        &render_cargo_toml(name, false),
+        quiet,
+    )?;
     write_file(dir.join("src/lib.rs"), NATIVE_PLUGIN_LIB_RS, quiet)?;
-    write_file(dir.join("package.json"), &render_package_json(name, false), quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_package_json(name, false),
+        quiet,
+    )?;
     write_file(dir.join("build.rs"), BUILD_RS, quiet)?;
     write_file(dir.join(".cargo/config.toml"), CARGO_CONFIG, quiet)?;
-    write_file(dir.join("README.md"), &render_readme(name, "Plugin natif Bun (Rust → .node)"), quiet)?;
+    write_file(
+        dir.join("README.md"),
+        &render_readme(name, "Plugin natif Bun (Rust → .node)"),
+        quiet,
+    )?;
     write_file(dir.join("index.ts"), INDEX_TS_NATIVE, quiet)?;
     write_file(dir.join(".gitignore"), GITIGNORE, quiet)?;
     Ok(())
 }
 
 fn scaffold_tailwind(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
-    write_file(dir.join("package.json"), &render_tailwind_package_json(name), quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_tailwind_package_json(name),
+        quiet,
+    )?;
     write_file(dir.join("plugin.ts"), TAILWIND_PLUGIN_TS, quiet)?;
     write_file(dir.join("build.ts"), TAILWIND_BUILD_TS, quiet)?;
-    write_file(dir.join("postcss.config.mjs"), TAILWIND_POSTCSS_CONFIG, quiet)?;
+    write_file(
+        dir.join("postcss.config.mjs"),
+        TAILWIND_POSTCSS_CONFIG,
+        quiet,
+    )?;
     write_file(dir.join("src/app.css"), TAILWIND_APP_CSS, quiet)?;
     write_file(dir.join("src/index.html"), TAILWIND_INDEX_HTML, quiet)?;
     write_file(
         dir.join("README.md"),
-        &render_readme(name, "Plugin Bun JS wrapping @tailwindcss/postcss (Tailwind v4 Oxide via N-API)"),
+        &render_readme(
+            name,
+            "Plugin Bun JS wrapping @tailwindcss/postcss (Tailwind v4 Oxide via N-API)",
+        ),
         quiet,
     )?;
     write_file(dir.join(".gitignore"), GITIGNORE_WASM, quiet)?;
@@ -119,14 +142,25 @@ fn scaffold_tailwind(dir: &std::path::Path, name: &str, quiet: bool) -> Result<(
 }
 
 fn scaffold_lightningcss(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
-    write_file(dir.join("Cargo.toml"), &render_lightningcss_cargo_toml(name), quiet)?;
+    write_file(
+        dir.join("Cargo.toml"),
+        &render_lightningcss_cargo_toml(name),
+        quiet,
+    )?;
     write_file(dir.join("src/lib.rs"), LIGHTNINGCSS_LIB_RS, quiet)?;
-    write_file(dir.join("package.json"), &render_package_json(name, false), quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_package_json(name, false),
+        quiet,
+    )?;
     write_file(dir.join("build.rs"), BUILD_RS, quiet)?;
     write_file(dir.join(".cargo/config.toml"), CARGO_CONFIG, quiet)?;
     write_file(
         dir.join("README.md"),
-        &render_readme(name, "Plugin Bun natif : minify/transpile CSS via lightningcss (Rust)"),
+        &render_readme(
+            name,
+            "Plugin Bun natif : minify/transpile CSS via lightningcss (Rust)",
+        ),
         quiet,
     )?;
     write_file(dir.join("index.ts"), INDEX_TS_LIGHTNINGCSS, quiet)?;
@@ -136,9 +170,17 @@ fn scaffold_lightningcss(dir: &std::path::Path, name: &str, quiet: bool) -> Resu
 }
 
 fn scaffold_mdx(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
-    write_file(dir.join("Cargo.toml"), &render_cargo_toml(name, true), quiet)?;
+    write_file(
+        dir.join("Cargo.toml"),
+        &render_cargo_toml(name, true),
+        quiet,
+    )?;
     write_file(dir.join("src/lib.rs"), MDX_LIB_RS, quiet)?;
-    write_file(dir.join("package.json"), &render_package_json(name, false), quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_package_json(name, false),
+        quiet,
+    )?;
     write_file(dir.join("build.rs"), BUILD_RS, quiet)?;
     write_file(dir.join(".cargo/config.toml"), CARGO_CONFIG, quiet)?;
     write_file(
@@ -155,10 +197,17 @@ fn scaffold_mdx(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
 fn scaffold_wasm(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
     write_file(dir.join("Cargo.toml"), &render_wasm_cargo_toml(name), quiet)?;
     write_file(dir.join("src/lib.rs"), WASM_LIB_RS, quiet)?;
-    write_file(dir.join("package.json"), &render_wasm_package_json(name), quiet)?;
+    write_file(
+        dir.join("package.json"),
+        &render_wasm_package_json(name),
+        quiet,
+    )?;
     write_file(
         dir.join("README.md"),
-        &render_readme(name, "Module WASM (wasm-pack / wasm-bindgen) utilisable depuis Bun"),
+        &render_readme(
+            name,
+            "Module WASM (wasm-pack / wasm-bindgen) utilisable depuis Bun",
+        ),
         quiet,
     )?;
     write_file(dir.join("index.ts"), INDEX_TS_WASM, quiet)?;
@@ -168,8 +217,7 @@ fn scaffold_wasm(dir: &std::path::Path, name: &str, quiet: bool) -> Result<()> {
 
 pub(crate) fn write_file(path: PathBuf, content: &str, quiet: bool) -> Result<()> {
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)
-            .with_context(|| format!("mkdir {}", parent.display()))?;
+        std::fs::create_dir_all(parent).with_context(|| format!("mkdir {}", parent.display()))?;
     }
     std::fs::write(&path, content).with_context(|| format!("écrire {}", path.display()))?;
     if !quiet {

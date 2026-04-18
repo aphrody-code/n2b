@@ -5,13 +5,16 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 
 static SETUP_NODE_RE: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"uses:\s*(?:actions/setup-node@[^\s\n]+)").unwrap()
+    Regex::new(r"uses:\s*(?:actions/setup-node@[^\s\n]+)")
+        .expect("invariant: SETUP_NODE_RE regex literal is valid")
 });
 static NODE_VERSION_RE: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r#"node-version:\s*['"]?[^\n'"]+['"]?"#).unwrap()
+    Regex::new(r#"node-version:\s*['"]?[^\n'"]+['"]?"#)
+        .expect("invariant: NODE_VERSION_RE regex literal is valid")
 });
 static CACHE_PM_RE: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r#"\n\s*cache:\s*['"]?(?:npm|yarn|pnpm)['"]?"#).unwrap()
+    Regex::new(r#"\n\s*cache:\s*['"]?(?:npm|yarn|pnpm)['"]?"#)
+        .expect("invariant: CACHE_PM_RE regex literal is valid")
 });
 
 pub fn scan_workflow(path: &str, content: &str) -> (Vec<Finding>, String) {
@@ -28,7 +31,10 @@ pub fn scan_workflow(path: &str, content: &str) -> (Vec<Finding>, String) {
             "actions/setup-node → oven-sh/setup-bun@v2",
             mat.as_str().to_string(),
             Some("uses: oven-sh/setup-bun@v2".to_string()),
-            MakeFindingOpts { autofix: Some(true), ..Default::default() },
+            MakeFindingOpts {
+                autofix: Some(true),
+                ..Default::default()
+            },
         ));
     }
     out = SETUP_NODE_RE
@@ -45,7 +51,10 @@ pub fn scan_workflow(path: &str, content: &str) -> (Vec<Finding>, String) {
             "remplacer 'node-version' par 'bun-version: latest'",
             mat.as_str().to_string(),
             Some("bun-version: latest".to_string()),
-            MakeFindingOpts { autofix: Some(true), ..Default::default() },
+            MakeFindingOpts {
+                autofix: Some(true),
+                ..Default::default()
+            },
         ));
     }
     out = NODE_VERSION_RE

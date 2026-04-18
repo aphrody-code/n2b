@@ -342,7 +342,11 @@ fn crosslink(
     prs: &[Hit],
     top_k: usize,
     threshold: f32,
-) -> Result<(Vec<IssueWithMatches>, Vec<IssueWithMatches>, Vec<FindingWithIssues>)> {
+) -> Result<(
+    Vec<IssueWithMatches>,
+    Vec<IssueWithMatches>,
+    Vec<FindingWithIssues>,
+)> {
     // Unique rule-messages (dedup).
     let mut rule_order: Vec<String> = Vec::new();
     let mut rule_text: Vec<String> = Vec::new();
@@ -395,8 +399,7 @@ fn crosslink(
     let prs_enriched = enrich_hits(prs, &rule_order, &rule_to_prs);
 
     // Pour chaque finding, récupérer les top-K issues via sa rule.
-    let mut rule_index: std::collections::HashMap<&str, usize> =
-        std::collections::HashMap::new();
+    let mut rule_index: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
     for (i, r) in rule_order.iter().enumerate() {
         rule_index.insert(r.as_str(), i);
     }
@@ -462,7 +465,11 @@ fn enrich_hits(
     hits.iter()
         .zip(per_hit)
         .map(|(h, mut related)| {
-            related.sort_by(|a, b| b.similarity.partial_cmp(&a.similarity).unwrap_or(std::cmp::Ordering::Equal));
+            related.sort_by(|a, b| {
+                b.similarity
+                    .partial_cmp(&a.similarity)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
             IssueWithMatches {
                 number: h.number,
                 title: h.title.clone(),
@@ -534,12 +541,7 @@ pub fn render_text(r: &AnalysisReport) -> String {
             Some(ri) => format!("{}/{}", ri.owner, ri.name).cyan().to_string(),
             None => "(no GitHub repo)".dimmed().to_string(),
         };
-        out.push_str(&format!(
-            "{} {} {}\n",
-            "▼".bold(),
-            a.path.bold(),
-            label
-        ));
+        out.push_str(&format!("{} {} {}\n", "▼".bold(), a.path.bold(), label));
         out.push_str(&format!(
             "  files: {} ({} w/ findings) · findings: {} ({}E/{}W/{}I) · issues: {} · PRs: {}\n",
             a.summary.files_scanned,

@@ -4,7 +4,8 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 
 static SHEBANG_RE: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"^#!\s*(?:/usr/bin/env\s+node|/usr/bin/node|node)(?:\s|$)").unwrap()
+    Regex::new(r"^#!\s*(?:/usr/bin/env\s+node|/usr/bin/node|node)(?:\s|$)")
+        .expect("invariant: SHEBANG_RE regex literal is valid")
 });
 
 pub fn scan_shebang(path: &str, content: &str) -> (Vec<Finding>, String) {
@@ -27,7 +28,10 @@ pub fn scan_shebang(path: &str, content: &str) -> (Vec<Finding>, String) {
         "shebang 'node' → 'bun'",
         first_line.to_string(),
         Some(replacement.to_string()),
-        MakeFindingOpts { autofix: Some(true), ..Default::default() },
+        MakeFindingOpts {
+            autofix: Some(true),
+            ..Default::default()
+        },
     ));
     let rest = &content[first_line.len()..];
     (findings, format!("{replacement}{rest}"))

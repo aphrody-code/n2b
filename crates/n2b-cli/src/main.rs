@@ -6,9 +6,9 @@ mod cli;
 mod commands;
 mod linux_cmd;
 mod patch;
-mod subprocess;
 #[cfg(test)]
 mod schema_test;
+mod subprocess;
 mod wasm_cmd;
 mod win32_cmd;
 
