@@ -10,7 +10,10 @@ pub fn scan_bunfig(path: &str, content: &str) -> (Vec<Finding>, String) {
     let mut findings: Vec<Finding> = Vec::new();
 
     // `install.registry = "https://..."` avec URL npm historique → info
-    if let Some(line) = content.lines().find(|l| l.trim_start().starts_with("registry")) {
+    if let Some(line) = content
+        .lines()
+        .find(|l| l.trim_start().starts_with("registry"))
+    {
         if line.contains("registry.npmjs.org") && !line.contains("//registry") {
             findings.push(make_finding(
                 path,
@@ -71,17 +74,16 @@ pub fn scan_bunfig(path: &str, content: &str) -> (Vec<Finding>, String) {
     }
 
     // Détecte les options Node-legacy qui ne s'appliquent pas
-    for dead in [
-        "loose =",
-        "babelTargets =",
-    ] {
+    for dead in ["loose =", "babelTargets ="] {
         if let Some(line) = content.lines().find(|l| l.contains(dead)) {
             findings.push(make_finding(
                 path,
                 &[],
                 0,
                 "bunfig/unknown-option",
-                format!("option '{dead}' ignorée par Bun — probablement un vestige d'un autre outil"),
+                format!(
+                    "option '{dead}' ignorée par Bun — probablement un vestige d'un autre outil"
+                ),
                 line.to_string(),
                 None,
                 MakeFindingOpts {
@@ -95,4 +97,3 @@ pub fn scan_bunfig(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     (findings, content.to_string())
 }
-

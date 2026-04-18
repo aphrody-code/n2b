@@ -19,7 +19,6 @@ mod codegen;
 mod parser;
 mod validator;
 
-
 // ---------------------------------------------------------------------------
 // Options publiques
 // ---------------------------------------------------------------------------
@@ -63,14 +62,27 @@ pub struct OpcodesOpts {
 /// Point d'entrée principal appelé depuis `wasm_cmd::run`.
 pub fn run_spec(cmd: crate::wasm_cmd::WasmSpecCmd, quiet: bool) -> anyhow::Result<()> {
     match cmd {
-        crate::wasm_cmd::WasmSpecCmd::Testsuite { path, filter, runtime, timeout_secs } => {
-            run_testsuite(&TestsuiteOpts { path, filter, runtime, timeout_secs, quiet })
-        }
+        crate::wasm_cmd::WasmSpecCmd::Testsuite {
+            path,
+            filter,
+            runtime,
+            timeout_secs,
+        } => run_testsuite(&TestsuiteOpts {
+            path,
+            filter,
+            runtime,
+            timeout_secs,
+            quiet,
+        }),
         crate::wasm_cmd::WasmSpecCmd::Features { path } => {
             validator::run_features(&FeaturesOpts { path, quiet })
         }
         crate::wasm_cmd::WasmSpecCmd::Opcodes { proposal, report } => {
-            codegen::run_opcodes(&OpcodesOpts { proposal, report, quiet })
+            codegen::run_opcodes(&OpcodesOpts {
+                proposal,
+                report,
+                quiet,
+            })
         }
     }
 }
@@ -105,7 +117,10 @@ pub fn run_testsuite(opts: &TestsuiteOpts) -> Result<()> {
     let wast_files = parser::collect_wast_files(&core_dir, opts.filter.as_deref())?;
     if wast_files.is_empty() {
         if !opts.quiet {
-            eprintln!("[wasm spec testsuite] Aucun fichier .wast trouvé (filtre: {:?})", opts.filter);
+            eprintln!(
+                "[wasm spec testsuite] Aucun fichier .wast trouvé (filtre: {:?})",
+                opts.filter
+            );
         }
         return Ok(());
     }
@@ -132,7 +147,8 @@ pub fn run_testsuite(opts: &TestsuiteOpts) -> Result<()> {
     let mut total_skipped = 0usize;
 
     for wast_path in &wast_files {
-        let result = parser::process_wast_file(wast_path, has_wat2wasm.as_deref(), has_bun.as_deref())?;
+        let result =
+            parser::process_wast_file(wast_path, has_wat2wasm.as_deref(), has_bun.as_deref())?;
         total_modules += result.modules_found;
         total_passed += result.modules_passed;
         total_failed += result.modules_failed;
@@ -190,7 +206,10 @@ pub fn run_testsuite(opts: &TestsuiteOpts) -> Result<()> {
                 "  {} Pour l'exécution complète, installer wabt : apt install wabt",
                 "TODO:".yellow()
             );
-            println!("  {} Support runtime Bun natif (sans wat2wasm) prévu en V2.", "TODO:".yellow());
+            println!(
+                "  {} Support runtime Bun natif (sans wat2wasm) prévu en V2.",
+                "TODO:".yellow()
+            );
         }
     }
 

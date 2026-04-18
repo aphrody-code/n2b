@@ -6,7 +6,7 @@
 //!   - `pwsh`   : scripts Bun Shell invoquant PowerShell 7 pour ops système
 //!   - `init`   : projet complet mêlant les 3 approches + build.ps1 + build.sh (cross)
 //!   - `doctor` : vérifie rustc+windows-msvc, cl.exe, link.exe, clang-cl,
-//!                cmake, ninja, pwsh, scoop, mingw-w64 (cross-compile)
+//!     cmake, ninja, pwsh, scoop, mingw-w64 (cross-compile)
 //!
 //! Refs :
 //!   - https://github.com/microsoft/windows-rs
@@ -83,10 +83,7 @@ fn scaffold(
         None => PathBuf::from(&name),
     };
     if target.exists() && !force {
-        anyhow::bail!(
-            "{} existe déjà — relancer avec --force",
-            target.display()
-        );
+        anyhow::bail!("{} existe déjà — relancer avec --force", target.display());
     }
     std::fs::create_dir_all(&target)?;
     match flavor {
@@ -109,10 +106,7 @@ fn init_all(name: String, dir: Option<PathBuf>, force: bool, quiet: bool) -> Res
         None => PathBuf::from(&name),
     };
     if target.exists() && !force {
-        anyhow::bail!(
-            "{} existe déjà — relancer avec --force",
-            target.display()
-        );
+        anyhow::bail!("{} existe déjà — relancer avec --force", target.display());
     }
     std::fs::create_dir_all(&target)?;
 
@@ -137,17 +131,29 @@ fn init_all(name: String, dir: Option<PathBuf>, force: bool, quiet: bool) -> Res
     write(target.join("scripts/ops.ts"), PWSH_OPS_TS, quiet)?;
 
     // Entrypoints TS
-    write(target.join("src/ffi.ts"), &render_ffi_index_ts(&name), quiet)?;
+    write(
+        target.join("src/ffi.ts"),
+        &render_ffi_index_ts(&name),
+        quiet,
+    )?;
     write(target.join("src/cc.ts"), CC_INDEX_TS, quiet)?;
     write(target.join("src/pwsh.ts"), PWSH_INDEX_TS, quiet)?;
     write(target.join("src/main.ts"), &render_main_ts(&name), quiet)?;
 
     // Package + scripts de build
-    write(target.join("package.json"), &render_all_package_json(&name), quiet)?;
+    write(
+        target.join("package.json"),
+        &render_all_package_json(&name),
+        quiet,
+    )?;
     write(target.join("README.md"), &render_all_readme(&name), quiet)?;
     write(target.join(".gitignore"), GITIGNORE, quiet)?;
     write(target.join("build.ps1"), &render_build_ps1(&name), quiet)?;
-    write(target.join("build.sh"), &render_build_sh_cross(&name), quiet)?;
+    write(
+        target.join("build.sh"),
+        &render_build_sh_cross(&name),
+        quiet,
+    )?;
     write(target.join("cross-compile.md"), CROSS_COMPILE_MD, quiet)?;
 
     #[cfg(unix)]
@@ -172,10 +178,22 @@ fn init_all(name: String, dir: Option<PathBuf>, force: bool, quiet: bool) -> Res
 }
 
 fn scaffold_ffi(dir: &Path, name: &str, quiet: bool) -> Result<()> {
-    write(dir.join("Cargo.toml"), &render_ffi_cargo_toml(name, false), quiet)?;
+    write(
+        dir.join("Cargo.toml"),
+        &render_ffi_cargo_toml(name, false),
+        quiet,
+    )?;
     write(dir.join("src/lib.rs"), FFI_LIB_RS_SIMPLE, quiet)?;
-    write(dir.join("package.json"), &render_ffi_package_json(name), quiet)?;
-    write(dir.join("index.ts"), &render_ffi_index_ts_simple(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_ffi_package_json(name),
+        quiet,
+    )?;
+    write(
+        dir.join("index.ts"),
+        &render_ffi_index_ts_simple(name),
+        quiet,
+    )?;
     write(
         dir.join("README.md"),
         &readme(name, "Rust cdylib (windows-rs) → Bun FFI dlopen .dll"),
@@ -201,11 +219,18 @@ fn scaffold_ffi(dir: &Path, name: &str, quiet: bool) -> Result<()> {
 fn scaffold_cc(dir: &Path, name: &str, quiet: bool) -> Result<()> {
     write(dir.join("hello.c"), CC_HELLO_C, quiet)?;
     write(dir.join("winapi.c"), CC_WINAPI_C, quiet)?;
-    write(dir.join("package.json"), &render_cc_package_json(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_cc_package_json(name),
+        quiet,
+    )?;
     write(dir.join("index.ts"), CC_INDEX_TS, quiet)?;
     write(
         dir.join("README.md"),
-        &readme(name, "Inline C avec <windows.h> compilé par TinyCC (bun:ffi `cc`)"),
+        &readme(
+            name,
+            "Inline C avec <windows.h> compilé par TinyCC (bun:ffi `cc`)",
+        ),
         quiet,
     )?;
     write(dir.join(".gitignore"), GITIGNORE, quiet)?;
@@ -213,12 +238,19 @@ fn scaffold_cc(dir: &Path, name: &str, quiet: bool) -> Result<()> {
 }
 
 fn scaffold_pwsh(dir: &Path, name: &str, quiet: bool) -> Result<()> {
-    write(dir.join("package.json"), &render_pwsh_package_json(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_pwsh_package_json(name),
+        quiet,
+    )?;
     write(dir.join("sysinfo.ts"), PWSH_SYSINFO_TS, quiet)?;
     write(dir.join("ops.ts"), PWSH_OPS_TS, quiet)?;
     write(
         dir.join("README.md"),
-        &readme(name, "Ops système via Bun Shell + PowerShell 7 (`$\\`pwsh ...\\``)"),
+        &readme(
+            name,
+            "Ops système via Bun Shell + PowerShell 7 (`$\\`pwsh ...\\``)",
+        ),
         quiet,
     )?;
     write(dir.join(".gitignore"), GITIGNORE, quiet)?;

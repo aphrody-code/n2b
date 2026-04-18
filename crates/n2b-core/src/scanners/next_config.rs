@@ -13,7 +13,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 1. output: 'standalone' — build Node-oriented, pas directement exécutable par `bun run`.
     static OUTPUT_STANDALONE: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r#"output\s*:\s*['"]standalone['"]"#).unwrap()
+        Regex::new(r#"output\s*:\s*['"]standalone['"]"#)
+            .expect("invariant: OUTPUT_STANDALONE regex literal is valid")
     });
     if OUTPUT_STANDALONE.is_match(content) {
         findings.push(make_finding(
@@ -34,7 +35,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 2. webpack() custom — Turbopack est le bundler par défaut Next 16.
     static WEBPACK_FN: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"\bwebpack\s*(?:\(|:\s*(?:function|\())").unwrap()
+        Regex::new(r"\bwebpack\s*(?:\(|:\s*(?:function|\())")
+            .expect("invariant: WEBPACK_FN regex literal is valid")
     });
     if WEBPACK_FN.is_match(content) {
         findings.push(make_finding(
@@ -55,7 +57,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 3. experimental.serverComponentsExternalPackages
     static SERVER_EXTERNAL: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"serverComponentsExternalPackages\s*:").unwrap()
+        Regex::new(r"serverComponentsExternalPackages\s*:")
+            .expect("invariant: SERVER_EXTERNAL regex literal is valid")
     });
     if SERVER_EXTERNAL.is_match(content) {
         findings.push(make_finding(
@@ -77,7 +80,9 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
     // 4. Absence de turbopack: (flag ou config) — Next 16 l'active par défaut,
     //    mais l'absence de mention explicite quand on porte est worth noting.
     //    On ne flaggue que si `webpack` custom est présent (sinon silencieux).
-    static TURBOPACK_FN: Lazy<Regex> = Lazy::new(|| Regex::new(r"\bturbopack\s*:").unwrap());
+    static TURBOPACK_FN: Lazy<Regex> = Lazy::new(|| {
+        Regex::new(r"\bturbopack\s*:").expect("invariant: TURBOPACK_FN regex literal is valid")
+    });
     if WEBPACK_FN.is_match(content) && !TURBOPACK_FN.is_match(content) {
         findings.push(make_finding(
             path,
@@ -97,7 +102,7 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.5 next-rspack : withRspack() enveloppe la config
     static WITH_RSPACK: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"\bwithRspack\s*\(").unwrap()
+        Regex::new(r"\bwithRspack\s*\(").expect("invariant: WITH_RSPACK regex literal is valid")
     });
     if WITH_RSPACK.is_match(content) {
         findings.push(make_finding(
@@ -118,7 +123,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.6 turbopack: { rules: {...} } — custom loader rules
     static TURBO_RULES: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"turbopack\s*:\s*\{[\s\S]*?\brules\s*:").unwrap()
+        Regex::new(r"turbopack\s*:\s*\{[\s\S]*?\brules\s*:")
+            .expect("invariant: TURBO_RULES regex literal is valid")
     });
     if TURBO_RULES.is_match(content) {
         findings.push(make_finding(
@@ -139,7 +145,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.7 turbopack.resolveAlias
     static TURBO_ALIAS: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"turbopack\s*:\s*\{[\s\S]*?\bresolveAlias\s*:").unwrap()
+        Regex::new(r"turbopack\s*:\s*\{[\s\S]*?\bresolveAlias\s*:")
+            .expect("invariant: TURBO_ALIAS regex literal is valid")
     });
     if TURBO_ALIAS.is_match(content) {
         findings.push(make_finding(
@@ -160,7 +167,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.8 transpilePackages — utile pour ESM-only packages
     static TRANSPILE_PKGS: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"\btranspilePackages\s*:").unwrap()
+        Regex::new(r"\btranspilePackages\s*:")
+            .expect("invariant: TRANSPILE_PKGS regex literal is valid")
     });
     if TRANSPILE_PKGS.is_match(content) {
         findings.push(make_finding(
@@ -181,7 +189,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.9 compiler.styledComponents
     static SWC_STYLED: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bstyledComponents\s*:").unwrap()
+        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bstyledComponents\s*:")
+            .expect("invariant: SWC_STYLED regex literal is valid")
     });
     if SWC_STYLED.is_match(content) {
         findings.push(make_finding(
@@ -200,22 +209,30 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.10 compiler.emotion
     static SWC_EMOTION: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bemotion\s*:").unwrap()
+        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bemotion\s*:")
+            .expect("invariant: SWC_EMOTION regex literal is valid")
     });
     if SWC_EMOTION.is_match(content) {
         findings.push(make_finding(
-            path, &[], 0,
+            path,
+            &[],
+            0,
             "next/compiler-emotion",
             "compiler.emotion activé — SWC transform remplace @emotion/babel-plugin",
             "compiler.emotion",
             None,
-            MakeFindingOpts { autofix: Some(false), severity: Some(Severity::Info), ..Default::default() },
+            MakeFindingOpts {
+                autofix: Some(false),
+                severity: Some(Severity::Info),
+                ..Default::default()
+            },
         ));
     }
 
     // 4.11 compiler.removeConsole
     static SWC_REMOVE_CONSOLE: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bremoveConsole\s*:").unwrap()
+        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bremoveConsole\s*:")
+            .expect("invariant: SWC_REMOVE_CONSOLE regex literal is valid")
     });
     if SWC_REMOVE_CONSOLE.is_match(content) {
         findings.push(make_finding(
@@ -230,22 +247,30 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.12 compiler.reactRemoveProperties
     static SWC_REACT_REMOVE: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\breactRemoveProperties\s*:").unwrap()
+        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\breactRemoveProperties\s*:")
+            .expect("invariant: SWC_REACT_REMOVE regex literal is valid")
     });
     if SWC_REACT_REMOVE.is_match(content) {
         findings.push(make_finding(
-            path, &[], 0,
+            path,
+            &[],
+            0,
             "next/compiler-react-remove-props",
             "compiler.reactRemoveProperties — strip data-test-* props en prod",
             "compiler.reactRemoveProperties",
             None,
-            MakeFindingOpts { autofix: Some(false), severity: Some(Severity::Info), ..Default::default() },
+            MakeFindingOpts {
+                autofix: Some(false),
+                severity: Some(Severity::Info),
+                ..Default::default()
+            },
         ));
     }
 
     // 4.13 compiler.relay
     static SWC_RELAY: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\brelay\s*:").unwrap()
+        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\brelay\s*:")
+            .expect("invariant: SWC_RELAY regex literal is valid")
     });
     if SWC_RELAY.is_match(content) {
         findings.push(make_finding(
@@ -260,7 +285,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.14 compiler.define / defineServer (Next 15+)
     static SWC_DEFINE: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bdefine(?:Server)?\s*:").unwrap()
+        Regex::new(r"compiler\s*:\s*\{[\s\S]*?\bdefine(?:Server)?\s*:")
+            .expect("invariant: SWC_DEFINE regex literal is valid")
     });
     if SWC_DEFINE.is_match(content) {
         findings.push(make_finding(
@@ -275,7 +301,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.15 experimental.swcPlugins
     static SWC_PLUGINS: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"experimental\s*:\s*\{[\s\S]*?\bswcPlugins\s*:").unwrap()
+        Regex::new(r"experimental\s*:\s*\{[\s\S]*?\bswcPlugins\s*:")
+            .expect("invariant: SWC_PLUGINS regex literal is valid")
     });
     if SWC_PLUGINS.is_match(content) {
         findings.push(make_finding(
@@ -290,7 +317,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 4.16 experimental.swcTraceProfiling
     static SWC_TRACE: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r"experimental\s*:\s*\{[\s\S]*?\bswcTraceProfiling\s*:").unwrap()
+        Regex::new(r"experimental\s*:\s*\{[\s\S]*?\bswcTraceProfiling\s*:")
+            .expect("invariant: SWC_TRACE regex literal is valid")
     });
     if SWC_TRACE.is_match(content) {
         findings.push(make_finding(
@@ -305,7 +333,8 @@ pub fn scan_next_config(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // 5. images.loader custom
     static IMAGES_CUSTOM: Lazy<Regex> = Lazy::new(|| {
-        Regex::new(r#"loader\s*:\s*['"]custom['"]"#).unwrap()
+        Regex::new(r#"loader\s*:\s*['"]custom['"]"#)
+            .expect("invariant: IMAGES_CUSTOM regex literal is valid")
     });
     if IMAGES_CUSTOM.is_match(content) {
         findings.push(make_finding(

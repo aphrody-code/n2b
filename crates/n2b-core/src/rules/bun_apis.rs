@@ -18,10 +18,18 @@ struct ApiRule {
     severity: Severity,
 }
 
-fn rule(id: &'static str, pat: &str, msg: &'static str, replace: ReplaceKind, aggressive: bool) -> ApiRule {
+fn rule(
+    id: &'static str,
+    pat: &str,
+    msg: &'static str,
+    replace: ReplaceKind,
+    aggressive: bool,
+) -> ApiRule {
     ApiRule {
         id,
-        re: Regex::new(pat).unwrap(),
+        re: Regex::new(pat).unwrap_or_else(|e| {
+            panic!("invariant: ApiRule pattern for rule '{id}' is invalid: {e}")
+        }),
         message: msg,
         replace,
         aggressive,
@@ -29,7 +37,13 @@ fn rule(id: &'static str, pat: &str, msg: &'static str, replace: ReplaceKind, ag
     }
 }
 
-fn info_rule(id: &'static str, pat: &str, msg: &'static str, replace: ReplaceKind, aggressive: bool) -> ApiRule {
+fn info_rule(
+    id: &'static str,
+    pat: &str,
+    msg: &'static str,
+    replace: ReplaceKind,
+    aggressive: bool,
+) -> ApiRule {
     ApiRule {
         severity: Severity::Info,
         ..rule(id, pat, msg, replace, aggressive)
@@ -383,19 +397,26 @@ static RULES: Lazy<Vec<ApiRule>> = Lazy::new(|| {
 pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<Finding>, String) {
     let offsets = line_offsets(source);
     let mut findings: Vec<Finding> = Vec::new();
-    struct Edit { index: usize, len: usize, replacement: String }
+    struct Edit {
+        index: usize,
+        len: usize,
+        replacement: String,
+    }
     let mut edits: Vec<Edit> = Vec::new();
 
     for r in RULES.iter() {
         for mat in r.re.captures_iter(source) {
-            let whole = mat.get(0).unwrap();
+            let whole = mat
+                .get(0)
+                .expect("invariant: capture group 0 is always present in a match");
             let index = whole.start();
 
             // Bug fix : api/exec matche aussi regex.exec() et string.exec() (accès membre).
             // Ne garder que les appels child_process → soit `child_process.exec(` explicite,
             // soit `exec(` en position d'appel directe (pas précédé d'un `.`).
             // Early continue pour éviter toute allocation inutile.
-            if (r.id == "api/exec" || r.id == "api/execSync") && is_member_exec_call(source, index) {
+            if (r.id == "api/exec" || r.id == "api/execSync") && is_member_exec_call(source, index)
+            {
                 continue;
             }
 
@@ -441,7 +462,11 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
                 },
             ));
             if let Some(repl) = replacement_for_edit {
-                edits.push(Edit { index, len: original_len, replacement: repl });
+                edits.push(Edit {
+                    index,
+                    len: original_len,
+                    replacement: repl,
+                });
             }
         }
     }

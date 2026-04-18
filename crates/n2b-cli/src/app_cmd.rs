@@ -54,10 +54,19 @@ pub enum AppCmd {
 
 pub fn run(cmd: AppCmd, quiet: bool) -> Result<()> {
     match cmd {
-        AppCmd::Init { name, flavor, dir, force } => init(name, flavor, dir, force, quiet),
-        AppCmd::Build { entry, outfile, target, minify, sourcemap } => {
-            build_compile(entry, outfile, target, minify, sourcemap, quiet)
-        }
+        AppCmd::Init {
+            name,
+            flavor,
+            dir,
+            force,
+        } => init(name, flavor, dir, force, quiet),
+        AppCmd::Build {
+            entry,
+            outfile,
+            target,
+            minify,
+            sourcemap,
+        } => build_compile(entry, outfile, target, minify, sourcemap, quiet),
         AppCmd::Doctor => doctor(quiet),
     }
 }
@@ -74,10 +83,7 @@ fn init(
         None => PathBuf::from(&name),
     };
     if target.exists() && !force {
-        anyhow::bail!(
-            "{} existe déjà — relancer avec --force",
-            target.display()
-        );
+        anyhow::bail!("{} existe déjà — relancer avec --force", target.display());
     }
     std::fs::create_dir_all(&target)?;
 
@@ -113,7 +119,11 @@ fn build_compile(
         anyhow::bail!("{} introuvable", entry.display());
     }
 
-    let mut args: Vec<String> = vec!["build".into(), "--compile".into(), entry.display().to_string()];
+    let mut args: Vec<String> = vec![
+        "build".into(),
+        "--compile".into(),
+        entry.display().to_string(),
+    ];
     if let Some(t) = target {
         args.push("--target".into());
         args.push(t);
@@ -141,11 +151,7 @@ fn build_compile(
     if !quiet {
         if let Ok(meta) = std::fs::metadata(&outfile) {
             let size_mb = meta.len() as f64 / 1024.0 / 1024.0;
-            eprintln!(
-                "[app build] ✓ {} ({:.1} MB)",
-                outfile.display(),
-                size_mb
-            );
+            eprintln!("[app build] ✓ {} ({:.1} MB)", outfile.display(), size_mb);
         }
     }
     Ok(())
@@ -153,12 +159,28 @@ fn build_compile(
 
 fn doctor(quiet: bool) -> Result<()> {
     let tools: &[(&str, &str, &str)] = &[
-        ("bun",     "curl -fsSL https://bun.sh/install | bash",    "runtime + bundler Bun"),
-        ("tsc",     "bun add -g typescript",                       "TS compiler (optionnel)"),
-        ("upx",     "sudo apt install upx",                        "compress binary (bun compile → upx)"),
+        (
+            "bun",
+            "curl -fsSL https://bun.sh/install | bash",
+            "runtime + bundler Bun",
+        ),
+        ("tsc", "bun add -g typescript", "TS compiler (optionnel)"),
+        (
+            "upx",
+            "sudo apt install upx",
+            "compress binary (bun compile → upx)",
+        ),
         // --- Unix CLIs cross-platform via uutils (utile pour scripts CLI multi-OS) ---
-        ("coreutils","cargo install coreutils",                    "uutils/coreutils (ls/cp/cat/… portables Windows/macOS/Linux)"),
-        ("findutils","cargo install findutils",                    "uutils/findutils (find/xargs)"),
+        (
+            "coreutils",
+            "cargo install coreutils",
+            "uutils/coreutils (ls/cp/cat/… portables Windows/macOS/Linux)",
+        ),
+        (
+            "findutils",
+            "cargo install findutils",
+            "uutils/findutils (find/xargs)",
+        ),
     ];
     let mut missing = 0;
     for (bin, install, desc) in tools {
@@ -189,7 +211,11 @@ fn doctor(quiet: bool) -> Result<()> {
 
 fn scaffold_cli(dir: &Path, name: &str, quiet: bool) -> Result<()> {
     write(dir.join("index.ts"), &render_cli_entry(name), quiet)?;
-    write(dir.join("package.json"), &render_cli_package_json(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_cli_package_json(name),
+        quiet,
+    )?;
     write(
         dir.join("README.md"),
         &readme(
@@ -205,11 +231,18 @@ fn scaffold_cli(dir: &Path, name: &str, quiet: bool) -> Result<()> {
 fn scaffold_tui(dir: &Path, name: &str, quiet: bool) -> Result<()> {
     write(dir.join("src/App.tsx"), TUI_APP_TSX, quiet)?;
     write(dir.join("src/index.tsx"), TUI_INDEX_TSX, quiet)?;
-    write(dir.join("package.json"), &render_tui_package_json(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_tui_package_json(name),
+        quiet,
+    )?;
     write(dir.join("tsconfig.json"), TUI_TSCONFIG, quiet)?;
     write(
         dir.join("README.md"),
-        &readme(name, "TUI React via Ink — interactive list, couleurs, keybindings"),
+        &readme(
+            name,
+            "TUI React via Ink — interactive list, couleurs, keybindings",
+        ),
         quiet,
     )?;
     write(dir.join(".gitignore"), GITIGNORE, quiet)?;
@@ -226,10 +259,17 @@ fn scaffold_gui(dir: &Path, name: &str, quiet: bool) -> Result<()> {
     write(dir.join("src/browser/index.ts"), GUI_BROWSER_TS, quiet)?;
     write(dir.join("src/browser/styles.css"), GUI_BROWSER_CSS, quiet)?;
     write(dir.join("electrobun.config.ts"), GUI_CONFIG_TS, quiet)?;
-    write(dir.join("package.json"), &render_gui_package_json(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_gui_package_json(name),
+        quiet,
+    )?;
     write(
         dir.join("README.md"),
-        &readme(name, "GUI desktop via Electrobun (Bun + Zig WebView, ~10× plus léger qu'Electron)"),
+        &readme(
+            name,
+            "GUI desktop via Electrobun (Bun + Zig WebView, ~10× plus léger qu'Electron)",
+        ),
         quiet,
     )?;
     write(dir.join(".gitignore"), GITIGNORE, quiet)?;
@@ -238,7 +278,11 @@ fn scaffold_gui(dir: &Path, name: &str, quiet: bool) -> Result<()> {
 
 fn scaffold_executable(dir: &Path, name: &str, quiet: bool) -> Result<()> {
     write(dir.join("index.ts"), &render_cli_entry(name), quiet)?;
-    write(dir.join("package.json"), &render_exe_package_json(name), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_exe_package_json(name),
+        quiet,
+    )?;
     write(dir.join("build-all.sh"), &render_build_all_sh(name), quiet)?;
     write(
         dir.join("README.md"),

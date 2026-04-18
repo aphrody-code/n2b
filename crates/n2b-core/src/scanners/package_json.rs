@@ -6,12 +6,20 @@ use regex::Regex;
 use serde_json::Value;
 
 const REDUNDANT_DEPS: &[&str] = &[
-    "node-fetch", "isomorphic-fetch", "cross-fetch",
-    "dotenv", "dotenv-cli",
-    "rimraf", "mkdirp",
-    "better-sqlite3", "sqlite3",
-    "uuid", "nanoid",
-    "ts-node", "tsx", "ts-node-esm",
+    "node-fetch",
+    "isomorphic-fetch",
+    "cross-fetch",
+    "dotenv",
+    "dotenv-cli",
+    "rimraf",
+    "mkdirp",
+    "better-sqlite3",
+    "sqlite3",
+    "uuid",
+    "nanoid",
+    "ts-node",
+    "tsx",
+    "ts-node-esm",
     "concurrently",
 ];
 
@@ -20,169 +28,782 @@ const REDUNDANT_DEPS: &[&str] = &[
 /// Tuples : (dep_name, rule_id suffix, guide_url, label).
 const ECOSYSTEM_GUIDES: &[(&str, &str, &str, &str)] = &[
     // Frameworks full-stack
-    ("next",               "nextjs",          "https://bun.sh/guides/ecosystem/nextjs",          "Next.js"),
-    ("nuxt",               "nuxt",            "https://bun.sh/guides/ecosystem/nuxt",            "Nuxt"),
-    ("astro",              "astro",           "https://bun.sh/guides/ecosystem/astro",           "Astro"),
-    ("@remix-run/react",   "remix",           "https://bun.sh/guides/ecosystem/remix",           "Remix"),
-    ("@sveltejs/kit",      "sveltekit",       "https://bun.sh/guides/ecosystem/sveltekit",       "SvelteKit"),
-    ("@tanstack/start",    "tanstack-start",  "https://bun.sh/guides/ecosystem/tanstack-start",  "TanStack Start"),
-    ("solid-start",        "solid-start",     "https://bun.sh/guides",                           "SolidStart"),
-    ("@builder.io/qwik",   "qwik",            "https://bun.sh/guides/ecosystem/qwik",            "Qwik"),
+    (
+        "next",
+        "nextjs",
+        "https://bun.sh/guides/ecosystem/nextjs",
+        "Next.js",
+    ),
+    (
+        "nuxt",
+        "nuxt",
+        "https://bun.sh/guides/ecosystem/nuxt",
+        "Nuxt",
+    ),
+    (
+        "astro",
+        "astro",
+        "https://bun.sh/guides/ecosystem/astro",
+        "Astro",
+    ),
+    (
+        "@remix-run/react",
+        "remix",
+        "https://bun.sh/guides/ecosystem/remix",
+        "Remix",
+    ),
+    (
+        "@sveltejs/kit",
+        "sveltekit",
+        "https://bun.sh/guides/ecosystem/sveltekit",
+        "SvelteKit",
+    ),
+    (
+        "@tanstack/start",
+        "tanstack-start",
+        "https://bun.sh/guides/ecosystem/tanstack-start",
+        "TanStack Start",
+    ),
+    (
+        "solid-start",
+        "solid-start",
+        "https://bun.sh/guides",
+        "SolidStart",
+    ),
+    (
+        "@builder.io/qwik",
+        "qwik",
+        "https://bun.sh/guides/ecosystem/qwik",
+        "Qwik",
+    ),
     // HTTP frameworks
-    ("hono",               "hono",            "https://bun.sh/guides/ecosystem/hono",            "Hono"),
-    ("elysia",             "elysia",          "https://bun.sh/guides/ecosystem/elysia",          "Elysia"),
-    ("fastify",            "fastify",         "https://bun.sh/guides",                           "Fastify"),
-    ("express",            "express",         "https://bun.sh/guides/ecosystem/express",         "Express"),
-    ("stric",              "stric",           "https://bun.sh/guides/ecosystem/stric",           "StricJS"),
+    (
+        "hono",
+        "hono",
+        "https://bun.sh/guides/ecosystem/hono",
+        "Hono",
+    ),
+    (
+        "elysia",
+        "elysia",
+        "https://bun.sh/guides/ecosystem/elysia",
+        "Elysia",
+    ),
+    ("fastify", "fastify", "https://bun.sh/guides", "Fastify"),
+    (
+        "express",
+        "express",
+        "https://bun.sh/guides/ecosystem/express",
+        "Express",
+    ),
+    (
+        "stric",
+        "stric",
+        "https://bun.sh/guides/ecosystem/stric",
+        "StricJS",
+    ),
     // Build / frontend
-    ("vite",               "vite",            "https://bun.sh/guides/ecosystem/vite",            "Vite"),
+    (
+        "vite",
+        "vite",
+        "https://bun.sh/guides/ecosystem/vite",
+        "Vite",
+    ),
     // ORMs & DB clients
-    ("prisma",             "prisma",          "https://bun.sh/guides/ecosystem/prisma",          "Prisma"),
-    ("@prisma/client",     "prisma",          "https://bun.sh/guides/ecosystem/prisma",          "Prisma"),
-    ("drizzle-orm",        "drizzle",         "https://bun.sh/guides/ecosystem/drizzle",         "Drizzle"),
-    ("mongoose",           "mongoose",        "https://bun.sh/guides/ecosystem/mongoose",        "Mongoose"),
-    ("@edgedb/driver",     "gel",             "https://bun.sh/guides/ecosystem/gel",             "Gel"),
+    (
+        "prisma",
+        "prisma",
+        "https://bun.sh/guides/ecosystem/prisma",
+        "Prisma",
+    ),
+    (
+        "@prisma/client",
+        "prisma",
+        "https://bun.sh/guides/ecosystem/prisma",
+        "Prisma",
+    ),
+    (
+        "drizzle-orm",
+        "drizzle",
+        "https://bun.sh/guides/ecosystem/drizzle",
+        "Drizzle",
+    ),
+    (
+        "mongoose",
+        "mongoose",
+        "https://bun.sh/guides/ecosystem/mongoose",
+        "Mongoose",
+    ),
+    (
+        "@edgedb/driver",
+        "gel",
+        "https://bun.sh/guides/ecosystem/gel",
+        "Gel",
+    ),
     // Daemons / process managers
-    ("pm2",                "pm2",             "https://bun.sh/guides/ecosystem/pm2",             "PM2"),
+    ("pm2", "pm2", "https://bun.sh/guides/ecosystem/pm2", "PM2"),
     // Observability
-    ("@sentry/node",       "sentry",          "https://bun.sh/guides/ecosystem/sentry",          "Sentry"),
-    ("@sentry/bun",        "sentry",          "https://bun.sh/guides/ecosystem/sentry",          "Sentry"),
+    (
+        "@sentry/node",
+        "sentry",
+        "https://bun.sh/guides/ecosystem/sentry",
+        "Sentry",
+    ),
+    (
+        "@sentry/bun",
+        "sentry",
+        "https://bun.sh/guides/ecosystem/sentry",
+        "Sentry",
+    ),
     // Bots
-    ("discord.js",         "discord-bot",     "https://bun.sh/guides/ecosystem/discordjs",       "discord.js"),
+    (
+        "discord.js",
+        "discord-bot",
+        "https://bun.sh/guides/ecosystem/discordjs",
+        "discord.js",
+    ),
     // --- Top 10 awesome-bun packages (https://github.com/oven-sh/awesome-bun) ---
-    ("graphql-yoga",       "graphql-yoga",    "https://the-guild.dev/graphql/yoga-server/v3/integrations/integration-with-bun", "GraphQL Yoga"),
-    ("@orama/orama",       "orama",           "https://github.com/oramasearch/orama",            "Orama (full-text search)"),
-    ("brisa",              "brisa",           "https://github.com/brisa-build/brisa",            "Brisa (full-stack + Web Components)"),
-    ("kysely",             "kysely",          "https://github.com/kysely-org/kysely",            "Kysely (SQL query builder)"),
-    ("kysely-bun-sqlite",  "kysely-bun",      "https://www.npmjs.com/package/kysely-bun-sqlite", "Kysely + bun:sqlite adapter"),
-    ("@hattip/core",       "hattip",          "https://github.com/hattipjs/hattip",              "HatTip (cross-runtime HTTP)"),
-    ("primate",            "primate",         "https://github.com/primatejs/primate",            "Primate web framework"),
-    ("vixeny",             "vixeny",          "https://github.com/mimiMonads/vixeny",            "Vixeny (functional web framework)"),
-    ("nbit",               "nbit",            "https://github.com/sstur/nbit",                   "NBit (zero-dep web framework)"),
-    ("bun-utilities",      "bun-utilities",   "https://www.npmjs.com/package/bun-utilities",     "bun-utilities (FS/shell helpers)"),
+    (
+        "graphql-yoga",
+        "graphql-yoga",
+        "https://the-guild.dev/graphql/yoga-server/v3/integrations/integration-with-bun",
+        "GraphQL Yoga",
+    ),
+    (
+        "@orama/orama",
+        "orama",
+        "https://github.com/oramasearch/orama",
+        "Orama (full-text search)",
+    ),
+    (
+        "brisa",
+        "brisa",
+        "https://github.com/brisa-build/brisa",
+        "Brisa (full-stack + Web Components)",
+    ),
+    (
+        "kysely",
+        "kysely",
+        "https://github.com/kysely-org/kysely",
+        "Kysely (SQL query builder)",
+    ),
+    (
+        "kysely-bun-sqlite",
+        "kysely-bun",
+        "https://www.npmjs.com/package/kysely-bun-sqlite",
+        "Kysely + bun:sqlite adapter",
+    ),
+    (
+        "@hattip/core",
+        "hattip",
+        "https://github.com/hattipjs/hattip",
+        "HatTip (cross-runtime HTTP)",
+    ),
+    (
+        "primate",
+        "primate",
+        "https://github.com/primatejs/primate",
+        "Primate web framework",
+    ),
+    (
+        "vixeny",
+        "vixeny",
+        "https://github.com/mimiMonads/vixeny",
+        "Vixeny (functional web framework)",
+    ),
+    (
+        "nbit",
+        "nbit",
+        "https://github.com/sstur/nbit",
+        "NBit (zero-dep web framework)",
+    ),
+    (
+        "bun-utilities",
+        "bun-utilities",
+        "https://www.npmjs.com/package/bun-utilities",
+        "bun-utilities (FS/shell helpers)",
+    ),
     // Desktop / native apps
-    ("electrobun",         "electrobun",      "https://github.com/blackboardsh/electrobun",      "Electrobun (desktop apps Bun+Zig, alternative Electron)"),
-    ("electron",           "electron-alt",    "https://github.com/blackboardsh/electrobun",      "Electron détecté — envisager Electrobun (Bun+Zig, bundle ~10× plus petit)"),
-    ("tauri",              "tauri",           "https://tauri.app",                                "Tauri (Rust + WebView) — compatible avec Bun côté frontend"),
+    (
+        "electrobun",
+        "electrobun",
+        "https://github.com/blackboardsh/electrobun",
+        "Electrobun (desktop apps Bun+Zig, alternative Electron)",
+    ),
+    (
+        "electron",
+        "electron-alt",
+        "https://github.com/blackboardsh/electrobun",
+        "Electron détecté — envisager Electrobun (Bun+Zig, bundle ~10× plus petit)",
+    ),
+    (
+        "tauri",
+        "tauri",
+        "https://tauri.app",
+        "Tauri (Rust + WebView) — compatible avec Bun côté frontend",
+    ),
     // CLI frameworks
-    ("ink",                "ink",             "https://github.com/vadimdemedes/ink",             "Ink (React for CLIs) — tourne sous Bun"),
-    ("bunli",              "bunli",           "https://bunli.dev/docs",                          "Bunli (CLI framework Bun-native, type-safe, zero-dep)"),
-    ("@bunli/core",        "bunli",           "https://bunli.dev/docs",                          "Bunli core"),
-    ("commander",          "commander",       "https://github.com/tj/commander.js",              "Commander — marche sous Bun (envisager Bunli pour Bun-native)"),
-    ("yargs",              "yargs",           "https://github.com/yargs/yargs",                  "yargs — marche sous Bun (envisager util.parseArgs natif ou Bunli)"),
+    (
+        "ink",
+        "ink",
+        "https://github.com/vadimdemedes/ink",
+        "Ink (React for CLIs) — tourne sous Bun",
+    ),
+    (
+        "bunli",
+        "bunli",
+        "https://bunli.dev/docs",
+        "Bunli (CLI framework Bun-native, type-safe, zero-dep)",
+    ),
+    (
+        "@bunli/core",
+        "bunli",
+        "https://bunli.dev/docs",
+        "Bunli core",
+    ),
+    (
+        "commander",
+        "commander",
+        "https://github.com/tj/commander.js",
+        "Commander — marche sous Bun (envisager Bunli pour Bun-native)",
+    ),
+    (
+        "yargs",
+        "yargs",
+        "https://github.com/yargs/yargs",
+        "yargs — marche sous Bun (envisager util.parseArgs natif ou Bunli)",
+    ),
     // --- Rspack / Rstack ecosystem (Rust-based bundlers) ---
-    ("@rspack/core",       "rspack",          "https://rspack.rs/",                              "Rspack (bundler Rust, webpack-compatible)"),
-    ("@rspack/cli",        "rspack",          "https://rspack.rs/",                              "Rspack CLI"),
-    ("next-rspack",        "next-rspack",     "https://rspack.rs/guide/tech/next",               "next-rspack (Next.js backed by Rspack)"),
-    ("@rsbuild/core",      "rsbuild",         "https://rsbuild.rs/",                             "Rsbuild (build tool Rust pour web apps)"),
-    ("rsbuild",            "rsbuild",         "https://rsbuild.rs/",                             "Rsbuild"),
-    ("@rslib/core",        "rslib",           "https://lib.rsbuild.rs/",                         "Rslib (build libs Rust-powered)"),
-    ("rslib",              "rslib",           "https://lib.rsbuild.rs/",                         "Rslib"),
-    ("rsdoctor",           "rsdoctor",        "https://rsdoctor.rs/",                            "Rsdoctor (build analyzer pour Rspack/webpack)"),
-    ("@rsdoctor/rspack-plugin", "rsdoctor",   "https://rsdoctor.rs/",                            "Rsdoctor plugin"),
-    ("rspress",            "rspress",         "https://rspress.rs/",                             "Rspress (static site generator Rust-powered)"),
-    ("rsbuild-plugin-react", "rsbuild",       "https://rsbuild.rs/",                             "Rsbuild React plugin"),
+    (
+        "@rspack/core",
+        "rspack",
+        "https://rspack.rs/",
+        "Rspack (bundler Rust, webpack-compatible)",
+    ),
+    ("@rspack/cli", "rspack", "https://rspack.rs/", "Rspack CLI"),
+    (
+        "next-rspack",
+        "next-rspack",
+        "https://rspack.rs/guide/tech/next",
+        "next-rspack (Next.js backed by Rspack)",
+    ),
+    (
+        "@rsbuild/core",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild (build tool Rust pour web apps)",
+    ),
+    ("rsbuild", "rsbuild", "https://rsbuild.rs/", "Rsbuild"),
+    (
+        "@rslib/core",
+        "rslib",
+        "https://lib.rsbuild.rs/",
+        "Rslib (build libs Rust-powered)",
+    ),
+    ("rslib", "rslib", "https://lib.rsbuild.rs/", "Rslib"),
+    (
+        "rsdoctor",
+        "rsdoctor",
+        "https://rsdoctor.rs/",
+        "Rsdoctor (build analyzer pour Rspack/webpack)",
+    ),
+    (
+        "@rsdoctor/rspack-plugin",
+        "rsdoctor",
+        "https://rsdoctor.rs/",
+        "Rsdoctor plugin",
+    ),
+    (
+        "rspress",
+        "rspress",
+        "https://rspress.rs/",
+        "Rspress (static site generator Rust-powered)",
+    ),
+    (
+        "rsbuild-plugin-react",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild React plugin",
+    ),
     // --- Rstack écosystème étendu (awesome-rstack) ---
-    ("@rstest/core",       "rstest",          "https://rstest.rs/",                              "Rstest (test runner Rust)"),
-    ("@rslint/core",       "rslint",          "https://rslint.rs/",                              "Rslint (linter Rust)"),
-    ("@rspress/core",      "rspress",         "https://rspress.rs/",                             "Rspress core"),
-    ("storybook-rsbuild",  "storybook-rsbuild", "https://storybook.js.org/",                     "Storybook builder Rsbuild"),
-    ("@nx/rspack",         "nx-rspack",       "https://nx.dev/",                                 "Nx + Rspack"),
-    ("@nx/rsbuild",        "nx-rsbuild",      "https://nx.dev/",                                 "Nx + Rsbuild"),
-    ("@nuxt/rspack-builder", "nuxt-rspack",   "https://nuxt.com/",                               "Nuxt bundler Rspack"),
-    ("re.pack",            "repack",          "https://re-pack.dev/",                            "Re.Pack (React Native toolkit)"),
-    ("@callstack/repack",  "repack",          "https://re-pack.dev/",                            "Re.Pack"),
-    ("@modern-js/app-tools", "modernjs",      "https://modernjs.dev/",                           "Modern.js (React framework)"),
-    ("@esmx/core",         "esmx",            "https://www.esmnext.com/",                        "Esmx (micro-frontend)"),
-    ("extension.js",       "extension-js",    "https://extension.js.org/",                       "Extension.js (browser ext)"),
-    ("@rsbuild/plugin-react", "rsbuild",      "https://rsbuild.rs/",                             "Rsbuild React plugin"),
-    ("@rsbuild/plugin-vue", "rsbuild",        "https://rsbuild.rs/",                             "Rsbuild Vue plugin"),
-    ("@rsbuild/plugin-svelte", "rsbuild",     "https://rsbuild.rs/",                             "Rsbuild Svelte plugin"),
-    ("@rsbuild/plugin-solid", "rsbuild",      "https://rsbuild.rs/",                             "Rsbuild Solid plugin"),
-    ("@rsbuild/plugin-tailwindcss", "rsbuild", "https://rsbuild.rs/",                            "Rsbuild Tailwind plugin"),
-    ("@rsbuild/plugin-mdx", "rsbuild",        "https://rsbuild.rs/",                             "Rsbuild MDX plugin"),
+    (
+        "@rstest/core",
+        "rstest",
+        "https://rstest.rs/",
+        "Rstest (test runner Rust)",
+    ),
+    (
+        "@rslint/core",
+        "rslint",
+        "https://rslint.rs/",
+        "Rslint (linter Rust)",
+    ),
+    (
+        "@rspress/core",
+        "rspress",
+        "https://rspress.rs/",
+        "Rspress core",
+    ),
+    (
+        "storybook-rsbuild",
+        "storybook-rsbuild",
+        "https://storybook.js.org/",
+        "Storybook builder Rsbuild",
+    ),
+    ("@nx/rspack", "nx-rspack", "https://nx.dev/", "Nx + Rspack"),
+    (
+        "@nx/rsbuild",
+        "nx-rsbuild",
+        "https://nx.dev/",
+        "Nx + Rsbuild",
+    ),
+    (
+        "@nuxt/rspack-builder",
+        "nuxt-rspack",
+        "https://nuxt.com/",
+        "Nuxt bundler Rspack",
+    ),
+    (
+        "re.pack",
+        "repack",
+        "https://re-pack.dev/",
+        "Re.Pack (React Native toolkit)",
+    ),
+    (
+        "@callstack/repack",
+        "repack",
+        "https://re-pack.dev/",
+        "Re.Pack",
+    ),
+    (
+        "@modern-js/app-tools",
+        "modernjs",
+        "https://modernjs.dev/",
+        "Modern.js (React framework)",
+    ),
+    (
+        "@esmx/core",
+        "esmx",
+        "https://www.esmnext.com/",
+        "Esmx (micro-frontend)",
+    ),
+    (
+        "extension.js",
+        "extension-js",
+        "https://extension.js.org/",
+        "Extension.js (browser ext)",
+    ),
+    (
+        "@rsbuild/plugin-react",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild React plugin",
+    ),
+    (
+        "@rsbuild/plugin-vue",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild Vue plugin",
+    ),
+    (
+        "@rsbuild/plugin-svelte",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild Svelte plugin",
+    ),
+    (
+        "@rsbuild/plugin-solid",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild Solid plugin",
+    ),
+    (
+        "@rsbuild/plugin-tailwindcss",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild Tailwind plugin",
+    ),
+    (
+        "@rsbuild/plugin-mdx",
+        "rsbuild",
+        "https://rsbuild.rs/",
+        "Rsbuild MDX plugin",
+    ),
     // --- SWC (bundler/compiler Rust utilisé par Next.js et Parcel) ---
-    ("@swc/core",          "swc",             "https://swc.rs/",                                 "SWC (Rust JS/TS compiler, 20× plus rapide que Babel)"),
-    ("@swc/cli",           "swc",             "https://swc.rs/",                                 "SWC CLI"),
-    ("@swc/helpers",       "swc",             "https://swc.rs/",                                 "SWC runtime helpers"),
-    ("@swc-node/register", "swc-node",        "https://github.com/swc-project/swc-node",         "SWC register (TS loader pour Node)"),
-    ("@swc/jest",          "swc",             "https://swc.rs/",                                 "SWC transformer pour Jest"),
+    (
+        "@swc/core",
+        "swc",
+        "https://swc.rs/",
+        "SWC (Rust JS/TS compiler, 20× plus rapide que Babel)",
+    ),
+    ("@swc/cli", "swc", "https://swc.rs/", "SWC CLI"),
+    (
+        "@swc/helpers",
+        "swc",
+        "https://swc.rs/",
+        "SWC runtime helpers",
+    ),
+    (
+        "@swc-node/register",
+        "swc-node",
+        "https://github.com/swc-project/swc-node",
+        "SWC register (TS loader pour Node)",
+    ),
+    (
+        "@swc/jest",
+        "swc",
+        "https://swc.rs/",
+        "SWC transformer pour Jest",
+    ),
     // --- Turborepo (monorepo manager Rust de Vercel) ---
-    ("turbo",              "turbo",           "https://turborepo.com/",                          "Turborepo (monorepo tool Rust, tasks cache)"),
-    ("@turbo/gen",         "turbo-gen",       "https://turborepo.com/docs/guides/generating-code", "Turbo code generators"),
-    ("@turbo/types",       "turbo",           "https://turborepo.com/",                          "Turbo types"),
-    ("react-wasm",         "react-wasm",      "https://github.com/mbasso/react-wasm",            "react-wasm (charge .wasm comme composants React)"),
+    (
+        "turbo",
+        "turbo",
+        "https://turborepo.com/",
+        "Turborepo (monorepo tool Rust, tasks cache)",
+    ),
+    (
+        "@turbo/gen",
+        "turbo-gen",
+        "https://turborepo.com/docs/guides/generating-code",
+        "Turbo code generators",
+    ),
+    (
+        "@turbo/types",
+        "turbo",
+        "https://turborepo.com/",
+        "Turbo types",
+    ),
+    (
+        "react-wasm",
+        "react-wasm",
+        "https://github.com/mbasso/react-wasm",
+        "react-wasm (charge .wasm comme composants React)",
+    ),
     // --- Tauri v2 ecosystem (desktop apps Rust + frontend web) ---
-    ("@tauri-apps/api",    "tauri-v2",        "https://v2.tauri.app/",                           "Tauri v2 API (core frontend bindings)"),
-    ("@tauri-apps/cli",    "tauri-v2",        "https://v2.tauri.app/",                           "Tauri v2 CLI"),
-    ("@tauri-apps/plugin-shell",  "tauri-v2-plugin", "https://v2.tauri.app/plugin/shell/",      "Tauri plugin shell"),
-    ("@tauri-apps/plugin-fs",     "tauri-v2-plugin", "https://v2.tauri.app/plugin/file-system/", "Tauri plugin fs"),
-    ("@tauri-apps/plugin-dialog", "tauri-v2-plugin", "https://v2.tauri.app/plugin/dialog/",     "Tauri plugin dialog"),
-    ("@tauri-apps/plugin-store",  "tauri-v2-plugin", "https://v2.tauri.app/plugin/store/",      "Tauri plugin store"),
-    ("@tauri-apps/plugin-sql",    "tauri-v2-plugin", "https://v2.tauri.app/plugin/sql/",        "Tauri plugin sql"),
-    ("@tauri-apps/plugin-http",   "tauri-v2-plugin", "https://v2.tauri.app/plugin/http-client/", "Tauri plugin http"),
-    ("@tauri-apps/plugin-notification", "tauri-v2-plugin", "https://v2.tauri.app/plugin/notification/", "Tauri plugin notification"),
-    ("@tauri-apps/plugin-updater", "tauri-v2-plugin", "https://v2.tauri.app/plugin/updater/",   "Tauri plugin updater"),
-    ("@tauri-apps/plugin-window-state", "tauri-v2-plugin", "https://v2.tauri.app/plugin/window-state/", "Tauri plugin window-state"),
+    (
+        "@tauri-apps/api",
+        "tauri-v2",
+        "https://v2.tauri.app/",
+        "Tauri v2 API (core frontend bindings)",
+    ),
+    (
+        "@tauri-apps/cli",
+        "tauri-v2",
+        "https://v2.tauri.app/",
+        "Tauri v2 CLI",
+    ),
+    (
+        "@tauri-apps/plugin-shell",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/shell/",
+        "Tauri plugin shell",
+    ),
+    (
+        "@tauri-apps/plugin-fs",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/file-system/",
+        "Tauri plugin fs",
+    ),
+    (
+        "@tauri-apps/plugin-dialog",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/dialog/",
+        "Tauri plugin dialog",
+    ),
+    (
+        "@tauri-apps/plugin-store",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/store/",
+        "Tauri plugin store",
+    ),
+    (
+        "@tauri-apps/plugin-sql",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/sql/",
+        "Tauri plugin sql",
+    ),
+    (
+        "@tauri-apps/plugin-http",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/http-client/",
+        "Tauri plugin http",
+    ),
+    (
+        "@tauri-apps/plugin-notification",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/notification/",
+        "Tauri plugin notification",
+    ),
+    (
+        "@tauri-apps/plugin-updater",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/updater/",
+        "Tauri plugin updater",
+    ),
+    (
+        "@tauri-apps/plugin-window-state",
+        "tauri-v2-plugin",
+        "https://v2.tauri.app/plugin/window-state/",
+        "Tauri plugin window-state",
+    ),
     // --- UI : shadcn/ui (installe via CLI, pas dep npm classique) ---
-    ("shadcn",             "shadcn",          "https://ui.shadcn.com/",                          "shadcn CLI (copy-paste components Radix+Tailwind)"),
-    ("shadcn-ui",          "shadcn",          "https://ui.shadcn.com/",                          "shadcn-ui (legacy name)"),
+    (
+        "shadcn",
+        "shadcn",
+        "https://ui.shadcn.com/",
+        "shadcn CLI (copy-paste components Radix+Tailwind)",
+    ),
+    (
+        "shadcn-ui",
+        "shadcn",
+        "https://ui.shadcn.com/",
+        "shadcn-ui (legacy name)",
+    ),
     // Radix primitives (base shadcn/ui)
-    ("@radix-ui/react-accordion",  "radix-ui", "https://www.radix-ui.com/",                      "Radix UI primitives"),
-    ("@radix-ui/react-dialog",     "radix-ui", "https://www.radix-ui.com/",                      "Radix UI primitives"),
-    ("@radix-ui/react-dropdown-menu", "radix-ui", "https://www.radix-ui.com/",                   "Radix UI primitives"),
-    ("@radix-ui/react-popover",    "radix-ui", "https://www.radix-ui.com/",                      "Radix UI primitives"),
-    ("@radix-ui/react-select",     "radix-ui", "https://www.radix-ui.com/",                      "Radix UI primitives"),
-    ("@radix-ui/react-slot",       "radix-ui", "https://www.radix-ui.com/",                      "Radix UI primitives"),
-    ("@radix-ui/react-toast",      "radix-ui", "https://www.radix-ui.com/",                      "Radix UI primitives"),
-    ("class-variance-authority", "cva",        "https://cva.style/",                              "CVA (variants Tailwind) — compagnon shadcn"),
-    ("clsx",               "clsx",            "https://github.com/lukeed/clsx",                  "clsx (className concat)"),
-    ("tailwind-merge",     "tailwind-merge",  "https://github.com/dcastil/tailwind-merge",       "tailwind-merge — dédupe classes"),
-    ("lucide-react",       "lucide",          "https://lucide.dev/",                             "Lucide icons (default shadcn)"),
+    (
+        "@radix-ui/react-accordion",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "@radix-ui/react-dialog",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "@radix-ui/react-dropdown-menu",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "@radix-ui/react-popover",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "@radix-ui/react-select",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "@radix-ui/react-slot",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "@radix-ui/react-toast",
+        "radix-ui",
+        "https://www.radix-ui.com/",
+        "Radix UI primitives",
+    ),
+    (
+        "class-variance-authority",
+        "cva",
+        "https://cva.style/",
+        "CVA (variants Tailwind) — compagnon shadcn",
+    ),
+    (
+        "clsx",
+        "clsx",
+        "https://github.com/lukeed/clsx",
+        "clsx (className concat)",
+    ),
+    (
+        "tailwind-merge",
+        "tailwind-merge",
+        "https://github.com/dcastil/tailwind-merge",
+        "tailwind-merge — dédupe classes",
+    ),
+    (
+        "lucide-react",
+        "lucide",
+        "https://lucide.dev/",
+        "Lucide icons (default shadcn)",
+    ),
     // --- UI : Material Design 3 ---
-    ("@material/web",      "material-web",    "https://material-web.dev/",                       "Material Web Components M3 (vanilla)"),
-    ("@material-tailwind/react", "material-tailwind", "https://www.material-tailwind.com/",      "Material Tailwind (React)"),
-    ("@material-tailwind/html",  "material-tailwind", "https://www.material-tailwind.com/",      "Material Tailwind (HTML)"),
+    (
+        "@material/web",
+        "material-web",
+        "https://material-web.dev/",
+        "Material Web Components M3 (vanilla)",
+    ),
+    (
+        "@material-tailwind/react",
+        "material-tailwind",
+        "https://www.material-tailwind.com/",
+        "Material Tailwind (React)",
+    ),
+    (
+        "@material-tailwind/html",
+        "material-tailwind",
+        "https://www.material-tailwind.com/",
+        "Material Tailwind (HTML)",
+    ),
     // --- UI : Material UI (MUI) ---
-    ("@mui/material",      "mui",             "https://mui.com/",                                "MUI React"),
-    ("@mui/icons-material","mui",             "https://mui.com/material-ui/material-icons/",     "MUI icons"),
-    ("@mui/lab",           "mui",             "https://mui.com/material-ui/about-the-lab/",      "MUI Lab (experimental)"),
-    ("@mui/system",        "mui",             "https://mui.com/system/",                         "MUI System (sx, theme)"),
-    ("@mui/base",          "mui",             "https://mui.com/base-ui/",                        "Base UI (unstyled MUI)"),
-    ("@mui/x-data-grid",   "mui-x",           "https://mui.com/x/react-data-grid/",              "MUI X Data Grid"),
-    ("@mui/x-date-pickers","mui-x",           "https://mui.com/x/react-date-pickers/",           "MUI X Date Pickers"),
-    ("@mui/x-charts",      "mui-x",           "https://mui.com/x/react-charts/",                 "MUI X Charts"),
-    ("@emotion/react",     "emotion",         "https://emotion.sh/",                             "Emotion (CSS-in-JS, MUI default)"),
-    ("@emotion/styled",    "emotion",         "https://emotion.sh/",                             "Emotion styled"),
+    ("@mui/material", "mui", "https://mui.com/", "MUI React"),
+    (
+        "@mui/icons-material",
+        "mui",
+        "https://mui.com/material-ui/material-icons/",
+        "MUI icons",
+    ),
+    (
+        "@mui/lab",
+        "mui",
+        "https://mui.com/material-ui/about-the-lab/",
+        "MUI Lab (experimental)",
+    ),
+    (
+        "@mui/system",
+        "mui",
+        "https://mui.com/system/",
+        "MUI System (sx, theme)",
+    ),
+    (
+        "@mui/base",
+        "mui",
+        "https://mui.com/base-ui/",
+        "Base UI (unstyled MUI)",
+    ),
+    (
+        "@mui/x-data-grid",
+        "mui-x",
+        "https://mui.com/x/react-data-grid/",
+        "MUI X Data Grid",
+    ),
+    (
+        "@mui/x-date-pickers",
+        "mui-x",
+        "https://mui.com/x/react-date-pickers/",
+        "MUI X Date Pickers",
+    ),
+    (
+        "@mui/x-charts",
+        "mui-x",
+        "https://mui.com/x/react-charts/",
+        "MUI X Charts",
+    ),
+    (
+        "@emotion/react",
+        "emotion",
+        "https://emotion.sh/",
+        "Emotion (CSS-in-JS, MUI default)",
+    ),
+    (
+        "@emotion/styled",
+        "emotion",
+        "https://emotion.sh/",
+        "Emotion styled",
+    ),
     // --- Icons & Fonts ---
-    ("material-symbols",   "material-symbols", "https://fonts.google.com/icons",                 "Material Symbols (variable font icons)"),
-    ("@material-symbols/font-400", "material-symbols", "https://fonts.google.com/icons",         "Material Symbols font 400"),
-    ("@fontsource/roboto", "fontsource",      "https://fontsource.org/",                         "Fontsource Roboto (self-host)"),
-    ("@fontsource/google-sans", "fontsource", "https://fontsource.org/",                         "Fontsource Google Sans"),
-    ("@fontsource-variable/google-sans-flex", "fontsource", "https://fonts.google.com/specimen/Google+Sans+Flex", "Google Sans Flex variable"),
+    (
+        "material-symbols",
+        "material-symbols",
+        "https://fonts.google.com/icons",
+        "Material Symbols (variable font icons)",
+    ),
+    (
+        "@material-symbols/font-400",
+        "material-symbols",
+        "https://fonts.google.com/icons",
+        "Material Symbols font 400",
+    ),
+    (
+        "@fontsource/roboto",
+        "fontsource",
+        "https://fontsource.org/",
+        "Fontsource Roboto (self-host)",
+    ),
+    (
+        "@fontsource/google-sans",
+        "fontsource",
+        "https://fontsource.org/",
+        "Fontsource Google Sans",
+    ),
+    (
+        "@fontsource-variable/google-sans-flex",
+        "fontsource",
+        "https://fonts.google.com/specimen/Google+Sans+Flex",
+        "Google Sans Flex variable",
+    ),
     // --- UI utility libs complémentaires ---
-    ("sonner",             "sonner",          "https://sonner.emilkowal.ski/",                   "Sonner (toasts, compat shadcn)"),
-    ("vaul",               "vaul",            "https://vaul.emilkowal.ski/",                     "Vaul (drawer, compat shadcn)"),
-    ("cmdk",               "cmdk",            "https://cmdk.paco.me/",                           "cmdk (command menu, compat shadcn)"),
-    ("react-hook-form",    "react-hook-form", "https://react-hook-form.com/",                    "React Hook Form (forms)"),
-    ("zod",                "zod",             "https://zod.dev/",                                "Zod (schema validation)"),
-    ("@hookform/resolvers","hookform-resolvers", "https://github.com/react-hook-form/resolvers", "React Hook Form resolvers"),
+    (
+        "sonner",
+        "sonner",
+        "https://sonner.emilkowal.ski/",
+        "Sonner (toasts, compat shadcn)",
+    ),
+    (
+        "vaul",
+        "vaul",
+        "https://vaul.emilkowal.ski/",
+        "Vaul (drawer, compat shadcn)",
+    ),
+    (
+        "cmdk",
+        "cmdk",
+        "https://cmdk.paco.me/",
+        "cmdk (command menu, compat shadcn)",
+    ),
+    (
+        "react-hook-form",
+        "react-hook-form",
+        "https://react-hook-form.com/",
+        "React Hook Form (forms)",
+    ),
+    ("zod", "zod", "https://zod.dev/", "Zod (schema validation)"),
+    (
+        "@hookform/resolvers",
+        "hookform-resolvers",
+        "https://github.com/react-hook-form/resolvers",
+        "React Hook Form resolvers",
+    ),
     // --- AI dev tooling (skills, MCP) ---
-    ("skills",             "skills",          "https://github.com/fforres/skills",               "skills CLI (ajoute des context packs AI : shadcn/ui, next, etc.)"),
+    (
+        "skills",
+        "skills",
+        "https://github.com/fforres/skills",
+        "skills CLI (ajoute des context packs AI : shadcn/ui, next, etc.)",
+    ),
     // --- Biome (linter + formatter Rust, remplace ESLint + Prettier) ---
-    ("@biomejs/biome",     "biome",           "https://biomejs.dev/",                            "Biome (linter + formatter Rust, ~100× ESLint+Prettier)"),
+    (
+        "@biomejs/biome",
+        "biome",
+        "https://biomejs.dev/",
+        "Biome (linter + formatter Rust, ~100× ESLint+Prettier)",
+    ),
     // --- OXC / Oxlint (linter Rust — alternative Biome) ---
-    ("oxlint",             "oxlint",          "https://oxc.rs/docs/guide/usage/linter.html",     "oxlint (linter Rust OXC, ~50× ESLint)"),
-    ("@oxlint/core",       "oxlint",          "https://oxc.rs/",                                 "oxlint core"),
+    (
+        "oxlint",
+        "oxlint",
+        "https://oxc.rs/docs/guide/usage/linter.html",
+        "oxlint (linter Rust OXC, ~50× ESLint)",
+    ),
+    ("@oxlint/core", "oxlint", "https://oxc.rs/", "oxlint core"),
     // Note : Yew/Leptos/Dioxus/Sycamore et autres frameworks Rust→WASM sont
     // détectés par scanners/cargo_toml.rs (ils vivent dans Cargo.toml).
 ];
 
-static JEST_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\bjest(?:\s|$)").unwrap());
-static TSUP_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\btsup(?:\s|$)").unwrap());
-static NEXT_DEV_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*next\s+dev\b").unwrap());
-static NEXT_START_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*next\s+start\b").unwrap());
-static NEXT_BUILD_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*next\s+build\b").unwrap());
+static JEST_RE: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"\bjest(?:\s|$)").expect("invariant: JEST_RE regex literal is valid"));
+static TSUP_RE: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"\btsup(?:\s|$)").expect("invariant: TSUP_RE regex literal is valid"));
+static NEXT_DEV_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"^\s*next\s+dev\b").expect("invariant: NEXT_DEV_RE regex literal is valid")
+});
+static NEXT_START_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"^\s*next\s+start\b").expect("invariant: NEXT_START_RE regex literal is valid")
+});
+static NEXT_BUILD_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"^\s*next\s+build\b").expect("invariant: NEXT_BUILD_RE regex literal is valid")
+});
 
 /// Parcourt src/ du package pour détecter un import de "bun" (statique ou dynamique).
 fn package_uses_bun_import(package_json_path: &str) -> bool {
@@ -194,11 +815,15 @@ fn package_uses_bun_import(package_json_path: &str) -> bool {
         return false;
     }
     fn walk(dir: &std::path::Path) -> bool {
-        let Ok(rd) = std::fs::read_dir(dir) else { return false };
+        let Ok(rd) = std::fs::read_dir(dir) else {
+            return false;
+        };
         for entry in rd.flatten() {
             let p = entry.path();
             if p.is_dir() {
-                if walk(&p) { return true; }
+                if walk(&p) {
+                    return true;
+                }
             } else if let Some(ext) = p.extension().and_then(|s| s.to_str()) {
                 if matches!(ext, "ts" | "tsx" | "mts" | "cts" | "js" | "mjs" | "cjs") {
                     if let Ok(c) = std::fs::read_to_string(&p) {
@@ -322,7 +947,8 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
 
             // pkg/tsup-bun-external — détecte tsup sans --external bun
             // Ne flaggue que si le package contient effectivement un import de "bun".
-            if TSUP_RE.is_match(&rewritten) && !rewritten.contains("--external bun")
+            if TSUP_RE.is_match(&rewritten)
+                && !rewritten.contains("--external bun")
                 && package_uses_bun_import(path)
             {
                 findings.push(make_finding(
@@ -356,14 +982,20 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                 format!("packageManager='{pm}' — remplacer par 'bun@<version>' ou supprimer"),
                 pm.to_string(),
                 None,
-                MakeFindingOpts { autofix: Some(false), ..Default::default() },
+                MakeFindingOpts {
+                    autofix: Some(false),
+                    ..Default::default()
+                },
             ));
         }
     }
 
     // 3. engines.{npm,pnpm,yarn}
     if let Some(engines) = parsed.get("engines").and_then(|v| v.as_object()) {
-        if engines.contains_key("npm") || engines.contains_key("pnpm") || engines.contains_key("yarn") {
+        if engines.contains_key("npm")
+            || engines.contains_key("pnpm")
+            || engines.contains_key("yarn")
+        {
             findings.push(make_finding(
                 path,
                 &[],
@@ -372,13 +1004,21 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                 "engines.{npm,pnpm,yarn} est superflu avec Bun — utiliser 'engines.bun'",
                 serde_json::to_string(engines).unwrap_or_default(),
                 None,
-                MakeFindingOpts { autofix: Some(false), ..Default::default() },
+                MakeFindingOpts {
+                    autofix: Some(false),
+                    ..Default::default()
+                },
             ));
         }
     }
 
     // 4. Redundant deps + 4b. Ecosystem guides
-    let dep_keys = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"];
+    let dep_keys = [
+        "dependencies",
+        "devDependencies",
+        "peerDependencies",
+        "optionalDependencies",
+    ];
     let mut seen_ecosystem: std::collections::HashSet<&str> = std::collections::HashSet::new();
     for key in dep_keys {
         if let Some(deps) = parsed.get(key).and_then(|v| v.as_object()) {
@@ -392,9 +1032,7 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                             &[],
                             0,
                             &rule_id,
-                            format!(
-                                "{label} détecté — guide d'intégration Bun : {url}"
-                            ),
+                            format!("{label} détecté — guide d'intégration Bun : {url}"),
                             (*name).to_string(),
                             Some((*url).to_string()),
                             MakeFindingOpts {
@@ -429,7 +1067,9 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
     //    + @types/bun manquant quand code utilise Bun.*
     let is_root_pkg = !path.contains('/');
     if is_root_pkg {
-        let dir = std::path::Path::new(path).parent().unwrap_or_else(|| std::path::Path::new("."));
+        let dir = std::path::Path::new(path)
+            .parent()
+            .unwrap_or_else(|| std::path::Path::new("."));
         let pnpm_ws = dir.join("pnpm-workspace.yaml");
         if pnpm_ws.exists() && parsed.get("workspaces").is_none() {
             findings.push(make_finding(
@@ -451,7 +1091,8 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
         // onlyBuiltDependencies dans pnpm-workspace.yaml → trustedDependencies
         if pnpm_ws.exists() && parsed.get("trustedDependencies").is_none() {
             if let Ok(content) = std::fs::read_to_string(&pnpm_ws) {
-                if let Some(info) = crate::scanners::pnpm_workspace::parse_pnpm_workspace(&content) {
+                if let Some(info) = crate::scanners::pnpm_workspace::parse_pnpm_workspace(&content)
+                {
                     if !info.only_built.is_empty() {
                         findings.push(make_finding(
                             path,
@@ -491,7 +1132,10 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                     r#""type":"module" mais main pointe sur un fichier .cjs"#.to_string(),
                     main.to_string(),
                     None,
-                    MakeFindingOpts { autofix: Some(false), ..Default::default() },
+                    MakeFindingOpts {
+                        autofix: Some(false),
+                        ..Default::default()
+                    },
                 ));
             }
         }

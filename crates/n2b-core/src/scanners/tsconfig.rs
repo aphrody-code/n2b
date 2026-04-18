@@ -94,7 +94,16 @@ pub fn scan_tsconfig(path: &str, content: &str) -> (Vec<Finding>, String) {
         let lower = target.to_ascii_lowercase();
         let legacy = matches!(
             lower.as_str(),
-            "es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021"
+            "es3"
+                | "es5"
+                | "es6"
+                | "es2015"
+                | "es2016"
+                | "es2017"
+                | "es2018"
+                | "es2019"
+                | "es2020"
+                | "es2021"
         );
         if legacy {
             findings.push(make_finding(
@@ -102,9 +111,7 @@ pub fn scan_tsconfig(path: &str, content: &str) -> (Vec<Finding>, String) {
                 &[],
                 0,
                 "tsconfig/target-legacy",
-                format!(
-                    "target='{target}' — Bun supporte ESNext/ES2022+, downlevel inutile"
-                ),
+                format!("target='{target}' — Bun supporte ESNext/ES2022+, downlevel inutile"),
                 target.to_string(),
                 None,
                 MakeFindingOpts {
@@ -139,7 +146,11 @@ pub fn scan_tsconfig(path: &str, content: &str) -> (Vec<Finding>, String) {
     }
 
     // verbatimModuleSyntax : recommandé avec moduleResolution=bundler + isolatedModules
-    if co.get("moduleResolution").and_then(|v| v.as_str()).map(|s| s.eq_ignore_ascii_case("bundler")).unwrap_or(false)
+    if co
+        .get("moduleResolution")
+        .and_then(|v| v.as_str())
+        .map(|s| s.eq_ignore_ascii_case("bundler"))
+        .unwrap_or(false)
         && co.get("verbatimModuleSyntax").and_then(|v| v.as_bool()) != Some(true)
     {
         findings.push(make_finding(
@@ -161,8 +172,15 @@ pub fn scan_tsconfig(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // allowImportingTsExtensions : si moduleResolution=bundler, on peut l'activer
     // pour importer directement des .ts (Bun resolve les .ts sans transform step).
-    if co.get("moduleResolution").and_then(|v| v.as_str()).map(|s| s.eq_ignore_ascii_case("bundler")).unwrap_or(false)
-        && co.get("allowImportingTsExtensions").and_then(|v| v.as_bool()) != Some(true)
+    if co
+        .get("moduleResolution")
+        .and_then(|v| v.as_str())
+        .map(|s| s.eq_ignore_ascii_case("bundler"))
+        .unwrap_or(false)
+        && co
+            .get("allowImportingTsExtensions")
+            .and_then(|v| v.as_bool())
+            != Some(true)
     {
         findings.push(make_finding(
             path,
@@ -183,7 +201,11 @@ pub fn scan_tsconfig(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     // noEmit : avec moduleResolution=bundler, noEmit=true est la config "types only"
     // recommandée (Bun fait le build, tsc valide juste les types).
-    if co.get("moduleResolution").and_then(|v| v.as_str()).map(|s| s.eq_ignore_ascii_case("bundler")).unwrap_or(false)
+    if co
+        .get("moduleResolution")
+        .and_then(|v| v.as_str())
+        .map(|s| s.eq_ignore_ascii_case("bundler"))
+        .unwrap_or(false)
         && co.get("noEmit").and_then(|v| v.as_bool()) != Some(true)
     {
         findings.push(make_finding(

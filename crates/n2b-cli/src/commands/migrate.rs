@@ -6,18 +6,14 @@
 ///
 /// Utilise `BackupGuard` pour un rollback transactionnel : si `bun install`
 /// échoue, les fichiers modifiés sont restaurés depuis leurs `.n2b-bak`.
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
 
 use crate::subprocess::bun::{self, BackupGuard};
 use n2b_core::types::FileFix;
 
-pub fn run_migrate_side_effects(
-    root: &PathBuf,
-    fixes: &[FileFix],
-    quiet: bool,
-) -> Result<()> {
+pub fn run_migrate_side_effects(root: &Path, fixes: &[FileFix], quiet: bool) -> Result<()> {
     let log = |msg: &str| {
         if !quiet {
             eprintln!("[migrate] {msg}");
@@ -45,8 +41,7 @@ pub fn run_migrate_side_effects(
     // 1. pnpm-workspace.yaml → package.json
     if pnpm_ws.exists() && root_pkg.exists() {
         let pnpm_content = std::fs::read_to_string(&pnpm_ws)?;
-        if let Some(info) =
-            n2b_core::scanners::pnpm_workspace::parse_pnpm_workspace(&pnpm_content)
+        if let Some(info) = n2b_core::scanners::pnpm_workspace::parse_pnpm_workspace(&pnpm_content)
         {
             let pkg_content = std::fs::read_to_string(&root_pkg)?;
             let mut pkg: serde_json::Value = serde_json::from_str(&pkg_content)?;
@@ -93,11 +88,12 @@ pub fn run_migrate_side_effects(
     }
 
     // 4. @types/bun si usage Bun.* détecté et absent des deps
-    let uses_bun_api = fixes.iter().any(|f| {
-        f.file.ends_with(".ts") || f.file.ends_with(".tsx") || f.file.ends_with(".mts")
-    }) && fixes.iter().any(|f| {
-        f.after.contains("Bun.") || f.findings.iter().any(|x| x.rule_id.starts_with("api/"))
-    });
+    let uses_bun_api = fixes
+        .iter()
+        .any(|f| f.file.ends_with(".ts") || f.file.ends_with(".tsx") || f.file.ends_with(".mts"))
+        && fixes.iter().any(|f| {
+            f.after.contains("Bun.") || f.findings.iter().any(|x| x.rule_id.starts_with("api/"))
+        });
     if uses_bun_api {
         if let Ok(pkg_content) = std::fs::read_to_string(&root_pkg) {
             if let Ok(pkg) = serde_json::from_str::<serde_json::Value>(&pkg_content) {

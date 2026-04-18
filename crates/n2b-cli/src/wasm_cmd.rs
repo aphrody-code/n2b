@@ -174,11 +174,29 @@ struct BuildOpts {
 
 pub fn run(cmd: WasmCmd, quiet: bool) -> Result<()> {
     match cmd {
-        WasmCmd::Init { name, template, dir, force } => init(name, template, dir, force, quiet),
+        WasmCmd::Init {
+            name,
+            template,
+            dir,
+            force,
+        } => init(name, template, dir, force, quiet),
         WasmCmd::Doctor => doctor(quiet),
-        WasmCmd::Build { root, target, profile, out_dir, out_name, scope } => {
-            build(BuildOpts { root, target, profile, out_dir, out_name, scope, quiet })
-        }
+        WasmCmd::Build {
+            root,
+            target,
+            profile,
+            out_dir,
+            out_name,
+            scope,
+        } => build(BuildOpts {
+            root,
+            target,
+            profile,
+            out_dir,
+            out_name,
+            scope,
+            quiet,
+        }),
         WasmCmd::Opt { path, level } => opt(path, level, quiet),
         WasmCmd::Size { path, top } => size(path, top, quiet),
         WasmCmd::Spec(spec_cmd) => crate::commands::wasm_spec::run_spec(spec_cmd, quiet),
@@ -223,15 +241,43 @@ fn init(
 
 fn doctor(quiet: bool) -> Result<()> {
     let tools: &[(&str, &str, &str)] = &[
-        ("wasm-pack",       "cargo install wasm-pack",       "build Rust→WASM standard"),
-        ("cargo-generate",  "cargo install cargo-generate",  "scaffolds depuis templates git"),
-        ("wasm-opt",        "apt install binaryen",          "optimise .wasm (binaryen)"),
-        ("twiggy",          "cargo install twiggy",          "profiler taille .wasm"),
-        ("wasm2wat",        "apt install wabt",              "disassembler .wasm ↔ .wat"),
-        ("wasm-run",        "cargo install wasm-run",        "dev-server hot-reload pour Rust WASM"),
-        ("trunk",           "cargo install trunk",           "build tool pour Rust WASM apps (Yew/Leptos)"),
-        ("wasm-bindgen",    "cargo install wasm-bindgen-cli", "CLI wasm-bindgen"),
-        ("wasm-snip",       "cargo install wasm-snip",       "remove panic paths from .wasm"),
+        (
+            "wasm-pack",
+            "cargo install wasm-pack",
+            "build Rust→WASM standard",
+        ),
+        (
+            "cargo-generate",
+            "cargo install cargo-generate",
+            "scaffolds depuis templates git",
+        ),
+        (
+            "wasm-opt",
+            "apt install binaryen",
+            "optimise .wasm (binaryen)",
+        ),
+        ("twiggy", "cargo install twiggy", "profiler taille .wasm"),
+        ("wasm2wat", "apt install wabt", "disassembler .wasm ↔ .wat"),
+        (
+            "wasm-run",
+            "cargo install wasm-run",
+            "dev-server hot-reload pour Rust WASM",
+        ),
+        (
+            "trunk",
+            "cargo install trunk",
+            "build tool pour Rust WASM apps (Yew/Leptos)",
+        ),
+        (
+            "wasm-bindgen",
+            "cargo install wasm-bindgen-cli",
+            "CLI wasm-bindgen",
+        ),
+        (
+            "wasm-snip",
+            "cargo install wasm-snip",
+            "remove panic paths from .wasm",
+        ),
     ];
     let mut missing: Vec<&str> = Vec::new();
     for (bin, install, desc) in tools {
@@ -248,13 +294,25 @@ fn doctor(quiet: bool) -> Result<()> {
         }
     }
     if !missing.is_empty() && !quiet {
-        eprintln!("\n{} outil(s) manquant(s) : {}", missing.len(), missing.join(", "));
+        eprintln!(
+            "\n{} outil(s) manquant(s) : {}",
+            missing.len(),
+            missing.join(", ")
+        );
     }
     Ok(())
 }
 
 fn build(opts: BuildOpts) -> Result<()> {
-    let BuildOpts { root, target, profile, out_dir, out_name, scope, quiet } = opts;
+    let BuildOpts {
+        root,
+        target,
+        profile,
+        out_dir,
+        out_name,
+        scope,
+        quiet,
+    } = opts;
 
     if which("wasm-pack").is_err() {
         anyhow::bail!("wasm-pack introuvable — `cargo install wasm-pack` ou `n2b wasm doctor`");
@@ -404,7 +462,11 @@ pub fn greet(name: &str) -> String {
         quiet,
     )?;
     write(dir.join("index.ts"), BASIC_INDEX_TS, quiet)?;
-    write(dir.join("README.md"), &readme(name, "Basic Rust → WASM"), quiet)?;
+    write(
+        dir.join("README.md"),
+        &readme(name, "Basic Rust → WASM"),
+        quiet,
+    )?;
     write(dir.join(".gitignore"), GITIGNORE, quiet)?;
     Ok(())
 }
@@ -439,7 +501,11 @@ opt-level = "z"
         quiet,
     )?;
     write(dir.join("index.ts"), GAME_OF_LIFE_TS, quiet)?;
-    write(dir.join("README.md"), &readme(name, "Game of Life (Rustwasm book)"), quiet)?;
+    write(
+        dir.join("README.md"),
+        &readme(name, "Game of Life (Rustwasm book)"),
+        quiet,
+    )?;
     write(dir.join(".gitignore"), GITIGNORE, quiet)?;
     Ok(())
 }
@@ -470,8 +536,16 @@ opt-level = "z"
     write(dir.join("src/main.rs"), YEW_MAIN_RS, quiet)?;
     write(dir.join("index.html"), &render_yew_index_html(name), quiet)?;
     write(dir.join("Trunk.toml"), TRUNK_TOML, quiet)?;
-    write(dir.join("package.json"), &render_yew_package_json(name), quiet)?;
-    write(dir.join("README.md"), &readme(name, "SPA Yew (React-like Rust) via Trunk"), quiet)?;
+    write(
+        dir.join("package.json"),
+        &render_yew_package_json(name),
+        quiet,
+    )?;
+    write(
+        dir.join("README.md"),
+        &readme(name, "SPA Yew (React-like Rust) via Trunk"),
+        quiet,
+    )?;
     write(dir.join(".gitignore"), GITIGNORE_WASM_YEW, quiet)?;
     Ok(())
 }
@@ -547,8 +621,7 @@ console.log(await greet("World"));
 
 fn write(path: PathBuf, content: &str, quiet: bool) -> Result<()> {
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)
-            .with_context(|| format!("mkdir {}", parent.display()))?;
+        std::fs::create_dir_all(parent).with_context(|| format!("mkdir {}", parent.display()))?;
     }
     std::fs::write(&path, content).with_context(|| format!("write {}", path.display()))?;
     if !quiet {

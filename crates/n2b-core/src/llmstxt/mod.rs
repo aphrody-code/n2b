@@ -45,8 +45,7 @@ pub struct LlmstxtOpts {
 }
 
 pub fn run(opts: &LlmstxtOpts) -> Result<()> {
-    std::fs::create_dir_all(&opts.out)
-        .with_context(|| format!("mkdir {}", opts.out.display()))?;
+    std::fs::create_dir_all(&opts.out).with_context(|| format!("mkdir {}", opts.out.display()))?;
     let md_dir = opts.out.join("_siteone_md");
     let md_single = opts.out.join("_siteone_single.md");
 
@@ -90,9 +89,7 @@ pub fn run(opts: &LlmstxtOpts) -> Result<()> {
     eprintln!(
         "       {} llms.txt ({} bytes)",
         "✓".green(),
-        std::fs::metadata(&index_path)
-            .map(|m| m.len())
-            .unwrap_or(0)
+        std::fs::metadata(&index_path).map(|m| m.len()).unwrap_or(0)
     );
 
     if opts.full {
@@ -101,9 +98,7 @@ pub fn run(opts: &LlmstxtOpts) -> Result<()> {
         eprintln!(
             "       {} llms-full.txt ({} bytes)",
             "✓".green(),
-            std::fs::metadata(&full_path)
-                .map(|m| m.len())
-                .unwrap_or(0)
+            std::fs::metadata(&full_path).map(|m| m.len()).unwrap_or(0)
         );
     }
 

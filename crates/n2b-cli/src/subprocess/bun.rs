@@ -4,7 +4,7 @@
 /// stderr pour construire des messages d'erreur riches.
 use std::path::{Path, PathBuf};
 
-use anyhow::{Context, Result, bail};
+use anyhow::{bail, Context, Result};
 
 // ---------------------------------------------------------------------------
 // Commandes Bun
@@ -12,6 +12,7 @@ use anyhow::{Context, Result, bail};
 
 /// Retourne la version de `bun` installé (ex. `"1.1.20"`).
 /// Renvoie une erreur si `bun` est absent du PATH.
+#[allow(dead_code)] // preexisting: planned for future version-check command
 pub fn version() -> Result<String> {
     let out = std::process::Command::new("bun")
         .arg("--version")
@@ -108,8 +109,13 @@ impl BackupGuard {
             Some(ext) => format!("{}.n2b-bak", ext.to_string_lossy()),
             None => "n2b-bak".to_owned(),
         });
-        std::fs::copy(path, &bak)
-            .with_context(|| format!("impossible de sauvegarder {} → {}", path.display(), bak.display()))?;
+        std::fs::copy(path, &bak).with_context(|| {
+            format!(
+                "impossible de sauvegarder {} → {}",
+                path.display(),
+                bak.display()
+            )
+        })?;
         self.backups.push((path.to_owned(), bak));
         Ok(())
     }
@@ -126,8 +132,9 @@ impl BackupGuard {
     pub fn commit(mut self) -> Result<()> {
         for (_, bak) in &self.backups {
             if bak.exists() {
-                std::fs::remove_file(bak)
-                    .with_context(|| format!("impossible de supprimer le backup {}", bak.display()))?;
+                std::fs::remove_file(bak).with_context(|| {
+                    format!("impossible de supprimer le backup {}", bak.display())
+                })?;
             }
         }
         self.committed = true;
@@ -138,9 +145,16 @@ impl BackupGuard {
         for (orig, bak) in &self.backups {
             if bak.exists() {
                 if let Err(e) = std::fs::copy(bak, orig) {
-                    eprintln!("[migrate] impossible de restaurer {} depuis {}: {e}", orig.display(), bak.display());
+                    eprintln!(
+                        "[migrate] impossible de restaurer {} depuis {}: {e}",
+                        orig.display(),
+                        bak.display()
+                    );
                 } else if let Err(e) = std::fs::remove_file(bak) {
-                    eprintln!("[migrate] impossible de supprimer le backup {}: {e}", bak.display());
+                    eprintln!(
+                        "[migrate] impossible de supprimer le backup {}: {e}",
+                        bak.display()
+                    );
                 }
             }
         }

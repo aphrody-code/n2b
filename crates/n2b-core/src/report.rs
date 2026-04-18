@@ -1,6 +1,5 @@
 use crate::ai::{
-    byte_offset, category, confidence, context_lines, docs_url, Context, SCHEMA_URL,
-    SCHEMA_VERSION,
+    byte_offset, category, confidence, context_lines, docs_url, Context, SCHEMA_URL, SCHEMA_VERSION,
 };
 use crate::types::{FileFix, Finding, Mode, RunOptions, Severity};
 use crate::util::line_offsets;
@@ -178,7 +177,9 @@ pub fn render_json(fixes: &[FileFix], opts: &RunOptions) -> String {
             let findings: Vec<Value> = f
                 .findings
                 .iter()
-                .map(|fi| serde_json::to_value(enrich(fi, &f.before, &offsets)).unwrap_or(json!({})))
+                .map(|fi| {
+                    serde_json::to_value(enrich(fi, &f.before, &offsets)).unwrap_or(json!({}))
+                })
                 .collect();
             json!({
                 "path": f.file,
@@ -289,19 +290,22 @@ pub fn render_sarif(fixes: &[FileFix], opts: &RunOptions) -> String {
                     });
                     if let Some(repl) = &f.replacement {
                         if let Some(obj) = result.as_object_mut() {
-                            obj.insert("fixes".to_string(), json!([{
-                                "description": { "text": format!("Replace with: {repl}") },
-                                "artifactChanges": [{
-                                    "artifactLocation": { "uri": file },
-                                    "replacements": [{
-                                        "deletedRegion": {
-                                            "byteOffset": start,
-                                            "byteLength": end - start,
-                                        },
-                                        "insertedContent": { "text": repl },
+                            obj.insert(
+                                "fixes".to_string(),
+                                json!([{
+                                    "description": { "text": format!("Replace with: {repl}") },
+                                    "artifactChanges": [{
+                                        "artifactLocation": { "uri": file },
+                                        "replacements": [{
+                                            "deletedRegion": {
+                                                "byteOffset": start,
+                                                "byteLength": end - start,
+                                            },
+                                            "insertedContent": { "text": repl },
+                                        }]
                                     }]
-                                }]
-                            }]));
+                                }]),
+                            );
                         }
                     }
                     let _ = before;

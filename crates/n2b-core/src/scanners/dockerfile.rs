@@ -4,8 +4,10 @@ use crate::util::{line_offsets, make_finding};
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-static FROM_NODE_RE: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"(?m)^\s*FROM\s+node:(\S+)").unwrap());
+static FROM_NODE_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"(?m)^\s*FROM\s+node:(\S+)")
+        .expect("invariant: FROM_NODE_RE regex literal is valid")
+});
 
 pub fn scan_dockerfile(path: &str, content: &str) -> (Vec<Finding>, String) {
     let mut findings: Vec<Finding> = Vec::new();
@@ -15,8 +17,13 @@ pub fn scan_dockerfile(path: &str, content: &str) -> (Vec<Finding>, String) {
     // FROM node:<tag>  →  FROM oven/bun:<tag>  si le tag n'est pas une version spécifique Node.
     // On laisse le tag tel quel (probablement alpine/bookworm), oven/bun publie des tags analogues.
     for cap in FROM_NODE_RE.captures_iter(content) {
-        let whole = cap.get(0).unwrap();
-        let tag = cap.get(1).unwrap().as_str();
+        let whole = cap
+            .get(0)
+            .expect("invariant: capture group 0 is always present in a match");
+        let tag = cap
+            .get(1)
+            .expect("invariant: capture group 1 is guaranteed by FROM_NODE_RE pattern")
+            .as_str();
         let suggested = format!("FROM oven/bun:{tag}");
         findings.push(make_finding(
             path,

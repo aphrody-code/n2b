@@ -40,7 +40,11 @@ pub enum BunppCmd {
 
 pub fn run(cmd: BunppCmd, quiet: bool) -> Result<()> {
     match cmd {
-        BunppCmd::Scaffold { module, root, force } => scaffold_one(&module, &root, force, quiet),
+        BunppCmd::Scaffold {
+            module,
+            root,
+            force,
+        } => scaffold_one(&module, &root, force, quiet),
         BunppCmd::ScaffoldAll { root, force } => scaffold_all(&root, force, quiet),
         BunppCmd::Status { root } => status(&root),
         BunppCmd::Sync { root, dry_run } => sync(&root, dry_run, quiet),
@@ -63,7 +67,8 @@ pub const CANARY_GAPS: &[CanaryGap] = &[
         module: "node:util",
         priority: "P1",
         issue: Some(22872),
-        description: "getCallSite(s), getSystemErrorMap/Message, transferableAbortSignal/Controller",
+        description:
+            "getCallSite(s), getSystemErrorMap/Message, transferableAbortSignal/Controller",
     },
     CanaryGap {
         pkg: "node-tls-secure-pair",
@@ -105,26 +110,26 @@ pub struct CanaryGap {
 
 fn scaffold_one(module: &str, root: &Path, force: bool, quiet: bool) -> Result<()> {
     let pkg = normalize_pkg_name(module);
-    let gap = CANARY_GAPS.iter().find(|g| g.pkg == pkg || g.module == module);
+    let gap = CANARY_GAPS
+        .iter()
+        .find(|g| g.pkg == pkg || g.module == module);
     let target = root.join("packages").join(&pkg);
     if target.exists() && !force {
-        anyhow::bail!(
-            "{} existe déjà — relancer avec --force",
-            target.display()
-        );
+        anyhow::bail!("{} existe déjà — relancer avec --force", target.display());
     }
     std::fs::create_dir_all(&target)?;
 
     let (index_src, test_src) = template_for(&pkg);
-    write(target.join("package.json"), &render_package_json(&pkg, gap), quiet)?;
+    write(
+        target.join("package.json"),
+        &render_package_json(&pkg, gap),
+        quiet,
+    )?;
     write(target.join("index.ts"), index_src, quiet)?;
     write(target.join(format!("{pkg}.test.ts")), test_src, quiet)?;
     write(target.join("README.md"), &render_readme(&pkg, gap), quiet)?;
     if !quiet {
-        eprintln!(
-            "[bunpp] ✓ @bun++/{pkg} scaffolded → {}",
-            target.display()
-        );
+        eprintln!("[bunpp] ✓ @bun++/{pkg} scaffolded → {}", target.display());
     }
     Ok(())
 }
@@ -188,7 +193,10 @@ fn status(root: &Path) -> Result<()> {
         );
     }
     println!();
-    println!("Action : `n2b bunpp scaffold-all --root {}`", root.display());
+    println!(
+        "Action : `n2b bunpp scaffold-all --root {}`",
+        root.display()
+    );
     Ok(())
 }
 
@@ -216,14 +224,15 @@ fn sync(root: &Path, dry_run: bool, quiet: bool) -> Result<()> {
                 .context("gh issue view")?;
             if out.status.success() {
                 let body = String::from_utf8_lossy(&out.stdout);
-                updates.push(format!("- `@bun++/{}` → #{issue} : {}", gap.pkg, body.trim()));
+                updates.push(format!(
+                    "- `@bun++/{}` → #{issue} : {}",
+                    gap.pkg,
+                    body.trim()
+                ));
             }
         }
     }
-    let report = format!(
-        "# bun++ sync\n\n{}\n",
-        updates.join("\n")
-    );
+    let report = format!("# bun++ sync\n\n{}\n", updates.join("\n"));
     if dry_run {
         println!("{report}");
     } else {
@@ -237,7 +246,11 @@ fn sync(root: &Path, dry_run: bool, quiet: bool) -> Result<()> {
 }
 
 fn doctor(quiet: bool) -> Result<()> {
-    let tools = [("gh", "GitHub CLI"), ("bun", "Bun runtime"), ("jq", "JSON query")];
+    let tools = [
+        ("gh", "GitHub CLI"),
+        ("bun", "Bun runtime"),
+        ("jq", "JSON query"),
+    ];
     let mut missing = Vec::new();
     for (bin, label) in tools {
         let present = which(bin);
@@ -313,7 +326,9 @@ fn render_readme(pkg: &str, gap: Option<&CanaryGap>) -> String {
         Some(g) => (
             g.description.to_string(),
             g.priority.to_string(),
-            g.issue.map(|n| format!("oven-sh/bun#{n}")).unwrap_or_default(),
+            g.issue
+                .map(|n| format!("oven-sh/bun#{n}"))
+                .unwrap_or_default(),
         ),
         None => (format!("Polyfill for {pkg}"), "P3".into(), String::new()),
     };
@@ -732,8 +747,7 @@ fn write(path: PathBuf, content: &str, quiet: bool) -> Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    std::fs::write(&path, content)
-        .with_context(|| format!("écriture {}", path.display()))?;
+    std::fs::write(&path, content).with_context(|| format!("écriture {}", path.display()))?;
     if !quiet {
         eprintln!("  + {}", path.display());
     }

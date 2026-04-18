@@ -44,7 +44,11 @@ impl From<StateArg> for audit::ItemState {
 }
 
 #[derive(Parser, Debug)]
-#[command(name = "n2b", version, about = "n2b — analyse un package et corrige les incompatibilités avec Bun.")]
+#[command(
+    name = "n2b",
+    version,
+    about = "n2b — analyse un package et corrige les incompatibilités avec Bun."
+)]
 pub struct Cli {
     #[command(subcommand)]
     pub cmd: Option<Cmd>,
@@ -154,7 +158,7 @@ pub enum Cmd {
     /// Scaffolde des projets Bun + Windows bas-niveau (Win32).
     /// FFI Rust (windows-rs → bun:ffi dlopen .dll), inline C (<windows.h>
     /// + TinyCC), Bun Shell + PowerShell 7. Cross-compile supporté (cargo-xwin
-    /// ou mingw-w64).
+    ///   ou mingw-w64).
     ///
     ///   n2b win32 init <name>        # projet complet (FFI + CC + PowerShell)
     ///   n2b win32 ffi <name>         # Rust cdylib (windows-rs) + bun:ffi

@@ -16,31 +16,36 @@ static RULES: Lazy<Vec<HuskyRule>> = Lazy::new(|| {
     vec![
         HuskyRule {
             id: "husky/pnpm-command",
-            re: Regex::new(r"(?m)^(\s*)pnpm\s+(?:run\s+)?([a-zA-Z0-9:_-]+)\b").unwrap(),
+            re: Regex::new(r"(?m)^(\s*)pnpm\s+(?:run\s+)?([a-zA-Z0-9:_-]+)\b")
+                .expect("invariant: pnpm-command regex literal is valid"),
             template: "${1}bun run ${2}",
             message: "hook husky utilise pnpm — remplacer par 'bun run'",
         },
         HuskyRule {
             id: "husky/npm-command",
-            re: Regex::new(r"(?m)^(\s*)npm\s+(?:run\s+)?([a-zA-Z0-9:_-]+)\b").unwrap(),
+            re: Regex::new(r"(?m)^(\s*)npm\s+(?:run\s+)?([a-zA-Z0-9:_-]+)\b")
+                .expect("invariant: npm-command regex literal is valid"),
             template: "${1}bun run ${2}",
             message: "hook husky utilise npm — remplacer par 'bun run'",
         },
         HuskyRule {
             id: "husky/yarn-command",
-            re: Regex::new(r"(?m)^(\s*)yarn\s+(?:run\s+)?([a-zA-Z0-9:_-]+)\b").unwrap(),
+            re: Regex::new(r"(?m)^(\s*)yarn\s+(?:run\s+)?([a-zA-Z0-9:_-]+)\b")
+                .expect("invariant: yarn-command regex literal is valid"),
             template: "${1}bun run ${2}",
             message: "hook husky utilise yarn — remplacer par 'bun run'",
         },
         HuskyRule {
             id: "husky/npx-command",
-            re: Regex::new(r"(?m)^(\s*)npx(?:\s+--no)?\s+(?:--\s+)?").unwrap(),
+            re: Regex::new(r"(?m)^(\s*)npx(?:\s+--no)?\s+(?:--\s+)?")
+                .expect("invariant: npx-command regex literal is valid"),
             template: "${1}bunx --bun ",
             message: "hook husky utilise npx — remplacer par 'bunx --bun'",
         },
         HuskyRule {
             id: "husky/pnpm-dlx",
-            re: Regex::new(r"(?m)^(\s*)pnpm\s+dlx\s+").unwrap(),
+            re: Regex::new(r"(?m)^(\s*)pnpm\s+dlx\s+")
+                .expect("invariant: pnpm-dlx regex literal is valid"),
             template: "${1}bunx --bun ",
             message: "hook husky utilise 'pnpm dlx' — remplacer par 'bunx --bun'",
         },
@@ -59,7 +64,9 @@ pub fn scan_husky(path: &str, content: &str) -> (Vec<Finding>, String) {
 
     for r in RULES.iter() {
         for mat in r.re.captures_iter(content) {
-            let whole = mat.get(0).unwrap();
+            let whole = mat
+                .get(0)
+                .expect("invariant: capture group 0 is always present in a match");
             let index = whole.start();
             let original = whole.as_str().to_string();
             let mut replacement = String::new();

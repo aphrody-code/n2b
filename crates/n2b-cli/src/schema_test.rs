@@ -18,7 +18,7 @@ mod tests {
     #[test]
     fn deserializes_fixture_baseline() {
         let raw = include_str!("../../../tests/snapshots/baseline/fixture.json");
-        let _parsed: N2bReport = serde_json::from_str(raw)
-            .expect("fixture baseline must deserialize into N2bReport");
+        let _parsed: N2bReport =
+            serde_json::from_str(raw).expect("fixture baseline must deserialize into N2bReport");
     }
 }

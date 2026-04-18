@@ -131,7 +131,7 @@ fn mk(
     // offsets[i] = position du \n qui termine la ligne i+1.
     // Pour obtenir line = `line`, il faut offsets[line-2] + 1 = 0 quand line==1.
     for i in 1..line {
-        offsets.push(i - 1  );
+        offsets.push(i - 1);
     }
     make_finding(
         path,

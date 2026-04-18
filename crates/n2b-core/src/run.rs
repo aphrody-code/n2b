@@ -46,7 +46,8 @@ fn is_workflow(rel: &str) -> bool {
     // .github/workflows/*.yml | *.yaml
     let normalized = rel.replace('\\', "/");
     static RE: Lazy<regex::Regex> = Lazy::new(|| {
-        regex::Regex::new(r"\.github/workflows/.+\.ya?ml$").unwrap()
+        regex::Regex::new(r"\.github/workflows/.+\.ya?ml$")
+            .expect("invariant: workflow path regex literal is valid")
     });
     RE.is_match(&normalized)
 }
@@ -153,9 +154,8 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
     let is_pkg = name == "package.json";
     let is_source = SOURCE_EXTS.contains(&ext.as_str());
     let is_shell = SHELL_EXTS.contains(&ext.as_str()) || SHELL_NAMES.contains(&name);
-    let is_dockerfile = name == "Dockerfile"
-        || name.starts_with("Dockerfile.")
-        || name.ends_with(".dockerfile");
+    let is_dockerfile =
+        name == "Dockerfile" || name.starts_with("Dockerfile.") || name.ends_with(".dockerfile");
     let is_nvmrc = name == ".nvmrc" || name == ".node-version";
     let is_tsconfig = name == "tsconfig.json" || name.starts_with("tsconfig.");
     let is_husky = is_husky_hook(rel);
@@ -206,7 +206,7 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
     } else if is_workflow {
         scan_workflow(rel, &before)
     } else if is_source {
-        scan_source(rel, &before, &opts)
+        scan_source(rel, &before, opts)
     } else if is_dockerfile {
         scan_dockerfile(rel, &before)
     } else if is_nvmrc {

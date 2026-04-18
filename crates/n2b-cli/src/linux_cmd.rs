@@ -70,10 +70,7 @@ fn scaffold(
         None => PathBuf::from(&name),
     };
     if target.exists() && !force {
-        anyhow::bail!(
-            "{} existe déjà — relancer avec --force",
-            target.display()
-        );
+        anyhow::bail!("{} existe déjà — relancer avec --force", target.display());
     }
     std::fs::create_dir_all(&target)?;
     match flavor {
@@ -96,10 +93,7 @@ fn init_all(name: String, dir: Option<PathBuf>, force: bool, quiet: bool) -> Res
         None => PathBuf::from(&name),
     };
     if target.exists() && !force {
-        anyhow::bail!(
-            "{} existe déjà — relancer avec --force",
-            target.display()
-        );
+        anyhow::bail!("{} existe déjà — relancer avec --force", target.display());
     }
     std::fs::create_dir_all(&target)?;
 
@@ -124,7 +118,11 @@ fn init_all(name: String, dir: Option<PathBuf>, force: bool, quiet: bool) -> Res
     write(target.join("src/main.ts"), &render_main_ts(&name), quiet)?;
 
     // Package + build
-    write(target.join("package.json"), &render_all_package_json(&name), quiet)?;
+    write(
+        target.join("package.json"),
+        &render_all_package_json(&name),
+        quiet,
+    )?;
     write(target.join("README.md"), &render_all_readme(&name), quiet)?;
     write(target.join(".gitignore"), GITIGNORE, quiet)?;
     write(target.join("build.sh"), &render_build_script(&name), quiet)?;
@@ -148,11 +146,7 @@ fn init_all(name: String, dir: Option<PathBuf>, force: bool, quiet: bool) -> Res
 }
 
 fn scaffold_ffi(dir: &Path, name: &str, quiet: bool) -> Result<()> {
-    write(
-        dir.join("Cargo.toml"),
-        &render_ffi_cargo_toml(name),
-        quiet,
-    )?;
+    write(dir.join("Cargo.toml"), &render_ffi_cargo_toml(name), quiet)?;
     write(dir.join("src/lib.rs"), FFI_LIB_RS, quiet)?;
     write(
         dir.join("package.json"),
@@ -205,22 +199,74 @@ fn scaffold_shell(dir: &Path, name: &str, quiet: bool) -> Result<()> {
 
 fn doctor(quiet: bool) -> Result<()> {
     let tools: &[(&str, &str, &str)] = &[
-        ("rustc",       "curl https://sh.rustup.rs -sSf | sh",        "compilateur Rust"),
-        ("cargo",       "(installé avec rustup)",                     "package manager Rust"),
-        ("gcc",         "sudo apt install build-essential",           "compilateur C (Bun.cc fallback)"),
-        ("clang",       "sudo apt install clang",                     "compilateur C/C++ alternatif"),
-        ("tcc",         "sudo apt install tcc",                       "TinyCC — utilisé par bun:ffi cc (intégré à Bun)"),
-        ("pkg-config",  "sudo apt install pkg-config",                "découverte de libs natives"),
-        ("make",        "sudo apt install build-essential",           "build classique"),
-        ("objdump",     "sudo apt install binutils",                  "inspection ELF / symboles"),
-        ("ldd",         "(glibc)",                                    "inspection deps dynamiques"),
-        ("strace",      "sudo apt install strace",                    "trace syscalls (debug FFI)"),
+        (
+            "rustc",
+            "curl https://sh.rustup.rs -sSf | sh",
+            "compilateur Rust",
+        ),
+        ("cargo", "(installé avec rustup)", "package manager Rust"),
+        (
+            "gcc",
+            "sudo apt install build-essential",
+            "compilateur C (Bun.cc fallback)",
+        ),
+        (
+            "clang",
+            "sudo apt install clang",
+            "compilateur C/C++ alternatif",
+        ),
+        (
+            "tcc",
+            "sudo apt install tcc",
+            "TinyCC — utilisé par bun:ffi cc (intégré à Bun)",
+        ),
+        (
+            "pkg-config",
+            "sudo apt install pkg-config",
+            "découverte de libs natives",
+        ),
+        (
+            "make",
+            "sudo apt install build-essential",
+            "build classique",
+        ),
+        (
+            "objdump",
+            "sudo apt install binutils",
+            "inspection ELF / symboles",
+        ),
+        ("ldd", "(glibc)", "inspection deps dynamiques"),
+        (
+            "strace",
+            "sudo apt install strace",
+            "trace syscalls (debug FFI)",
+        ),
         // --- Unix CLI rewrites Rust (uutils) — drop-in modernes pour dev / scripts ---
-        ("coreutils",   "cargo install coreutils",                    "uutils/coreutils (ls/cp/cat/… Rust)"),
-        ("findutils",   "cargo install findutils",                    "uutils/findutils (find/xargs Rust)"),
-        ("diffutils",   "cargo install diffutils",                    "uutils/diffutils (diff/cmp Rust)"),
-        ("procps",      "cargo install procps",                       "uutils/procps (ps/top/watch Rust)"),
-        ("util-linux-rs","cargo install --git https://github.com/uutils/util-linux", "uutils/util-linux (mount/fdisk/lscpu/dmesg Rust)"),
+        (
+            "coreutils",
+            "cargo install coreutils",
+            "uutils/coreutils (ls/cp/cat/… Rust)",
+        ),
+        (
+            "findutils",
+            "cargo install findutils",
+            "uutils/findutils (find/xargs Rust)",
+        ),
+        (
+            "diffutils",
+            "cargo install diffutils",
+            "uutils/diffutils (diff/cmp Rust)",
+        ),
+        (
+            "procps",
+            "cargo install procps",
+            "uutils/procps (ps/top/watch Rust)",
+        ),
+        (
+            "util-linux-rs",
+            "cargo install --git https://github.com/uutils/util-linux",
+            "uutils/util-linux (mount/fdisk/lscpu/dmesg Rust)",
+        ),
     ];
     let mut missing = 0;
     for (bin, install, desc) in tools {

@@ -8,11 +8,7 @@
 // ---------------------------------------------------------------------------
 
 pub(super) fn render_cargo_toml(name: &str, with_mdx: bool) -> String {
-    let extra = if with_mdx {
-        "mdxjs-rs = \"0.2\"\n"
-    } else {
-        ""
-    };
+    let extra = if with_mdx { "mdxjs-rs = \"0.2\"\n" } else { "" };
     format!(
         r#"[package]
 name = "{name}"
