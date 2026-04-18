@@ -15,11 +15,14 @@ clap = { version = "4", features = ["derive", "color"] }
 colored = "2"
 serde = { workspace = true }
 serde_json = { workspace = true }
+serde_yaml = "0.9"
 anyhow = { workspace = true }
 regex = { workspace = true }
 once_cell = { workspace = true }
 tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread"] }
 similar = "2"
+ignore = "0.4"
+globset = "0.4"
 fastembed = { version = "5", optional = true }
 
 [features]

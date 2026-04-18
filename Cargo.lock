@@ -2147,6 +2147,8 @@ dependencies = [
  "clap",
  "colored",
  "fastembed",
+ "globset",
+ "ignore",
  "jsonschema",
  "n2b-core",
  "once_cell",
@@ -2154,6 +2156,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "serde_yaml",
  "similar",
  "tokio",
 ]

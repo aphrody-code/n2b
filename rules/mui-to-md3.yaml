@@ -1,0 +1,676 @@
+# MUI v9 → md3-ui codemod rules
+# Consumed by `n2b mui-to-md3` (n2b-core/src/codemod/).
+# Format spec: n2b-core/src/rules/mui_to_md3.rs (schema `MuiToMd3Rules`).
+#
+# Schema:
+#   rules[]:
+#     id: string                      unique rule identifier
+#     effort: trivial|low|med|high
+#     status: active|deferred|gap     # gap = md3 component needs to be created first
+#     from:
+#       package: "@mui/material" | "@mui/x-*" | "@mui/icons-material"
+#       imports: [string, ...]        # named exports to match
+#     to:
+#       package: string | "NONE"      # NONE = remove import + rewrite JSX to <div>
+#       imports: [string, ...]        # optional if package == NONE
+#       subpath-per-import: bool      # true → rewrite `import {X}` into `import {X} from "@md3-ui/core/x-kebab"`
+#     prop-transforms:
+#       - from: { propName: value | "any" }
+#         to:   { propName: value }   # `null` value removes prop
+#     sx-bridge: true|false           # if true, convert `sx` prop to `className` (Tailwind best-effort)
+#     jsx-rewrite:
+#       pattern: string               # pseudo-JSX for structural rewrites
+#       replacement: string
+#     notes: string
+
+version: 1
+md3-ui-version: "^1.0.0"
+generated: 2026-04-18
+
+# ─────────────────────────────────────────────────────────────────────
+# @mui/material — direct mappings
+# ─────────────────────────────────────────────────────────────────────
+
+rules:
+  - id: mui-button
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Button]
+    to:
+      package: "@md3-ui/core/button"
+      imports: [Button]
+    prop-transforms:
+      - { from: { variant: contained }, to: { variant: filled } }
+      - { from: { variant: outlined }, to: { variant: outlined } }
+      - { from: { variant: text }, to: { variant: text } }
+      - { from: { color: primary }, to: {} }
+      - { from: { color: secondary }, to: { variant: tonal } }
+      - { from: { color: error }, to: { className: "text-(--md-sys-color-error)" } }
+      - { from: { size: small }, to: { size: sm } }
+      - { from: { size: medium }, to: {} }
+      - { from: { size: large }, to: { size: lg } }
+      - { from: { fullWidth: true }, to: { className: "w-full" } }
+      - { from: { disableElevation: true }, to: {} }
+      - { from: { disableRipple: true }, to: {} }
+    sx-bridge: true
+    notes: "startIcon/endIcon must be inlined as children — handled by JSX rewriter, not prop-transform."
+
+  - id: mui-card
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Card, CardContent, CardHeader, CardActions, CardMedia, CardActionArea]
+    to:
+      package: "@md3-ui/core/card"
+      imports: [Card, CardContent, CardHeader, CardActions, CardMedia, CardActionArea]
+    prop-transforms:
+      - { from: { variant: elevation }, to: { variant: elevated } }
+      - { from: { variant: outlined }, to: { variant: outlined } }
+    sx-bridge: true
+
+  - id: mui-typography
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Typography]
+    to:
+      package: "@md3-ui/core/typography"
+      imports: [Typography]
+    prop-transforms:
+      - { from: { variant: h1 }, to: { variant: display-large } }
+      - { from: { variant: h2 }, to: { variant: display-medium } }
+      - { from: { variant: h3 }, to: { variant: display-small } }
+      - { from: { variant: h4 }, to: { variant: headline-large } }
+      - { from: { variant: h5 }, to: { variant: headline-medium } }
+      - { from: { variant: h6 }, to: { variant: headline-small } }
+      - { from: { variant: subtitle1 }, to: { variant: title-large } }
+      - { from: { variant: subtitle2 }, to: { variant: title-medium } }
+      - { from: { variant: body1 }, to: { variant: body-large } }
+      - { from: { variant: body2 }, to: { variant: body-medium } }
+      - { from: { variant: caption }, to: { variant: body-small } }
+      - { from: { variant: button }, to: { variant: label-large } }
+      - { from: { variant: overline }, to: { variant: label-medium } }
+      - { from: { component: any }, to: { as: "$1" } }
+      - { from: { align: center }, to: { className: "text-center" } }
+      - { from: { align: left }, to: { className: "text-left" } }
+      - { from: { align: right }, to: { className: "text-right" } }
+      - { from: { align: justify }, to: { className: "text-justify" } }
+      - { from: { gutterBottom: true }, to: { className: "mb-4" } }
+      - { from: { noWrap: true }, to: { className: "truncate" } }
+      - { from: { paragraph: true }, to: { as: "p" } }
+    sx-bridge: true
+
+  - id: mui-chip
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Chip]
+    to:
+      package: "@md3-ui/core/chip"
+      imports: [Chip]
+    prop-transforms:
+      - { from: { label: any }, to: { children: "$1" } }
+      - { from: { variant: filled }, to: { variant: assist } }
+      - { from: { variant: outlined }, to: { variant: filter } }
+      - { from: { color: primary }, to: {} }
+      - { from: { size: small }, to: { size: sm } }
+      - { from: { onDelete: any }, to: { onRemove: "$1" } }
+      - { from: { deleteIcon: any }, to: { removeIcon: "$1" } }
+      - { from: { icon: any }, to: { leadingIcon: "$1" } }
+      - { from: { avatar: any }, to: { leadingIcon: "$1" } }
+    sx-bridge: true
+
+  - id: mui-text-field
+    effort: med
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [TextField]
+    to:
+      package: "@md3-ui/core/text-field"
+      imports: [TextField]
+    prop-transforms:
+      - { from: { variant: filled }, to: { variant: filled } }
+      - { from: { variant: outlined }, to: { variant: outlined } }
+      - { from: { variant: standard }, to: { variant: filled } }
+      - { from: { size: small }, to: { density: compact } }
+      - { from: { size: medium }, to: {} }
+      - { from: { fullWidth: true }, to: { className: "w-full" } }
+      - { from: { multiline: true }, to: { multiline: true } }
+      - { from: { InputProps: any }, to: { slotProps: { input: "$1" } } }
+      - { from: { InputLabelProps: any }, to: { slotProps: { label: "$1" } } }
+    sx-bridge: true
+    notes: "select=true should be rewritten to <Select> manually (flagged by JSX rewriter)."
+
+  - id: mui-icon-button
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [IconButton]
+    to:
+      package: "@md3-ui/core/icon-button"
+      imports: [IconButton]
+    prop-transforms:
+      - { from: { size: small }, to: { size: sm } }
+      - { from: { size: large }, to: { size: lg } }
+      - { from: { color: primary }, to: { variant: filled } }
+      - { from: { color: secondary }, to: { variant: tonal } }
+      - { from: { edge: any }, to: {} }
+    sx-bridge: true
+
+  - id: mui-tooltip
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Tooltip]
+    to:
+      package: "@md3-ui/core/tooltip"
+      imports: [Tooltip]
+    prop-transforms:
+      - { from: { title: any }, to: { content: "$1" } }
+      - { from: { placement: any }, to: { side: "$1" } }
+      - { from: { arrow: true }, to: {} }
+    sx-bridge: true
+
+  - id: mui-linear-progress
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [LinearProgress]
+    to:
+      package: "@md3-ui/core/linear-progress"
+      imports: [LinearProgress]
+    prop-transforms:
+      - { from: { variant: determinate, value: any }, to: { value: "$1" } }
+      - { from: { variant: indeterminate }, to: {} }
+    sx-bridge: true
+
+  - id: mui-divider
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Divider]
+    to:
+      package: "@md3-ui/core/divider"
+      imports: [Divider]
+    prop-transforms:
+      - { from: { orientation: vertical }, to: { orientation: vertical } }
+      - { from: { flexItem: true }, to: {} }
+      - { from: { textAlign: center }, to: { labelPosition: center } }
+    sx-bridge: true
+
+  - id: mui-tabs
+    effort: med
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Tabs, Tab]
+    to:
+      package: "@md3-ui/core/tabs"
+      imports: [Tabs]
+    prop-transforms:
+      - { from: { value: any }, to: { value: "$1" } }
+      - { from: { onChange: "fn(e,x)" }, to: { onValueChange: "(v) => fn(null, v)" } }
+      - { from: { orientation: vertical }, to: { orientation: vertical } }
+      - { from: { variant: scrollable }, to: { scrollable: true } }
+    jsx-rewrite:
+      - pattern: "<Tabs value={V} onChange={C}>{CH}</Tabs>"
+        replacement: "<Tabs.Root value={V} onValueChange={(v) => C(null, v)}><Tabs.List>{CH}</Tabs.List></Tabs.Root>"
+      - pattern: "<Tab label={L} value={V} />"
+        replacement: "<Tabs.Tab value={V}>{L}</Tabs.Tab>"
+    notes: "Structural change; manual review recommended."
+
+  - id: mui-dialog
+    effort: high
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText]
+    to:
+      package: "@md3-ui/core/dialog"
+      imports: [Dialog]
+    prop-transforms:
+      - { from: { open: any, onClose: "fn" }, to: { open: "$1", onOpenChange: "(o) => !o && fn()" } }
+    jsx-rewrite:
+      - pattern: |
+          <Dialog open={O} onClose={C} fullWidth maxWidth={M}>
+            <DialogTitle>{T}</DialogTitle>
+            <DialogContent>{B}</DialogContent>
+            <DialogActions>{A}</DialogActions>
+          </Dialog>
+        replacement: |
+          <Dialog.Root open={O} onOpenChange={(o) => !o && C()}>
+            <Dialog.Portal>
+              <Dialog.Backdrop />
+              <Dialog.Viewport>
+                <Dialog.Popup className={`max-w-${M} w-full`}>
+                  <Dialog.Title>{T}</Dialog.Title>
+                  <div>{B}</div>
+                  <div className="flex gap-2 justify-end">{A}</div>
+                </Dialog.Popup>
+              </Dialog.Viewport>
+            </Dialog.Portal>
+          </Dialog.Root>
+    notes: "Structural change — preserve all children. JSX rewriter must handle case variations."
+
+  # Components redirected to @md3-ui/core compat wrappers
+  - id: mui-box
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Box]
+    to:
+      package: "@md3-ui/core/box"
+      imports: [Box]
+    notes: "Redirect Box import to md3-ui compat wrapper (absorbs sx/component/motion props)."
+
+  - id: mui-stack
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Stack]
+    to:
+      package: "@md3-ui/core/stack"
+      imports: [Stack]
+    notes: "Redirect Stack to md3-ui compat wrapper (spacing/direction/alignItems absorbés)."
+    sx-bridge: true
+
+  - id: mui-grid
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Grid]
+    to:
+      package: "@md3-ui/core/grid"
+      imports: [Grid]
+    notes: "Redirect Grid to md3-ui compat wrapper (container/item/size v2 + xs/sm/md v1 absorbés)."
+
+  - id: mui-container
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Container]
+    to:
+      package: "@md3-ui/core/container"
+      imports: [Container]
+    notes: "Redirect Container to md3-ui compat wrapper (maxWidth/disableGutters/fixed absorbés)."
+    sx-bridge: true
+
+  - id: mui-paper
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Paper]
+    to:
+      package: "@md3-ui/core/card"
+      imports: [Card]
+    prop-transforms:
+      - { from: { variant: elevation, elevation: 1 }, to: { variant: elevated } }
+      - { from: { variant: outlined }, to: { variant: outlined } }
+    sx-bridge: true
+
+  # Hooks
+  - id: mui-use-theme
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [useTheme]
+    to:
+      package: "@md3-ui/core/theme"
+      imports: [useTheme]
+    notes: "theme.palette.primary.main → var(--md-sys-color-primary) in CSS. theme.breakpoints.up() → useWindowSizeAtLeast."
+
+  - id: mui-use-media-query
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [useMediaQuery]
+    to:
+      package: "@md3-ui/core/layout"
+      imports: [useWindowSizeAtLeast]
+    notes: "Rewriter must parse `theme.breakpoints.up('lg')` to `'large'`. Max-width queries not supported — flag as manual."
+
+  # Gaps — md3 components to create first
+  - id: mui-circular-progress
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [CircularProgress]
+    to:
+      package: "@md3-ui/core/circular-progress"
+      imports: [CircularProgress]
+    notes: "Redirect CircularProgress to md3-ui compat wrapper."
+
+  - id: mui-form-control
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [FormControl, FormControlLabel, InputLabel, InputAdornment]
+    to:
+      package: "@md3-ui/core/form-control"
+      imports: [FormControl, FormControlLabel, InputLabel, InputAdornment]
+    notes: "Redirect form-control ecosystem to md3-ui compat wrappers (Agent C)."
+
+  - id: mui-card-header
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [CardHeader, CardActions, CardActionArea, CardMedia]
+    to:
+      package: "@md3-ui/core/card"
+      imports: [CardHeader, CardActions, CardActionArea, CardMedia]
+    notes: "Redirect card helpers to md3-ui/core/card."
+
+  - id: mui-app-bar
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [AppBar, Toolbar]
+    to:
+      package: "@md3-ui/core/app-bar"
+      imports: [AppBar, Toolbar]
+    notes: "Redirect AppBar + Toolbar to md3-ui compat."
+
+  - id: mui-checkbox
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Checkbox]
+    to:
+      package: "@md3-ui/core/checkbox"
+      imports: [Checkbox]
+    notes: "Redirect Checkbox to md3-ui compat."
+
+  - id: mui-menu
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Menu]
+    to:
+      package: "@md3-ui/core/menu"
+      imports: [Menu]
+    notes: "Redirect Menu to md3-ui (MenuItem géré par mui-select rule)."
+
+  - id: mui-switch
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Switch]
+    to:
+      package: "@md3-ui/core/switch"
+      imports: [Switch]
+    notes: "Redirect Switch to md3-ui compat."
+
+  - id: mui-list
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [List, ListItem, ListItemText, ListItemIcon, ListItemAvatar, ListItemButton, ListSubheader]
+    to:
+      package: "@md3-ui/core/list"
+      imports: [List, ListItem, ListItemText, ListItemIcon, ListItemAvatar, ListItemButton, ListSubheader]
+    notes: "Redirect List family to md3-ui compat wrappers."
+
+  - id: mui-avatar
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Avatar]
+    to:
+      package: "@md3-ui/core/avatar"
+      imports: [Avatar]
+    notes: "Requires @md3-ui/core/avatar creation (Phase 3, ~2h)."
+
+  - id: mui-skeleton
+    effort: trivial
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Skeleton]
+    to:
+      package: "@md3-ui/core/skeleton"
+      imports: [Skeleton]
+    notes: "Requires @md3-ui/core/skeleton creation (~1h)."
+
+  - id: mui-alert
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Alert, AlertTitle]
+    to:
+      package: "@md3-ui/core/alert"
+      imports: [Alert]
+    notes: "Requires @md3-ui/core/alert creation (~2h)."
+
+  - id: mui-select
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Select, MenuItem, FormControl, InputLabel, FormHelperText]
+    to:
+      package: "@md3-ui/core/select"
+      imports: [Select, SelectItem]
+    notes: "Requires @md3-ui/core/select creation (~3h)."
+
+# ─────────────────────────────────────────────────────────────────────
+# @mui/x-date-pickers
+# ─────────────────────────────────────────────────────────────────────
+
+  - id: mui-x-date-picker
+    effort: med
+    status: active
+    from:
+      package: "@mui/x-date-pickers"
+      imports: [DatePicker]
+    to:
+      package: "@md3-ui/core/date-picker"
+      imports: [DatePicker]
+    prop-transforms:
+      - { from: { value: any }, to: { value: "$1" } }
+      - { from: { onChange: any }, to: { onChange: "$1" } }
+      - { from: { label: any }, to: { label: "$1" } }
+      - { from: { format: any }, to: { format: "$1" } }
+      - { from: { slotProps: { textField: any } }, to: { inputProps: "$1" } }
+
+  - id: mui-x-localization-provider
+    effort: med
+    status: active
+    from:
+      package: "@mui/x-date-pickers"
+      imports: [LocalizationProvider]
+    to:
+      package: NONE
+    jsx-rewrite:
+      - pattern: "<LocalizationProvider dateAdapter={A} adapterLocale={L}>{CH}</LocalizationProvider>"
+        replacement: "{CH}"
+    notes: "LocalizationProvider is no-op in md3 date-picker (locale is a direct prop)."
+
+# ─────────────────────────────────────────────────────────────────────
+# Excluded / deferred
+# ─────────────────────────────────────────────────────────────────────
+
+  - id: mui-x-data-grid
+    effort: deferred
+    status: deferred
+    from:
+      package: "@mui/x-data-grid"
+      imports: [DataGrid, GridColDef, GridPaginationModel, GridActionsCellItem]
+    to: null
+    notes: |
+      DataGrid is used on 2 pages only and has no md3-ui equivalent in v1.0.
+      Keep MUI X DataGrid with @deprecated tag. Migration planned for v1.1
+      (15-20h for @md3-ui/core/table basic implementation).
+      n2b mui-to-md3 SKIPS this rule entirely.
+
+  - id: mui-x-charts
+    effort: deferred
+    status: deferred
+    from:
+      package: "@mui/x-charts"
+      imports: ["*"]
+    to: null
+    notes: "Not used in production. Recharts 3.8.0 is used instead. No migration needed."
+
+  - id: mui-tiptap
+    effort: deferred
+    status: deferred
+    from:
+      package: "mui-tiptap"
+      imports: ["*"]
+    to: null
+    notes: "Complex Tiptap wrapper. Low ROI migration. Keep as-is."
+
+  - id: mui-autocomplete
+    effort: low
+    status: active
+    from:
+      package: "@mui/material"
+      imports: [Autocomplete]
+    to:
+      package: "@md3-ui/core/autocomplete"
+      imports: [Autocomplete]
+    notes: |
+      Redirect to @md3-ui/core/autocomplete wrapper (Agent C création). Attention :
+      signatures Autocomplete MUI très flexibles (multiple/freeSolo/groupBy/etc.)
+      — manual review recommandé sur chaque site.
+      in v1.1+ (1-2 weeks effort, requires Downshift-like primitive).
+
+# ─────────────────────────────────────────────────────────────────────
+# Theme infrastructure (manual — not automatable)
+# ─────────────────────────────────────────────────────────────────────
+
+theme-migration:
+  packages:
+    - from: "@mui/material-nextjs"
+      to: "@md3-ui/core/theme"
+    - from: "@emotion/react"
+      to: null
+    - from: "@emotion/styled"
+      to: null
+    - from: "@emotion/cache"
+      to: null
+  instructions: |
+    1. Import tokens.css from @md3-ui/tokens in app/globals.css or layout.tsx
+    2. Replace <AppRouterCacheProvider><ThemeProvider theme={theme}><CssBaseline />...</ThemeProvider></AppRouterCacheProvider>
+       with <ThemeProvider scheme="red">...</ThemeProvider> (from @md3-ui/core/theme)
+    3. Port src/lib/theme.ts to tokens.json (DTCG 3-tiers) consumed by md3-tokens-builder
+    4. Remove @emotion/* from package.json (if no Tiptap usage left)
+
+# ─────────────────────────────────────────────────────────────────────
+# sx prop → className (Tailwind best-effort)
+# ─────────────────────────────────────────────────────────────────────
+
+sx-to-className:
+  mappings:
+    # Colors
+    - { sx: "bgcolor: 'primary.main'",     class: "bg-(--md-sys-color-primary)" }
+    - { sx: "bgcolor: 'secondary.main'",   class: "bg-(--md-sys-color-secondary)" }
+    - { sx: "bgcolor: 'error.main'",       class: "bg-(--md-sys-color-error)" }
+    - { sx: "bgcolor: 'background.paper'", class: "bg-(--md-sys-color-surface-container)" }
+    - { sx: "color: 'text.primary'",       class: "text-(--md-sys-color-on-surface)" }
+    - { sx: "color: 'text.secondary'",     class: "text-(--md-sys-color-on-surface-variant)" }
+    - { sx: "color: 'primary.main'",       class: "text-(--md-sys-color-primary)" }
+
+    # Spacing (sx × 8 = px)
+    - { sx: "p: N",  class: "p-{N}" }
+    - { sx: "pt: N", class: "pt-{N}" }
+    - { sx: "pb: N", class: "pb-{N}" }
+    - { sx: "pl: N", class: "pl-{N}" }
+    - { sx: "pr: N", class: "pr-{N}" }
+    - { sx: "px: N", class: "px-{N}" }
+    - { sx: "py: N", class: "py-{N}" }
+    - { sx: "m: N",  class: "m-{N}" }
+    - { sx: "mt: N", class: "mt-{N}" }
+    - { sx: "mb: N", class: "mb-{N}" }
+    - { sx: "ml: N", class: "ml-{N}" }
+    - { sx: "mr: N", class: "mr-{N}" }
+    - { sx: "mx: N", class: "mx-{N}" }
+    - { sx: "my: N", class: "my-{N}" }
+    - { sx: "gap: N", class: "gap-{N}" }
+
+    # Display / Flex
+    - { sx: "display: 'flex'",      class: "flex" }
+    - { sx: "display: 'grid'",      class: "grid" }
+    - { sx: "display: 'block'",     class: "block" }
+    - { sx: "display: 'none'",      class: "hidden" }
+    - { sx: "flexDirection: 'row'", class: "flex-row" }
+    - { sx: "flexDirection: 'column'", class: "flex-col" }
+    - { sx: "alignItems: 'center'", class: "items-center" }
+    - { sx: "alignItems: 'flex-start'", class: "items-start" }
+    - { sx: "alignItems: 'flex-end'", class: "items-end" }
+    - { sx: "justifyContent: 'center'", class: "justify-center" }
+    - { sx: "justifyContent: 'space-between'", class: "justify-between" }
+    - { sx: "justifyContent: 'flex-start'", class: "justify-start" }
+    - { sx: "justifyContent: 'flex-end'", class: "justify-end" }
+    - { sx: "flexWrap: 'wrap'", class: "flex-wrap" }
+
+    # Sizing
+    - { sx: "width: '100%'", class: "w-full" }
+    - { sx: "width: N",      class: "w-{N}" }
+    - { sx: "height: '100%'", class: "h-full" }
+    - { sx: "height: N",     class: "h-{N}" }
+    - { sx: "minWidth: N",   class: "min-w-[{N}px]" }
+    - { sx: "minHeight: N",  class: "min-h-[{N}px]" }
+    - { sx: "maxWidth: N",   class: "max-w-[{N}px]" }
+
+    # Shape / Elevation
+    - { sx: "borderRadius: 0",  class: "rounded-none" }
+    - { sx: "borderRadius: 1",  class: "rounded-(--md-sys-shape-corner-extra-small)" }
+    - { sx: "borderRadius: 2",  class: "rounded-(--md-sys-shape-corner-small)" }
+    - { sx: "borderRadius: 3",  class: "rounded-(--md-sys-shape-corner-medium)" }
+    - { sx: "borderRadius: 4",  class: "rounded-(--md-sys-shape-corner-large)" }
+    - { sx: "boxShadow: N",     class: "shadow-(--md-sys-elevation-level{N})" }
+    - { sx: "border: '1px solid'", class: "border border-(--md-sys-color-outline-variant)" }
+
+    # Position
+    - { sx: "position: 'relative'", class: "relative" }
+    - { sx: "position: 'absolute'", class: "absolute" }
+    - { sx: "position: 'fixed'",    class: "fixed" }
+    - { sx: "overflow: 'hidden'",   class: "overflow-hidden" }
+    - { sx: "overflow: 'auto'",     class: "overflow-auto" }
+    - { sx: "textAlign: 'center'",  class: "text-center" }
+
+  fallback: "Leave sx={{ ...unmapped }} intact with // TODO comment when pattern unrecognized."
+
+# ─────────────────────────────────────────────────────────────────────
+# Files / globs to ignore
+# ─────────────────────────────────────────────────────────────────────
+
+ignore:
+  - "node_modules/**"
+  - ".next/**"
+  - "dist/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  # Keep RichTextEditor untouched (mui-tiptap dep)
+  - "src/components/ui/RichTextEditor.tsx"
+  # DataGrid pages — handle manually or keep MUI X
+  - "src/app/(admin)/admin/users/page.tsx"
+  - "src/app/(public-parts)/parts/page.tsx"

@@ -6,6 +6,7 @@ mod cli;
 mod commands;
 mod linux_cmd;
 mod patch;
+mod rust_cmd;
 #[cfg(test)]
 mod schema_test;
 mod subprocess;
