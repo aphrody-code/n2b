@@ -140,9 +140,22 @@ bun run codegen:schema
 
 ## Documentation de référence
 
-Les règles sont dérivées de `/home/ubuntu/rsbun/docs/bun-docs/` :
+Les règles sont dérivées de la doc Bun officielle (`runtime/nodejs-compat.md`, `runtime/bun-apis.md`, `pm/`, `guides/util/import-meta-dir.md`).
 
-- `runtime/nodejs-compat.md` — matrice de compatibilité Node.js
-- `runtime/bun-apis.md` — catalogue des APIs natives Bun
-- `pm/` — `bun install`, `bunx`, `bun add`
-- `guides/util/import-meta-dir.md` — `import.meta.dir` et famille
+## Intégration Claude Code via `bun-agent` plugin
+
+L'intégration officielle pour Claude Code est packagée dans le plugin **`bun-agent`** :
+
+- **Source** (dev) : `~/vps/agents/bun-agent/`
+- **Agent dédié** : `agents/n2b.md` — détecte le binaire via `command -v n2b`, la racine projet via `git rev-parse --show-toplevel`, lit un `bun/MIGRATION_PLAN.md` optionnel
+- **Command** : `commands/n2b.md` — `/n2b audit|N|fix|aggressive|migrate|rollback|diff|analyze|rules`
+- **Skill** : `skills/n2b/SKILL.md` — model-invoked, triggers sur "migrate to bun", "n2b audit", etc.
+- **Docs bundled** : `docs/n2b/` (ce README, CHANGELOG, STRUCTURE, research, roadmap) + `docs/bun-official/` (329 `.mdx` officiels)
+
+Le plugin est **agnostique au projet** — aucun chemin `/home/ubuntu/...` hardcodé, aucune référence à un repo spécifique. Réutilisable dans n'importe quel codebase Node → Bun.
+
+Cycle de re-sync (upstream → plugin) :
+```bash
+rsync -a --delete docs/ ~/vps/agents/bun-agent/docs/n2b/
+cp {README,CLAUDE,STRUCTURE,CHANGELOG,CONTRIBUTING,build-your-own-x}.md ~/vps/agents/bun-agent/docs/n2b/
+```

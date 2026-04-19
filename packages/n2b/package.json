@@ -1,6 +1,6 @@
 {
   "name": "@n2b/core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "TypeScript façade for the `n2b` Rust binary : subprocess wrapper, Bun plugin, and Bun-native shims for the Node patterns n2b flags.",
   "type": "module",
   "main": "./src/index.ts",

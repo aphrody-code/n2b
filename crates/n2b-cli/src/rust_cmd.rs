@@ -69,7 +69,12 @@ pub enum RustCmd {
 
 pub fn run(cmd: RustCmd, quiet: bool) -> Result<()> {
     match cmd {
-        RustCmd::New { name, flavor, dir, force } => run_new(name, flavor, dir, force, quiet),
+        RustCmd::New {
+            name,
+            flavor,
+            dir,
+            force,
+        } => run_new(name, flavor, dir, force, quiet),
         RustCmd::Check { root } => run_check(root, quiet),
         RustCmd::Deps { root } => run_deps(root, quiet),
         RustCmd::Doctor => run_doctor(quiet),
@@ -122,11 +127,7 @@ fn run_new(
             dest.display().to_string().cyan(),
             format!("{:?}", flavor).to_lowercase().dimmed()
         );
-        println!(
-            "  {} cd {} && cargo build",
-            "→".dimmed(),
-            dest.display()
-        );
+        println!("  {} cd {} && cargo build", "→".dimmed(), dest.display());
     }
     Ok(())
 }
@@ -358,8 +359,7 @@ pub fn {fn_name}_derive(input: TokenStream) -> TokenStream {{
 fn scaffold_workspace(dest: &Path, name: &str) -> Result<()> {
     write(
         &dest.join("Cargo.toml"),
-        &format!(
-            r#"[workspace]
+        r#"[workspace]
 resolver = "2"
 members = ["crates/*"]
 
@@ -371,18 +371,17 @@ repository = ""
 
 [workspace.dependencies]
 anyhow = "1"
-serde = {{ version = "1", features = ["derive"] }}
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tokio = {{ version = "1", features = ["full"] }}
+tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
-tracing-subscriber = {{ version = "0.3", features = ["env-filter"] }}
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [profile.release]
 lto = "fat"
 codegen-units = 1
 strip = "symbols"
-"#
-        ),
+"#,
     )?;
     let core_name = format!("{name}-core");
     write(
@@ -412,7 +411,10 @@ pub fn version() -> &'static str {{
         ),
     )?;
     write(&dest.join(".gitignore"), "/target\n")?;
-    write(&dest.join("rust-toolchain.toml"), "[toolchain]\nchannel = \"stable\"\n")?;
+    write(
+        &dest.join("rust-toolchain.toml"),
+        "[toolchain]\nchannel = \"stable\"\n",
+    )?;
     Ok(())
 }
 
@@ -489,7 +491,10 @@ async fn health() -> Json<Value> {{
         ),
     )?;
     write(&dest.join(".gitignore"), "/target\n.env\n")?;
-    write(&dest.join(".env.example"), "RUST_LOG=info\nADDR=0.0.0.0:3000\n")?;
+    write(
+        &dest.join(".env.example"),
+        "RUST_LOG=info\nADDR=0.0.0.0:3000\n",
+    )?;
     Ok(())
 }
 
@@ -574,7 +579,10 @@ async fn main() -> anyhow::Result<()> {
 "#,
     )?;
     write(&dest.join(".gitignore"), "/target\n.env\n")?;
-    write(&dest.join(".env.example"), "DISCORD_TOKEN=your_token_here\nRUST_LOG=info\n")?;
+    write(
+        &dest.join(".env.example"),
+        "DISCORD_TOKEN=your_token_here\nRUST_LOG=info\n",
+    )?;
     Ok(())
 }
 
@@ -1276,21 +1284,96 @@ struct Tool {
 }
 
 static TOOLS: &[Tool] = &[
-    Tool { bin: "rustc", cmd: &["rustc", "--version"], install: "rustup", required: true },
-    Tool { bin: "cargo", cmd: &["cargo", "--version"], install: "rustup", required: true },
-    Tool { bin: "rustup", cmd: &["rustup", "--version"], install: "https://rustup.rs", required: true },
-    Tool { bin: "rustfmt", cmd: &["rustfmt", "--version"], install: "rustup component add rustfmt", required: false },
-    Tool { bin: "clippy", cmd: &["cargo", "clippy", "--version"], install: "rustup component add clippy", required: false },
-    Tool { bin: "cargo-audit", cmd: &["cargo", "audit", "--version"], install: "cargo install cargo-audit", required: false },
-    Tool { bin: "cargo-outdated", cmd: &["cargo", "outdated", "--version"], install: "cargo install cargo-outdated", required: false },
-    Tool { bin: "cargo-watch", cmd: &["cargo", "watch", "--version"], install: "cargo install cargo-watch", required: false },
-    Tool { bin: "cargo-expand", cmd: &["cargo", "expand", "--version"], install: "cargo install cargo-expand", required: false },
-    Tool { bin: "cargo-typify", cmd: &["cargo", "typify", "--version"], install: "cargo install cargo-typify", required: false },
-    Tool { bin: "wasm-pack", cmd: &["wasm-pack", "--version"], install: "cargo install wasm-pack", required: false },
-    Tool { bin: "just", cmd: &["just", "--version"], install: "cargo install just", required: false },
-    Tool { bin: "trunk", cmd: &["trunk", "--version"], install: "cargo install trunk", required: false },
-    Tool { bin: "cargo-leptos", cmd: &["cargo", "leptos", "--version"], install: "cargo install cargo-leptos", required: false },
-    Tool { bin: "tauri-cli", cmd: &["cargo", "tauri", "--version"], install: "cargo install tauri-cli", required: false },
+    Tool {
+        bin: "rustc",
+        cmd: &["rustc", "--version"],
+        install: "rustup",
+        required: true,
+    },
+    Tool {
+        bin: "cargo",
+        cmd: &["cargo", "--version"],
+        install: "rustup",
+        required: true,
+    },
+    Tool {
+        bin: "rustup",
+        cmd: &["rustup", "--version"],
+        install: "https://rustup.rs",
+        required: true,
+    },
+    Tool {
+        bin: "rustfmt",
+        cmd: &["rustfmt", "--version"],
+        install: "rustup component add rustfmt",
+        required: false,
+    },
+    Tool {
+        bin: "clippy",
+        cmd: &["cargo", "clippy", "--version"],
+        install: "rustup component add clippy",
+        required: false,
+    },
+    Tool {
+        bin: "cargo-audit",
+        cmd: &["cargo", "audit", "--version"],
+        install: "cargo install cargo-audit",
+        required: false,
+    },
+    Tool {
+        bin: "cargo-outdated",
+        cmd: &["cargo", "outdated", "--version"],
+        install: "cargo install cargo-outdated",
+        required: false,
+    },
+    Tool {
+        bin: "cargo-watch",
+        cmd: &["cargo", "watch", "--version"],
+        install: "cargo install cargo-watch",
+        required: false,
+    },
+    Tool {
+        bin: "cargo-expand",
+        cmd: &["cargo", "expand", "--version"],
+        install: "cargo install cargo-expand",
+        required: false,
+    },
+    Tool {
+        bin: "cargo-typify",
+        cmd: &["cargo", "typify", "--version"],
+        install: "cargo install cargo-typify",
+        required: false,
+    },
+    Tool {
+        bin: "wasm-pack",
+        cmd: &["wasm-pack", "--version"],
+        install: "cargo install wasm-pack",
+        required: false,
+    },
+    Tool {
+        bin: "just",
+        cmd: &["just", "--version"],
+        install: "cargo install just",
+        required: false,
+    },
+    Tool {
+        bin: "trunk",
+        cmd: &["trunk", "--version"],
+        install: "cargo install trunk",
+        required: false,
+    },
+    Tool {
+        bin: "cargo-leptos",
+        cmd: &["cargo", "leptos", "--version"],
+        install: "cargo install cargo-leptos",
+        required: false,
+    },
+    Tool {
+        bin: "tauri-cli",
+        cmd: &["cargo", "tauri", "--version"],
+        install: "cargo install tauri-cli",
+        required: false,
+    },
 ];
 
 fn run_doctor(quiet: bool) -> Result<()> {
@@ -1313,12 +1396,7 @@ fn run_doctor(quiet: bool) -> Result<()> {
                     .and_then(|o| String::from_utf8(o.stdout).ok())
                     .unwrap_or_default();
                 let ver = ver.lines().next().unwrap_or("").trim().to_string();
-                println!(
-                    "  {} {:<18} {}",
-                    "✓".green().bold(),
-                    tool.bin,
-                    ver.dimmed()
-                );
+                println!("  {} {:<18} {}", "✓".green().bold(), tool.bin, ver.dimmed());
             } else if tool.required {
                 println!(
                     "  {} {:<18} {}",

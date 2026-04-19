@@ -1981,20 +1981,6 @@
     "confidence": 0.75
   },
   {
-    "id": "ecosystem/mui",
-    "category": "ecosystem",
-    "description": "@mui/* (Material UI React)",
-    "docs_url": "https://bun.sh/guides/ecosystem",
-    "confidence": 0.75
-  },
-  {
-    "id": "ecosystem/mui-x",
-    "category": "ecosystem",
-    "description": "@mui/x-* (Data Grid, Pickers, Charts)",
-    "docs_url": "https://bun.sh/guides/ecosystem",
-    "confidence": 0.75
-  },
-  {
     "id": "ecosystem/emotion",
     "category": "ecosystem",
     "description": "@emotion/* (CSS-in-JS, MUI default)",

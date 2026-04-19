@@ -577,9 +577,7 @@ pub fn run_rules(report: Report) -> Result<ExitCode> {
             "ecosystem/material-tailwind",
             "@material-tailwind/* (M3 + Tailwind)",
         ),
-        ("ecosystem/mui", "@mui/* (Material UI React)"),
-        ("ecosystem/mui-x", "@mui/x-* (Data Grid, Pickers, Charts)"),
-        ("ecosystem/emotion", "@emotion/* (CSS-in-JS, MUI default)"),
+("ecosystem/emotion", "@emotion/* (CSS-in-JS, MUI default)"),
         // --- UI : icons & fonts ---
         (
             "ecosystem/material-symbols",

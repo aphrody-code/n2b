@@ -4,7 +4,9 @@ use std::process::ExitCode;
 use anyhow::Result;
 use clap::Parser;
 
-use crate::cli::args::{AppSub, BunppSub, Cli, Cmd, LinuxSub, RustSub, WasmSpecSub, WasmSub, Win32Sub};
+use crate::cli::args::{
+    AppSub, BunppSub, Cli, Cmd, LinuxSub, RustSub, WasmSpecSub, WasmSub, Win32Sub,
+};
 use crate::commands;
 
 /// Point d'entrée principal après le parsing clap.
@@ -268,35 +270,20 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
             })?;
             Ok(ExitCode::SUCCESS)
         }
-        Some(Cmd::MuiToMd3 {
-            root,
-            write,
-            stage_atomic,
-            only,
-            rewrite_sx,
-            ignore,
-            rules,
-            report,
-        }) => {
-            commands::mui_to_md3::run(commands::mui_to_md3::MuiToMd3Opts {
-                root,
-                write,
-                stage_atomic,
-                only,
-                rewrite_sx,
-                ignore,
-                rules,
-                report: report.into(),
-                quiet: cli.quiet,
-                agent: cli.agent,
-            })?;
-            Ok(ExitCode::SUCCESS)
-        }
+        // Cmd::MuiToMd3 déplacé vers mui-rs/codemod/ — n2b = Node→Bun uniquement
         Some(Cmd::Rust { sub }) => {
             let cmd = match sub {
-                RustSub::New { name, flavor, dir, force } => {
-                    crate::rust_cmd::RustCmd::New { name, flavor, dir, force }
-                }
+                RustSub::New {
+                    name,
+                    flavor,
+                    dir,
+                    force,
+                } => crate::rust_cmd::RustCmd::New {
+                    name,
+                    flavor,
+                    dir,
+                    force,
+                },
                 RustSub::Check { root } => crate::rust_cmd::RustCmd::Check { root },
                 RustSub::Deps { root } => crate::rust_cmd::RustCmd::Deps { root },
                 RustSub::Doctor => crate::rust_cmd::RustCmd::Doctor,

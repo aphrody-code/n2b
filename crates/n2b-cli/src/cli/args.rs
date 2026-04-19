@@ -339,52 +339,8 @@ pub enum Cmd {
         export_sitemap: bool,
     },
 
-    /// Migre un projet Next.js / React de MUI v9 (@mui/material + @mui/x-*)
-    /// vers @md3-ui/core (Material Design 3 scaffoldé par md3-ui).
-    ///
-    ///   n2b mui-to-md3 ./rpb-dashboard               # dry-run rapport text
-    ///   n2b mui-to-md3 ./rpb-dashboard --write       # applique les rewrites
-    ///   n2b mui-to-md3 . --only Button --dry-run
-    ///   n2b mui-to-md3 . --write --stage-atomic      # 1 commit par composant
-    ///   n2b mui-to-md3 . --report md > migration.md
-    ///
-    /// Règles : `rules/mui-to-md3.yaml` (schéma docs/RULES_MUI_TO_MD3.md).
-    MuiToMd3 {
-        /// Racine du projet Next.js / React à migrer.
-        #[arg(default_value = ".")]
-        root: PathBuf,
-
-        /// Applique les rewrites sur le filesystem (sinon dry-run).
-        #[arg(long)]
-        write: bool,
-
-        /// 1 commit git par composant migré (Button, Card, …). Requiert un
-        /// working tree clean.
-        #[arg(long)]
-        stage_atomic: bool,
-
-        /// Filtre : n'applique que les règles dont l'id correspond (sans
-        /// préfixe `mui-`, ex : `Button` ou `button`).
-        #[arg(long, value_name = "COMPONENT")]
-        only: Vec<String>,
-
-        /// Réécrit aussi la prop `sx` en classes Tailwind (best-effort).
-        #[arg(long)]
-        rewrite_sx: bool,
-
-        /// Glob(s) à exclure (cumulable).
-        #[arg(long)]
-        ignore: Vec<String>,
-
-        /// Chemin vers un YAML de règles custom (override du bundled).
-        #[arg(long)]
-        rules: Option<PathBuf>,
-
-        /// Format du rapport.
-        #[arg(long, value_enum, default_value = "text")]
-        report: ReportArg,
-    },
-
+    // NOTE: `mui-to-md3` a été déplacé vers le workspace mui-rs
+    // (voir ~/vps/rust/mui-rs/codemod/). n2b se concentre sur Node→Bun uniquement.
     /// Outils de développement Rust : scaffold, check, deps, doctor.
     ///
     ///   n2b rust new myapp --flavor axum       # serveur Axum
