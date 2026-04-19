@@ -646,50 +646,6 @@ const ECOSYSTEM_GUIDES: &[(&str, &str, &str, &str)] = &[
         "https://www.material-tailwind.com/",
         "Material Tailwind (HTML)",
     ),
-    // --- UI : Material UI (MUI) ---
-    ("@mui/material", "mui", "https://mui.com/", "MUI React"),
-    (
-        "@mui/icons-material",
-        "mui",
-        "https://mui.com/material-ui/material-icons/",
-        "MUI icons",
-    ),
-    (
-        "@mui/lab",
-        "mui",
-        "https://mui.com/material-ui/about-the-lab/",
-        "MUI Lab (experimental)",
-    ),
-    (
-        "@mui/system",
-        "mui",
-        "https://mui.com/system/",
-        "MUI System (sx, theme)",
-    ),
-    (
-        "@mui/base",
-        "mui",
-        "https://mui.com/base-ui/",
-        "Base UI (unstyled MUI)",
-    ),
-    (
-        "@mui/x-data-grid",
-        "mui-x",
-        "https://mui.com/x/react-data-grid/",
-        "MUI X Data Grid",
-    ),
-    (
-        "@mui/x-date-pickers",
-        "mui-x",
-        "https://mui.com/x/react-date-pickers/",
-        "MUI X Date Pickers",
-    ),
-    (
-        "@mui/x-charts",
-        "mui-x",
-        "https://mui.com/x/react-charts/",
-        "MUI X Charts",
-    ),
     (
         "@emotion/react",
         "emotion",

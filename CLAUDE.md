@@ -103,8 +103,8 @@ Les deux fichiers générés sont **commités** et la CI échoue si drift. Jamai
 
 ## Règles du dépôt parent
 
-- **Bun uniquement** (jamais `node`/`npm`/`npx`/`pnpm`/`yarn`) — c'est ironiquement ce que n2b détecte. Voir `/home/ubuntu/rsbun/CLAUDE.md`.
-- **CLI Rust au lieu des binaires GNU** (`rg` au lieu de `grep`, `fd` au lieu de `find`, `bat` au lieu de `cat`, etc.). Voir `/home/ubuntu/CLAUDE.md`.
+- **Bun uniquement** (jamais `node`/`npm`/`npx`/`pnpm`/`yarn`) — c'est ironiquement ce que n2b détecte.
+- **CLI Rust au lieu des binaires GNU** (`rg` au lieu de `grep`, `fd` au lieu de `find`, `bat` au lieu de `cat`, etc.).
 
 ## Gotchas
 

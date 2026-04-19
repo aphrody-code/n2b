@@ -1,4 +1,4 @@
-n2b (315 rules)
+n2b (313 rules)
 
 api
   api/fs-readFileSync  fs.readFileSync(path, 'utf8') → await Bun.file(path).text()
@@ -243,8 +243,6 @@ ecosystem
   ecosystem/lucide  lucide-react (icons default shadcn)
   ecosystem/material-web  @material/web (Web Components M3)
   ecosystem/material-tailwind  @material-tailwind/* (M3 + Tailwind)
-  ecosystem/mui  @mui/* (Material UI React)
-  ecosystem/mui-x  @mui/x-* (Data Grid, Pickers, Charts)
   ecosystem/emotion  @emotion/* (CSS-in-JS, MUI default)
   ecosystem/material-symbols  material-symbols (variable icons)
   ecosystem/fontsource  @fontsource/* (self-host Google Fonts)

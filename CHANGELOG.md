@@ -2,6 +2,25 @@
 
 Toutes les évolutions notables de n2b — format [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnage [SemVer](https://semver.org/lang/fr/).
 
+## [0.4.0] — 2026-04-19
+
+### Breaking changes
+
+- **`mui-to-md3` supprimée.** La sous-commande `n2b mui-to-md3` est retirée de ce workspace et déplacée vers `~/vps/rust/mui-rs/crates/mui-rs-codemod-staging/`. `n2b` est désormais **Node→Bun only** ; toute migration MUI v5→MD3 se fait via le workspace `mui-rs`.
+- **`ecosystem/mui` et `ecosystem/mui-x` supprimés.** Les règles qui détectaient `@mui/*` et `@mui/x-*` dans `package.json` sont retirées. Ce périmètre UI-specific sort du scope de n2b. Le mapping complet des packages est archivé dans `~/vps/rust/mui-rs/crates/mui-rs-codemod-staging/MUI_PACKAGES.md`. Pour tout projet ayant `@mui/icons-material` ou `@mui/x-charts`, `findings_total` baisse de 2 en conséquence.
+
+### Supprimé
+
+- `scanners/package_json.rs` : 8 entrées `@mui/*` retirées de la table de détection d'écosystème (`@mui/material`, `@mui/icons-material`, `@mui/lab`, `@mui/system`, `@mui/base`, `@mui/x-data-grid`, `@mui/x-date-pickers`, `@mui/x-charts`).
+- `commands/rules.rs` : `("ecosystem/mui", ...)` et `("ecosystem/mui-x", ...)` retirés de la table des règles listées par `n2b rules`.
+- Snapshots `tests/rpb-dashboard-baseline/` mis à jour : 2 findings MUI retirés, `findings_total` 280 → 278.
+
+### Corrigé
+
+- `rust_cmd.rs` : `format!()` inutile sur un littéral statique remplacé par `.to_string()` (clippy `useless_format`).
+
+---
+
 ## [0.3.0] — 2026-04-18
 
 Refactor massif pour maintenabilité et précision Rust↔Bun.
