@@ -1,6 +1,6 @@
 {
   "name": "@n2b/types",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "TypeScript types auto-générés depuis schema/v2.json. Source de vérité Rust → TS.",
   "type": "module",
   "main": "./src/index.ts",

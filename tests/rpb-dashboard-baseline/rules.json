@@ -1,0 +1,2193 @@
+[
+  {
+    "id": "shebang/node",
+    "category": "shebang",
+    "description": "shebang `node` → `bun`",
+    "docs_url": "https://bun.sh/docs/cli/run#shebangs",
+    "confidence": 1.0
+  },
+  {
+    "id": "lock/rival",
+    "category": "lockfile",
+    "description": "lockfile concurrent (pnpm-lock / yarn.lock / package-lock)",
+    "docs_url": "https://bun.sh/docs/install/lockfile",
+    "confidence": 1.0
+  },
+  {
+    "id": "cli/npm-install",
+    "category": "cli",
+    "description": "npm install → bun install",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/npm-ci",
+    "category": "cli",
+    "description": "npm ci → bun install --frozen-lockfile",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/npm-run",
+    "category": "cli",
+    "description": "npm run → bun run",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/npx",
+    "category": "cli",
+    "description": "npx → bunx",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/pnpm-install",
+    "category": "cli",
+    "description": "pnpm install → bun install",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/pnpm-add",
+    "category": "cli",
+    "description": "pnpm add → bun add",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/pnpm-dlx",
+    "category": "cli",
+    "description": "pnpm dlx → bunx",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "cli/yarn-add",
+    "category": "cli",
+    "description": "yarn add → bun add",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "pkg/package-manager",
+    "category": "package",
+    "description": "packageManager → bun@<version>",
+    "docs_url": "https://bun.sh/docs/cli/install",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "pkg/engines-pm",
+    "category": "package",
+    "description": "engines.{npm,pnpm,yarn} → engines.bun",
+    "docs_url": "https://bun.sh/docs/cli/install",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "pkg/redundant-dep",
+    "category": "package",
+    "description": "dépendance redondante avec API Bun native",
+    "docs_url": "https://bun.sh/docs/cli/install",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "imports/node-prefix",
+    "category": "imports",
+    "description": "préfixer `fs` → `node:fs` etc.",
+    "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "imports/bun-native",
+    "category": "imports",
+    "description": "package npm → API Bun native (bun:sqlite, Bun.sql, etc.)",
+    "docs_url": "https://bun.sh/docs/runtime/modules",
+    "confidence": 0.800000011920929
+  },
+  {
+    "id": "api/fs-readFileSync",
+    "category": "api",
+    "description": "fs.readFileSync(path, 'utf8') → await Bun.file(path).text()",
+    "docs_url": "https://bun.sh/guides/read-file/string",
+    "confidence": 0.8500000238418579
+  },
+  {
+    "id": "api/fs-writeFileSync",
+    "category": "api",
+    "description": "fs.writeFileSync(path, data) → await Bun.write(path, data)",
+    "docs_url": "https://bun.sh/guides/write-file/basic",
+    "confidence": 0.8500000238418579
+  },
+  {
+    "id": "api/fs-existsSync",
+    "category": "api",
+    "description": "fs.existsSync(path) → await Bun.file(path).exists()",
+    "docs_url": "https://bun.sh/guides/read-file/exists",
+    "confidence": 0.8500000238418579
+  },
+  {
+    "id": "api/fs-readFile-promise",
+    "category": "api",
+    "description": "fsPromises.readFile → Bun.file(path).text()",
+    "docs_url": "https://bun.sh/guides/read-file/string",
+    "confidence": 0.8500000238418579
+  },
+  {
+    "id": "api/json-parse-readFileSync",
+    "category": "api",
+    "description": "JSON.parse(fs.readFileSync) → Bun.file(path).json()",
+    "docs_url": "https://bun.sh/guides/read-file/json",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/dirname-esm",
+    "category": "api",
+    "description": "__dirname ESM → import.meta.dir",
+    "docs_url": "https://bun.sh/docs/api/import-meta",
+    "confidence": 0.8500000238418579
+  },
+  {
+    "id": "api/filename-esm",
+    "category": "api",
+    "description": "__filename ESM → import.meta.path",
+    "docs_url": "https://bun.sh/docs/api/import-meta",
+    "confidence": 0.8500000238418579
+  },
+  {
+    "id": "api/fileURLToPath",
+    "category": "api",
+    "description": "fileURLToPath → Bun.fileURLToPath / import.meta.dir",
+    "docs_url": "https://bun.sh/docs/api/import-meta",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/new-url-import-meta",
+    "category": "api",
+    "description": "new URL(..., import.meta.url) → import.meta.dir",
+    "docs_url": "https://bun.sh/docs/api/import-meta",
+    "confidence": 0.30000001192092896
+  },
+  {
+    "id": "api/path-join-dirname",
+    "category": "api",
+    "description": "path.join(__dirname, ...) → path.join(import.meta.dir, ...)",
+    "docs_url": "https://bun.sh/docs/api/import-meta",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/buffer-alloc",
+    "category": "api",
+    "description": "Buffer.alloc(n) → new Uint8Array(n)",
+    "docs_url": "https://bun.sh/docs/api/binary-data",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/buffer-concat",
+    "category": "api",
+    "description": "Buffer.concat → concaténation Uint8Array",
+    "docs_url": "https://bun.sh/docs/api/binary-data",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/buffer-from-string",
+    "category": "api",
+    "description": "Buffer.from(str, 'utf8') → new TextEncoder().encode(str)",
+    "docs_url": "https://bun.sh/docs/api/binary-data",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/buffer-from-base64",
+    "category": "api",
+    "description": "Buffer.from(x, 'base64') → atob/btoa",
+    "docs_url": "https://bun.sh/docs/api/binary-data",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/buffer-byteLength",
+    "category": "api",
+    "description": "Buffer.byteLength → new TextEncoder().encode().length",
+    "docs_url": "https://bun.sh/docs/api/binary-data",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/http-createServer",
+    "category": "api",
+    "description": "http.createServer → Bun.serve()",
+    "docs_url": "https://bun.sh/guides/http/simple",
+    "confidence": 0.6000000238418579
+  },
+  {
+    "id": "api/https-createServer",
+    "category": "api",
+    "description": "https.createServer → Bun.serve({ tls })",
+    "docs_url": "https://bun.sh/guides/http/tls",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/execSync",
+    "category": "api",
+    "description": "child_process.execSync → shell Bun $`cmd`",
+    "docs_url": "https://bun.sh/guides/process/spawn",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/exec",
+    "category": "api",
+    "description": "child_process.exec → Bun.spawn",
+    "docs_url": "https://bun.sh/guides/process/spawn",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/child-process-spawn",
+    "category": "api",
+    "description": "spawn → Bun.spawn",
+    "docs_url": "https://bun.sh/guides/process/spawn",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/crypto-createHash",
+    "category": "api",
+    "description": "crypto.createHash → Bun.hash / Bun.CryptoHasher",
+    "docs_url": "https://bun.sh/docs/api/hashing",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/util-inspect",
+    "category": "api",
+    "description": "util.inspect → Bun.inspect",
+    "docs_url": "https://bun.sh/reference/bun/inspect",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/util-promisify",
+    "category": "api",
+    "description": "util.promisify (préférer APIs async natives)",
+    "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/sleep-promise",
+    "category": "api",
+    "description": "setTimeout Promise → Bun.sleep",
+    "docs_url": "https://bun.sh/guides/util/sleep",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/uuid-v4",
+    "category": "api",
+    "description": "uuidv4() → crypto.randomUUID() / Bun.randomUUIDv7",
+    "docs_url": "https://bun.sh/reference/bun/randomUUIDv7",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/express-server",
+    "category": "api",
+    "description": "express() → Bun.serve",
+    "docs_url": "https://bun.sh/docs/api/http",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/toml-parse",
+    "category": "api",
+    "description": "TOML.parse → Bun.TOML.parse",
+    "docs_url": "https://bun.sh/guides/runtime/import-toml",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/semver",
+    "category": "api",
+    "description": "semver.* → Bun.semver.*",
+    "docs_url": "https://bun.sh/docs/api/semver",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/require-resolve",
+    "category": "api",
+    "description": "require.resolve → Bun.resolveSync",
+    "docs_url": "https://bun.sh/docs/runtime/modules",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/set-immediate",
+    "category": "api",
+    "description": "setImmediate → queueMicrotask / setTimeout(fn, 0)",
+    "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/os-platform",
+    "category": "api",
+    "description": "os.platform() → process.platform (info)",
+    "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+    "confidence": 0.30000001192092896
+  },
+  {
+    "id": "api/os-homedir",
+    "category": "api",
+    "description": "os.homedir() → Bun.env.HOME (info)",
+    "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+    "confidence": 0.30000001192092896
+  },
+  {
+    "id": "api/process-env",
+    "category": "api",
+    "description": "process.env.X → Bun.env.X (info, stylistique)",
+    "docs_url": "https://bun.sh/docs/runtime/env",
+    "confidence": 0.30000001192092896
+  },
+  {
+    "id": "api/process-stdout-write",
+    "category": "api",
+    "description": "process.stdout.write → Bun.stdout.write",
+    "docs_url": "https://bun.sh/docs/api/console",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/process-stderr-write",
+    "category": "api",
+    "description": "process.stderr.write → Bun.stderr.write",
+    "docs_url": "https://bun.sh/docs/api/console",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/performance-now",
+    "category": "api",
+    "description": "performance.now → Bun.nanoseconds (info)",
+    "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+    "confidence": 0.30000001192092896
+  },
+  {
+    "id": "ci/setup-node",
+    "category": "ci",
+    "description": "actions/setup-node → oven-sh/setup-bun@v2",
+    "docs_url": "https://github.com/oven-sh/setup-bun",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "ci/node-version",
+    "category": "ci",
+    "description": "node-version → bun-version: latest",
+    "docs_url": "https://github.com/oven-sh/setup-bun",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "docker/node-base",
+    "category": "docker",
+    "description": "FROM node:<tag> → FROM oven/bun:<tag>",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "env/nvmrc",
+    "category": "env",
+    "description": ".nvmrc / .node-version (info)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/bun-types",
+    "category": "tsconfig",
+    "description": "compilerOptions.types : ajouter 'bun'",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.699999988079071
+  },
+  {
+    "id": "tsconfig/module-resolution",
+    "category": "tsconfig",
+    "description": "moduleResolution → bundler/nodenext",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "workspace/pnpm-yaml",
+    "category": "workspace",
+    "description": "pnpm-workspace.yaml → \"workspaces\" dans package.json racine",
+    "docs_url": "https://bun.sh/docs/install/workspaces",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "workspace/only-built-deps",
+    "category": "workspace",
+    "description": "onlyBuiltDependencies → trustedDependencies",
+    "docs_url": "https://bun.sh/docs/install/workspaces",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "workspace/root-missing",
+    "category": "workspace",
+    "description": "package.json racine sans \"workspaces\" alors que pnpm-workspace.yaml existe",
+    "docs_url": "https://bun.sh/docs/install/workspaces",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "workspace/trusted-deps-missing",
+    "category": "workspace",
+    "description": "trustedDependencies manquant (onlyBuiltDependencies de pnpm non porté)",
+    "docs_url": "https://bun.sh/docs/install/workspaces",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "husky/pnpm-command",
+    "category": "husky",
+    "description": "hook husky 'pnpm X' → 'bun run X'",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "husky/npm-command",
+    "category": "husky",
+    "description": "hook husky 'npm X' → 'bun run X'",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "husky/yarn-command",
+    "category": "husky",
+    "description": "hook husky 'yarn X' → 'bun run X'",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "husky/npx-command",
+    "category": "husky",
+    "description": "hook husky 'npx' → 'bunx --bun'",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "husky/pnpm-dlx",
+    "category": "husky",
+    "description": "hook husky 'pnpm dlx' → 'bunx --bun'",
+    "docs_url": "https://bun.sh/docs/cli/run",
+    "confidence": 0.949999988079071
+  },
+  {
+    "id": "pkg/jest-script",
+    "category": "package",
+    "description": "script 'jest' → 'bun test'",
+    "docs_url": "https://bun.sh/docs/cli/install",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "pkg/tsup-bun-external",
+    "category": "package",
+    "description": "script tsup + import('bun') → ajouter '--external bun'",
+    "docs_url": "https://bun.sh/docs/cli/install",
+    "confidence": 0.8999999761581421
+  },
+  {
+    "id": "api/bcrypt-hash",
+    "category": "api",
+    "description": "bcrypt.hash → Bun.password.hash",
+    "docs_url": "https://bun.sh/guides/util/hash-a-password",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/bcrypt-compare",
+    "category": "api",
+    "description": "bcrypt.compare → Bun.password.verify",
+    "docs_url": "https://bun.sh/guides/util/hash-a-password",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/argon2-hash",
+    "category": "api",
+    "description": "argon2.hash/verify → Bun.password",
+    "docs_url": "https://bun.sh/guides/util/hash-a-password",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/yaml-parse",
+    "category": "api",
+    "description": "yaml.load/parse → Bun.YAML.parse",
+    "docs_url": "https://bun.sh/guides/runtime/import-yaml",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/yaml-stringify",
+    "category": "api",
+    "description": "yaml.dump/stringify → Bun.YAML.stringify",
+    "docs_url": "https://bun.sh/guides/runtime/import-yaml",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/json5-parse",
+    "category": "api",
+    "description": "JSON5.parse → Bun.JSON5.parse",
+    "docs_url": "https://bun.sh/guides/runtime/import-json",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/json5-stringify",
+    "category": "api",
+    "description": "JSON5.stringify → Bun.JSON5.stringify",
+    "docs_url": "https://bun.sh/guides/runtime/import-json",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/marked-call",
+    "category": "api",
+    "description": "marked() → Bun.markdown.html",
+    "docs_url": "https://bun.sh/reference/bun/markdown",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/marked-parse",
+    "category": "api",
+    "description": "marked.parse → Bun.markdown.html",
+    "docs_url": "https://bun.sh/reference/bun/markdown",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/escape-html",
+    "category": "api",
+    "description": "escapeHtml / he.encode → Bun.escapeHTML",
+    "docs_url": "https://bun.sh/reference/bun/escapeHTML",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/strip-ansi",
+    "category": "api",
+    "description": "stripAnsi → Bun.stripANSI",
+    "docs_url": "https://bun.sh/reference/bun",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/string-width",
+    "category": "api",
+    "description": "stringWidth → Bun.stringWidth",
+    "docs_url": "https://bun.sh/reference/bun",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/slice-ansi",
+    "category": "api",
+    "description": "sliceAnsi → Bun.sliceAnsi",
+    "docs_url": "https://bun.sh/reference/bun",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/which-call",
+    "category": "api",
+    "description": "which(pkg) → Bun.which(pkg)",
+    "docs_url": "https://bun.sh/reference/bun/which",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/cron-schedule",
+    "category": "api",
+    "description": "cron.schedule → Bun.cron",
+    "docs_url": "https://bun.sh/reference/bun/cron",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/cronjob-new",
+    "category": "api",
+    "description": "new CronJob → Bun.cron",
+    "docs_url": "https://bun.sh/reference/bun/cron",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/fast-deep-equal",
+    "category": "api",
+    "description": "fastDeepEqual → Bun.deepEquals",
+    "docs_url": "https://bun.sh/guides/util/deep-equals",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/pako-gzip",
+    "category": "api",
+    "description": "pako.gzip/deflate → Bun.gzipSync / deflateSync",
+    "docs_url": "https://bun.sh/guides/util/gzip",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/pako-gunzip",
+    "category": "api",
+    "description": "pako.ungzip/inflate → Bun.gunzipSync / inflateSync",
+    "docs_url": "https://bun.sh/guides/util/gzip",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/express-app",
+    "category": "api",
+    "description": "express() → Bun.serve (info)",
+    "docs_url": "https://bun.sh/guides/ecosystem/express",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/fastify-app",
+    "category": "api",
+    "description": "fastify() → Bun.serve (info)",
+    "docs_url": "https://bun.sh/guides",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/koa-new",
+    "category": "api",
+    "description": "new Koa() → Bun.serve (info)",
+    "docs_url": "https://bun.sh/guides/http/fetch",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/http-request",
+    "category": "api",
+    "description": "http.request → fetch",
+    "docs_url": "https://bun.sh/guides/http/fetch",
+    "confidence": 0.6000000238418579
+  },
+  {
+    "id": "api/https-request",
+    "category": "api",
+    "description": "https.request → fetch",
+    "docs_url": "https://bun.sh/guides/http/fetch",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/crypto-randomBytes",
+    "category": "api",
+    "description": "crypto.randomBytes → crypto.getRandomValues",
+    "docs_url": "https://developer.mozilla.org/docs/Web/API/Crypto/getRandomValues",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/eventsource-new",
+    "category": "api",
+    "description": "new EventSource → Bun.EventSource (déjà global, info)",
+    "docs_url": "https://bun.sh/reference/bun/EventSource",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/cookie-parse",
+    "category": "api",
+    "description": "cookie.parse → new Bun.CookieMap",
+    "docs_url": "https://bun.sh/reference/bun/Cookie",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/cookie-serialize",
+    "category": "api",
+    "description": "cookie.serialize → Bun.Cookie.toString",
+    "docs_url": "https://bun.sh/reference/bun/Cookie",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/aws-sdk-s3-client",
+    "category": "api",
+    "description": "new S3Client → Bun.S3Client",
+    "docs_url": "https://bun.sh/reference/bun/S3Client",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/file-based-routing",
+    "category": "api",
+    "description": "next-router → Bun.FileSystemRouter (info)",
+    "docs_url": "https://bun.sh/reference/bun/FileSystemRouter",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/chalk-call",
+    "category": "api",
+    "description": "chalk.<color> → Bun.color / ANSI natif (info)",
+    "docs_url": "https://bun.sh/reference/bun/color",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/zlib-gzipSync",
+    "category": "api",
+    "description": "zlib.gzipSync → Bun.gzipSync (info)",
+    "docs_url": "https://bun.sh/guides/util/gzip",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/process-hrtime-bigint",
+    "category": "api",
+    "description": "process.hrtime.bigint → Bun.nanoseconds (info)",
+    "docs_url": "https://bun.sh/reference/bun/nanoseconds",
+    "confidence": 0.75
+  },
+  {
+    "id": "api/execa-call",
+    "category": "api",
+    "description": "execa → Bun.$ / Bun.spawn",
+    "docs_url": "https://bun.sh/docs/api/spawn",
+    "confidence": 0.75
+  },
+  {
+    "id": "bunfig/registry-npmjs",
+    "category": "bunfig",
+    "description": "registry npmjs par défaut (redondant)",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "bunfig/option-note",
+    "category": "bunfig",
+    "description": "note sur une option bunfig (isolated, saveTextLockfile)",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "bunfig/unknown-option",
+    "category": "bunfig",
+    "description": "option bunfig inconnue (legacy)",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/module-legacy",
+    "category": "tsconfig",
+    "description": "module=CommonJS/AMD/UMD → ESNext/Preserve",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/target-legacy",
+    "category": "tsconfig",
+    "description": "target=ES2021 ou moins → ES2022+/ESNext",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/module-detection",
+    "category": "tsconfig",
+    "description": "moduleDetection absent → 'force'",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/verbatim-module-syntax",
+    "category": "tsconfig",
+    "description": "moduleResolution=bundler + verbatimModuleSyntax=true",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/allow-ts-extensions",
+    "category": "tsconfig",
+    "description": "Bun résout les .ts nativement → allowImportingTsExtensions",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/no-emit",
+    "category": "tsconfig",
+    "description": "bundler + noEmit=true (Bun émet, tsc type-check)",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "tsconfig/duplicate-node-types",
+    "category": "tsconfig",
+    "description": "types=['bun','node'] redondant — bun suffit",
+    "docs_url": "https://bun.sh/docs/typescript",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/output-standalone",
+    "category": "nextjs",
+    "description": "next.config output:'standalone' (info, reste OK en Node)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/webpack-custom",
+    "category": "nextjs",
+    "description": "next.config webpack() custom (Turbopack est default Next 16)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/server-external-packages",
+    "category": "nextjs",
+    "description": "experimental.serverComponentsExternalPackages (auditer)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/turbopack-missing",
+    "category": "nextjs",
+    "description": "next.config : webpack custom sans turbopack: {}",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/images-custom-loader",
+    "category": "nextjs",
+    "description": "next images.loader: 'custom'",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/script-runtime",
+    "category": "nextjs",
+    "description": "script 'next dev/start' → préfixer par bunx --bun",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/build-turbopack",
+    "category": "nextjs",
+    "description": "'next build' sans --turbopack (Next 16)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/custom-server-next-app",
+    "category": "nextjs",
+    "description": "next({ dev }) custom server → Bun.serve({ fetch })",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/request-handler",
+    "category": "nextjs",
+    "description": "app.getRequestHandler() → wrapper pour Bun.serve",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nextjs",
+    "category": "ecosystem",
+    "description": "next détecté → guide Bun + Next.js",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nuxt",
+    "category": "ecosystem",
+    "description": "nuxt détecté → guide Bun + Nuxt",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/astro",
+    "category": "ecosystem",
+    "description": "astro détecté → guide Bun + Astro",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/remix",
+    "category": "ecosystem",
+    "description": "@remix-run/react détecté → guide Bun + Remix",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/sveltekit",
+    "category": "ecosystem",
+    "description": "@sveltejs/kit détecté → guide Bun + SvelteKit",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tanstack-start",
+    "category": "ecosystem",
+    "description": "@tanstack/start → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/solid-start",
+    "category": "ecosystem",
+    "description": "solid-start → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/qwik",
+    "category": "ecosystem",
+    "description": "@builder.io/qwik → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/hono",
+    "category": "ecosystem",
+    "description": "hono → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/elysia",
+    "category": "ecosystem",
+    "description": "elysia → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/fastify",
+    "category": "ecosystem",
+    "description": "fastify → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/express",
+    "category": "ecosystem",
+    "description": "express → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/stric",
+    "category": "ecosystem",
+    "description": "stric → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/vite",
+    "category": "ecosystem",
+    "description": "vite → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/prisma",
+    "category": "ecosystem",
+    "description": "prisma / @prisma/client → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/drizzle",
+    "category": "ecosystem",
+    "description": "drizzle-orm → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/mongoose",
+    "category": "ecosystem",
+    "description": "mongoose → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/gel",
+    "category": "ecosystem",
+    "description": "@edgedb/driver (Gel) → guide Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/pm2",
+    "category": "ecosystem",
+    "description": "pm2 → guide daemon Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/sentry",
+    "category": "ecosystem",
+    "description": "@sentry/node → guide Sentry + Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/discord-bot",
+    "category": "ecosystem",
+    "description": "discord.js → guide Discord bot Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/graphql-yoga",
+    "category": "ecosystem",
+    "description": "graphql-yoga → intégration Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/orama",
+    "category": "ecosystem",
+    "description": "@orama/orama → search engine",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/brisa",
+    "category": "ecosystem",
+    "description": "brisa → full-stack framework",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/kysely",
+    "category": "ecosystem",
+    "description": "kysely → SQL query builder",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/kysely-bun",
+    "category": "ecosystem",
+    "description": "kysely-bun-sqlite → Kysely + bun:sqlite",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/hattip",
+    "category": "ecosystem",
+    "description": "@hattip/core → HTTP cross-runtime",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/primate",
+    "category": "ecosystem",
+    "description": "primate → web framework",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/vixeny",
+    "category": "ecosystem",
+    "description": "vixeny → functional web framework",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nbit",
+    "category": "ecosystem",
+    "description": "nbit → zero-dep web framework",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/bun-utilities",
+    "category": "ecosystem",
+    "description": "bun-utilities → FS/shell helpers",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/electrobun",
+    "category": "ecosystem",
+    "description": "electrobun → desktop apps Bun+Zig",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/electron-alt",
+    "category": "ecosystem",
+    "description": "electron → envisager Electrobun (Bun+Zig)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tauri",
+    "category": "ecosystem",
+    "description": "tauri → compatible Bun frontend",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/ink",
+    "category": "ecosystem",
+    "description": "ink (React CLI) → tourne sous Bun",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/bunli",
+    "category": "ecosystem",
+    "description": "bunli → CLI framework Bun-native",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/commander",
+    "category": "ecosystem",
+    "description": "commander → compatible, ou Bunli",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/yargs",
+    "category": "ecosystem",
+    "description": "yargs → compatible, ou util.parseArgs/Bunli",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rspack",
+    "category": "ecosystem",
+    "description": "@rspack/core → Rspack (Rust bundler)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/next-rspack",
+    "category": "ecosystem",
+    "description": "next-rspack → Next.js + Rspack",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rsbuild",
+    "category": "ecosystem",
+    "description": "@rsbuild/core → Rsbuild",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rslib",
+    "category": "ecosystem",
+    "description": "@rslib/core → Rslib (build libs)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rsdoctor",
+    "category": "ecosystem",
+    "description": "rsdoctor → build analyzer",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rspress",
+    "category": "ecosystem",
+    "description": "rspress → static site generator Rust",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/rspack-wrapper",
+    "category": "nextjs",
+    "description": "withRspack() détecté dans next.config",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/yew",
+    "category": "ecosystem",
+    "description": "yew (Cargo.toml) → React-like Rust",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/leptos",
+    "category": "ecosystem",
+    "description": "leptos (Cargo.toml) → fine-grained reactivity",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/dioxus",
+    "category": "ecosystem",
+    "description": "dioxus (Cargo.toml) → cross-platform Rust GUI",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/sycamore",
+    "category": "ecosystem",
+    "description": "sycamore (Cargo.toml) → Solid-like Rust",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/seed",
+    "category": "ecosystem",
+    "description": "seed (Cargo.toml) → Elm-like SPA",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/wgpu",
+    "category": "ecosystem",
+    "description": "wgpu (Cargo.toml) → WebGPU",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/naga",
+    "category": "ecosystem",
+    "description": "naga (Cargo.toml) → shader translator",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/wasm-bindgen",
+    "category": "ecosystem",
+    "description": "wasm-bindgen (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/js-sys",
+    "category": "ecosystem",
+    "description": "js-sys (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/web-sys",
+    "category": "ecosystem",
+    "description": "web-sys (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/wasm-bindgen-futures",
+    "category": "ecosystem",
+    "description": "wasm-bindgen-futures",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/panic-hook",
+    "category": "ecosystem",
+    "description": "console_error_panic_hook",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/wee-alloc",
+    "category": "ecosystem",
+    "description": "wee_alloc (small WASM allocator)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/napi-rs",
+    "category": "ecosystem",
+    "description": "napi / napi-derive → napi-rs",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/bun-native-plugin",
+    "category": "ecosystem",
+    "description": "bun-native-plugin (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/serde-wasm",
+    "category": "ecosystem",
+    "description": "serde-wasm-bindgen",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/gloo",
+    "category": "ecosystem",
+    "description": "gloo (Rust+WASM toolkit)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tauri-rs",
+    "category": "ecosystem",
+    "description": "tauri (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/bevy",
+    "category": "ecosystem",
+    "description": "bevy (Cargo.toml) → game engine",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/mdxjs-rs",
+    "category": "ecosystem",
+    "description": "mdxjs-rs (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/windows-rs",
+    "category": "ecosystem",
+    "description": "windows / windows-sys (Cargo.toml) → Win32",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/libc",
+    "category": "ecosystem",
+    "description": "libc (Cargo.toml) → POSIX + CRT",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nix-rs",
+    "category": "ecosystem",
+    "description": "nix (Cargo.toml) → POSIX idiomatic",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/lightningcss",
+    "category": "ecosystem",
+    "description": "lightningcss (Cargo.toml) → CSS bundler",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/uutils",
+    "category": "ecosystem",
+    "description": "uutils coreutils/findutils/diffutils/procps (cross-platform CLI)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/util-linux-rs",
+    "category": "ecosystem",
+    "description": "uutils/util-linux (mount/fdisk/lscpu/dmesg Rust, Linux-only)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/ripgrep",
+    "category": "ecosystem",
+    "description": "ripgrep (grep successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/fd-find",
+    "category": "ecosystem",
+    "description": "fd (find successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/bat",
+    "category": "ecosystem",
+    "description": "bat (cat + syntax)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tokei",
+    "category": "ecosystem",
+    "description": "tokei (cloc successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/hyperfine",
+    "category": "ecosystem",
+    "description": "hyperfine (benchmark)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/du-dust",
+    "category": "ecosystem",
+    "description": "dust (du successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/ouch",
+    "category": "ecosystem",
+    "description": "ouch (universal de/compress)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/zoxide",
+    "category": "ecosystem",
+    "description": "zoxide (cd successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/eza",
+    "category": "ecosystem",
+    "description": "eza (ls successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/sd",
+    "category": "ecosystem",
+    "description": "sd (sed successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/bottom",
+    "category": "ecosystem",
+    "description": "bottom (top/htop successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/delta",
+    "category": "ecosystem",
+    "description": "delta (git diff viewer)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/just",
+    "category": "ecosystem",
+    "description": "just (make successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/watchexec",
+    "category": "ecosystem",
+    "description": "watchexec (watch+exec)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/xh",
+    "category": "ecosystem",
+    "description": "xh (curl/httpie successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/miniserve",
+    "category": "ecosystem",
+    "description": "miniserve (HTTP serveur minimal)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/duf",
+    "category": "ecosystem",
+    "description": "duf (df successor)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/swc",
+    "category": "ecosystem",
+    "description": "SWC (@swc/core ou swc_core Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/swc-node",
+    "category": "ecosystem",
+    "description": "@swc-node/register (TS loader Node)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/ts-rs",
+    "category": "ecosystem",
+    "description": "ts-rs (Cargo.toml) → génère .ts depuis Rust",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/specta",
+    "category": "ecosystem",
+    "description": "specta (Cargo.toml) → alternative ts-rs",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/turbopack",
+    "category": "ecosystem",
+    "description": "turbopack / turbopack-core (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/turbo-tasks",
+    "category": "ecosystem",
+    "description": "turbo-tasks (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/serde",
+    "category": "ecosystem",
+    "description": "serde (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/serde-json",
+    "category": "ecosystem",
+    "description": "serde_json (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tokio",
+    "category": "ecosystem",
+    "description": "tokio (Cargo.toml) → async runtime",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/reqwest",
+    "category": "ecosystem",
+    "description": "reqwest (Cargo.toml) → HTTP client",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/axum",
+    "category": "ecosystem",
+    "description": "axum (Cargo.toml) → HTTP framework",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/clap",
+    "category": "ecosystem",
+    "description": "clap (Cargo.toml) → CLI parser",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/anyhow",
+    "category": "ecosystem",
+    "description": "anyhow (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/thiserror",
+    "category": "ecosystem",
+    "description": "thiserror (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rstest",
+    "category": "ecosystem",
+    "description": "@rstest/core → test runner Rust-based",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rslint",
+    "category": "ecosystem",
+    "description": "@rslint/core → linter Rust-based",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/storybook-rsbuild",
+    "category": "ecosystem",
+    "description": "storybook-rsbuild",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nx-rspack",
+    "category": "ecosystem",
+    "description": "@nx/rspack",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nx-rsbuild",
+    "category": "ecosystem",
+    "description": "@nx/rsbuild",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nuxt-rspack",
+    "category": "ecosystem",
+    "description": "@nuxt/rspack-builder",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/repack",
+    "category": "ecosystem",
+    "description": "Re.Pack (React Native)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/modernjs",
+    "category": "ecosystem",
+    "description": "Modern.js",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/esmx",
+    "category": "ecosystem",
+    "description": "Esmx (micro-frontend)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/extension-js",
+    "category": "ecosystem",
+    "description": "Extension.js",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/turbopack-rules",
+    "category": "nextjs",
+    "description": "turbopack.rules dans next.config",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/turbopack-alias",
+    "category": "nextjs",
+    "description": "turbopack.resolveAlias",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/transpile-packages",
+    "category": "nextjs",
+    "description": "transpilePackages (config Next)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/compiler-styled",
+    "category": "nextjs",
+    "description": "compiler.styledComponents (SWC)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/compiler-emotion",
+    "category": "nextjs",
+    "description": "compiler.emotion (SWC)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/compiler-remove-console",
+    "category": "nextjs",
+    "description": "compiler.removeConsole",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/compiler-react-remove-props",
+    "category": "nextjs",
+    "description": "compiler.reactRemoveProperties",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/compiler-relay",
+    "category": "nextjs",
+    "description": "compiler.relay",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/compiler-define",
+    "category": "nextjs",
+    "description": "compiler.define / defineServer (Next 15+)",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/swc-plugins",
+    "category": "nextjs",
+    "description": "experimental.swcPlugins",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "next/swc-trace",
+    "category": "nextjs",
+    "description": "experimental.swcTraceProfiling",
+    "docs_url": "https://bun.sh/guides/ecosystem/nextjs",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tauri-v2",
+    "category": "ecosystem",
+    "description": "@tauri-apps/api / cli",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tauri-v2-plugin",
+    "category": "ecosystem",
+    "description": "@tauri-apps/plugin-*",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "tauri/before-cmd-pm",
+    "category": "tauri",
+    "description": "tauri.conf beforeDevCommand utilise npm/pnpm/yarn",
+    "docs_url": "https://v2.tauri.app/reference/config/",
+    "confidence": 0.75
+  },
+  {
+    "id": "tauri/frontend-dist-next-export",
+    "category": "tauri",
+    "description": "frontendDist='out' → Next static export",
+    "docs_url": "https://v2.tauri.app/reference/config/",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/actix-web",
+    "category": "ecosystem",
+    "description": "actix-web (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/rocket",
+    "category": "ecosystem",
+    "description": "rocket (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/salvo",
+    "category": "ecosystem",
+    "description": "salvo (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/warp",
+    "category": "ecosystem",
+    "description": "warp (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tide",
+    "category": "ecosystem",
+    "description": "tide (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/poem",
+    "category": "ecosystem",
+    "description": "poem (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/gotham",
+    "category": "ecosystem",
+    "description": "gotham (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/iron",
+    "category": "ecosystem",
+    "description": "iron (Cargo.toml, legacy)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/nickel",
+    "category": "ecosystem",
+    "description": "nickel (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/cot",
+    "category": "ecosystem",
+    "description": "cot (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/pavex",
+    "category": "ecosystem",
+    "description": "pavex (Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/egui",
+    "category": "ecosystem",
+    "description": "egui (immediate-mode GUI)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/iced",
+    "category": "ecosystem",
+    "description": "iced (Elm-inspired GUI)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/silkenweb",
+    "category": "ecosystem",
+    "description": "silkenweb",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/vizia",
+    "category": "ecosystem",
+    "description": "vizia",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/xilem",
+    "category": "ecosystem",
+    "description": "xilem (experimental)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/floem",
+    "category": "ecosystem",
+    "description": "floem",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/askama",
+    "category": "ecosystem",
+    "description": "askama (Jinja, compile-time)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/handlebars",
+    "category": "ecosystem",
+    "description": "handlebars (runtime)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tera",
+    "category": "ecosystem",
+    "description": "tera (Jinja/Django)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/maud",
+    "category": "ecosystem",
+    "description": "maud (HTML DSL macro)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/sailfish",
+    "category": "ecosystem",
+    "description": "sailfish (compile-time fast)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tokio-tungstenite",
+    "category": "ecosystem",
+    "description": "tokio-tungstenite (WS async)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tungstenite",
+    "category": "ecosystem",
+    "description": "tungstenite (WS blocking)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/hyper",
+    "category": "ecosystem",
+    "description": "hyper (low-level HTTP)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/ureq",
+    "category": "ecosystem",
+    "description": "ureq (sync HTTP)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/isahc",
+    "category": "ecosystem",
+    "description": "isahc (libcurl)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/shadcn",
+    "category": "ecosystem",
+    "description": "shadcn/ui (components.json ou CLI)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/radix-ui",
+    "category": "ecosystem",
+    "description": "@radix-ui/react-* (primitives headless)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/cva",
+    "category": "ecosystem",
+    "description": "class-variance-authority (variants Tailwind)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/clsx",
+    "category": "ecosystem",
+    "description": "clsx (className concat)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/tailwind-merge",
+    "category": "ecosystem",
+    "description": "tailwind-merge (dédupe classes)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/lucide",
+    "category": "ecosystem",
+    "description": "lucide-react (icons default shadcn)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/material-web",
+    "category": "ecosystem",
+    "description": "@material/web (Web Components M3)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/material-tailwind",
+    "category": "ecosystem",
+    "description": "@material-tailwind/* (M3 + Tailwind)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/emotion",
+    "category": "ecosystem",
+    "description": "@emotion/* (CSS-in-JS, MUI default)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/material-symbols",
+    "category": "ecosystem",
+    "description": "material-symbols (variable icons)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/fontsource",
+    "category": "ecosystem",
+    "description": "@fontsource/* (self-host Google Fonts)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/sonner",
+    "category": "ecosystem",
+    "description": "sonner (toasts)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/vaul",
+    "category": "ecosystem",
+    "description": "vaul (drawer)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/cmdk",
+    "category": "ecosystem",
+    "description": "cmdk (command menu)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/react-hook-form",
+    "category": "ecosystem",
+    "description": "react-hook-form",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/zod",
+    "category": "ecosystem",
+    "description": "zod (schema validation)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/hookform-resolvers",
+    "category": "ecosystem",
+    "description": "@hookform/resolvers",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/skills",
+    "category": "ecosystem",
+    "description": "skills (AI skills CLI, context packs)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/biome",
+    "category": "ecosystem",
+    "description": "@biomejs/biome (linter+formatter Rust, remplace ESLint+Prettier)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/oxc",
+    "category": "ecosystem",
+    "description": "oxc (JS/TS Rust parser, Cargo.toml)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/oxlint",
+    "category": "ecosystem",
+    "description": "oxlint (linter Rust OXC)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "shadcn/tailwind-css",
+    "category": "ui",
+    "description": "components.json tailwind.css invalide",
+    "docs_url": "https://ui.shadcn.com/docs/components-json",
+    "confidence": 0.75
+  },
+  {
+    "id": "shadcn/style-unknown",
+    "category": "ui",
+    "description": "components.json style invalide",
+    "docs_url": "https://ui.shadcn.com/docs/components-json",
+    "confidence": 0.75
+  },
+  {
+    "id": "shadcn/custom-registry",
+    "category": "ui",
+    "description": "components.json registries custom",
+    "docs_url": "https://ui.shadcn.com/docs/components-json",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/turbo",
+    "category": "ecosystem",
+    "description": "turbo (turborepo, Rust)",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/turbo-gen",
+    "category": "ecosystem",
+    "description": "@turbo/gen",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "turbo/global-deps-bun-lock",
+    "category": "turbo",
+    "description": "globalDependencies : ajouter bun.lock",
+    "docs_url": "https://turborepo.com/docs/reference/configuration",
+    "confidence": 0.75
+  },
+  {
+    "id": "turbo/task-inputs-lock",
+    "category": "turbo",
+    "description": "task inputs mentionne lockfile non-Bun",
+    "docs_url": "https://turborepo.com/docs/reference/configuration",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/react-wasm",
+    "category": "ecosystem",
+    "description": "react-wasm → charge .wasm comme composants React",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "ecosystem/wasm-react",
+    "category": "ecosystem",
+    "description": "wasm-react (Cargo.toml) → composants React Rust→WASM",
+    "docs_url": "https://bun.sh/guides/ecosystem",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/registry",
+    "category": "npmrc",
+    "description": ".npmrc registry → bunfig.toml [install].registry",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/auth-token",
+    "category": "npmrc",
+    "description": ".npmrc _authToken → bunfig.toml [install.scopes]",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/scoped-registry",
+    "category": "npmrc",
+    "description": "@scope:registry → bunfig.toml [install.scopes]",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/always-auth",
+    "category": "npmrc",
+    "description": "'always-auth' spécifique npm",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/save-prefix",
+    "category": "npmrc",
+    "description": "save-exact/save-prefix → bunfig.toml",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/node-linker",
+    "category": "npmrc",
+    "description": "node-linker → bunfig.toml [install].linker",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/engine-strict",
+    "category": "npmrc",
+    "description": "engine-strict (Bun lit engines.bun)",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  },
+  {
+    "id": "npmrc/lockfile-flag",
+    "category": "npmrc",
+    "description": "options lockfile obsolètes avec bun.lock",
+    "docs_url": "https://bun.sh/docs/runtime/bunfig",
+    "confidence": 0.75
+  }
+]
