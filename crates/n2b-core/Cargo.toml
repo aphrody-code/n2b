@@ -10,6 +10,13 @@ name = "n2b_core"
 path = "src/lib.rs"
 
 [dependencies]
+n2b-types = { path = "../n2b-types" }
+n2b-util = { path = "../n2b-util" }
+n2b-ai = { path = "../n2b-ai" }
+n2b-github = { path = "../n2b-github" }
+n2b-report = { path = "../n2b-report" }
+n2b-rules = { path = "../n2b-rules" }
+n2b-scanners = { path = "../n2b-scanners" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = "0.9"

@@ -10,7 +10,6 @@
     "noEmit": false,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "references": [{ "path": "../n2b-types" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

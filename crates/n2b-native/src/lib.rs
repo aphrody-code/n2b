@@ -18,7 +18,7 @@ use memchr::memchr_iter;
 /// # Safety
 /// - `buf` doit pointer sur `byte_len` octets valides et alignés sur 2.
 /// - `out_ptr` doit pointer sur `out_cap` `u32` valides et alignés.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn find_newlines_u16(
     buf: *const u8,
     byte_len: usize,
@@ -28,11 +28,11 @@ pub unsafe extern "C" fn find_newlines_u16(
     if buf.is_null() || byte_len < 2 {
         return 0;
     }
-    let bytes = std::slice::from_raw_parts(buf, byte_len & !1);
+    let bytes = unsafe { std::slice::from_raw_parts(buf, byte_len & !1) };
     let out = if out_ptr.is_null() || out_cap == 0 {
         &mut [][..]
     } else {
-        std::slice::from_raw_parts_mut(out_ptr, out_cap)
+        unsafe { std::slice::from_raw_parts_mut(out_ptr, out_cap) }
     };
 
     // UTF-16LE : le code unit 0x000A (\n) est représenté par les octets
@@ -45,7 +45,7 @@ pub unsafe extern "C" fn find_newlines_u16(
             continue;
         }
         // SAFETY: byte_pos < bytes.len() et bytes.len() pair.
-        let hi = *bytes.get_unchecked(byte_pos + 1);
+        let hi = unsafe { *bytes.get_unchecked(byte_pos + 1) };
         if hi != 0 {
             continue;
         }
@@ -60,7 +60,7 @@ pub unsafe extern "C" fn find_newlines_u16(
 
 /// Sanity-check appelé par le wrapper TS au load pour vérifier que la
 /// lib est chargeable et que l'ABI est la bonne.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn node2bun_abi_version() -> u32 {
     1
 }
