@@ -1,7 +1,7 @@
 # node2bun report
 
 - mode : `check`
-- racine : `/home/ubuntu/vps/rust/n2b/test/fixture`
+- racine : `/home/ubuntu/vps/packages/n2b/test/fixture`
 
 ## `.github/workflows/ci.yml`
 

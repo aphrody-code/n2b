@@ -2,6 +2,23 @@
 
 Toutes les évolutions notables de n2b — format [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnage [SemVer](https://semver.org/lang/fr/).
 
+## [0.5.0] — 2026-05-13
+
+### Modifié
+
+- **Refactor Turborepo-style** : `n2b-core` éclaté en 7 micro-crates frères (`n2b-types`, `n2b-util`, `n2b-ai`, `n2b-github`, `n2b-rules`, `n2b-scanners`, `n2b-report`) + facade `n2b-core` qui réexporte tout. Package TS `@n2b/core` éclaté en 4 packages frères (`@n2b/core` wrapper CLI, `@n2b/types` schemas auto-générés, `@n2b/plugin` Bun.plugin + FFI, `@n2b/shims` polyfills Bun).
+- **Cargo workspace** : `resolver = "3"`, `edition = "2024"`, `rust-version = "1.85"`. Workspace lints clippy + rust. Toutes les deps externes consolidées dans `[workspace.dependencies]`.
+- **Compat API préservée** : `n2b-cli` et consommateurs externes (rpb-dashboard) continuent d'importer via `n2b_core::{types, scanners, ai, llmstxt, ...}` grâce aux re-exports facade. Aucun breaking sur le contrat gelé.
+- **Bump versions** : 0.4.0 → 0.5.0 sur 8 crates (cli, core, ai, github, report, util, rules, scanners). `n2b-types` 0.2.0 → 0.3.0. `n2b-native` reste à 0.1.0 (ABI v1 gelée). 4 packages TS bumpés en concert.
+
+### Corrigé
+
+- Edition 2024 : `#[no_mangle]` → `#[unsafe(no_mangle)]`, blocs `unsafe { }` explicites dans `n2b-native`.
+- Cycle TS éliminé : retrait du re-export `n2bPlugin` depuis `@n2b/core` (consommateurs importent désormais `@n2b/plugin`).
+- Hygiène monorepo parent : retrait Biome (CLAUDE.md interdit Biome depuis 2026-04-26), remplacé par `oxlint` + `cargo fmt`. Drop `biome.json`.
+
+---
+
 ## [0.4.0] — 2026-04-19
 
 ### Breaking changes
