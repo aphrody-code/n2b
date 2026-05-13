@@ -1,0 +1,42 @@
+{
+  "task": "Refactor n2b to Turborepo-like modular architecture",
+  "status": "in_progress",
+  "created_at": "2026-05-12T20:45:00Z",
+  "goals": [
+    {
+      "id": "root_config",
+      "name": "Update root Cargo.toml, turbo.json, and package.json",
+      "status": "completed",
+      "details": "Adopt resolver 3, edition 2024, synthetic tasks (//#quality, //#lint), and replace biome with oxlint/oxfmt."
+    },
+    {
+      "id": "crates_modularization",
+      "name": "Split n2b-core into micro-crates",
+      "status": "in_progress",
+      "details": "Extract n2b-types, n2b-rules, n2b-scanners, n2b-report, n2b-ai, n2b-github into crates/."
+    },
+    {
+      "id": "rust_imports",
+      "name": "Refactor Rust imports",
+      "status": "pending",
+      "details": "Replace all internal crate:: schema references to explicitly call the new micro-crates (e.g. n2b_types::...)"
+    },
+    {
+      "id": "ts_packages",
+      "name": "Split TypeScript packages",
+      "status": "pending",
+      "details": "Break down @n2b/core into @n2b/cli, @n2b/types, @n2b/plugin, and @n2b/shims to mirror the Turborepo package architecture."
+    },
+    {
+      "id": "ci_pipeline",
+      "name": "Validate build & pipeline",
+      "status": "pending",
+      "details": "Run turbo run //#quality and cargo check --workspace to validate."
+    }
+  ],
+  "context_files": [
+    "n2b-state.md",
+    "README.md",
+    "../../GEMINI.md"
+  ]
+}

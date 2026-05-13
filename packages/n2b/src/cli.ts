@@ -6,7 +6,7 @@
 // for automation scripts and for the Bun plugin (packages/n2b/src/plugin.ts).
 // No schema duplication: schema.ts is codegen'd from schema/v2.json.
 
-import type { N2BReport, Mode } from "./schema";
+import type { N2BReport, Mode } from "@n2b/types";
 
 export interface ScanOptions {
   /** Scan mode. "check" is dry-run, "fix" applies safe autofixes, "aggressive" also applies API migrations. */
@@ -33,7 +33,11 @@ function makeError(msg: string, stderr: string, code: number): N2BError {
   return err;
 }
 
-async function runBin(bin: string, args: string[], cwd?: string): Promise<{ stdout: string; stderr: string; code: number }> {
+async function runBin(
+  bin: string,
+  args: string[],
+  cwd?: string,
+): Promise<{ stdout: string; stderr: string; code: number }> {
   const proc = Bun.spawn([bin, ...args], {
     stdout: "pipe",
     stderr: "pipe",
@@ -80,7 +84,10 @@ export async function rules(opts: Pick<ScanOptions, "bin" | "cwd"> = {}): Promis
 /**
  * LLM prompt (markdown) for a given root. Equivalent to `n2b prompt <root>`.
  */
-export async function promptMarkdown(root: string, opts: Pick<ScanOptions, "bin" | "cwd"> = {}): Promise<string> {
+export async function promptMarkdown(
+  root: string,
+  opts: Pick<ScanOptions, "bin" | "cwd"> = {},
+): Promise<string> {
   const bin = opts.bin ?? "n2b";
   const { stdout, stderr, code } = await runBin(bin, ["prompt", root], opts.cwd);
   if (code !== 0) throw makeError(`n2b prompt failed (exit ${code})`, stderr, code);

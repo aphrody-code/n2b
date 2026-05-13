@@ -1,0 +1,15 @@
+[package]
+name = "n2b-github"
+version = "0.4.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+name = "n2b_github"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+octocrab = "0.49"

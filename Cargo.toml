@@ -12,15 +12,38 @@
 #   - Profile release unique propagé à tous les members
 
 [workspace]
-resolver = "2"
+resolver = "3"
 members = ["crates/*"]
 
+[workspace.metadata.groups]
+n2b-libraries = [
+  { path = "crates/n2b-types" },
+  { path = "crates/n2b-util" },
+  { path = "crates/n2b-rules" },
+  { path = "crates/n2b-scanners" },
+  { path = "crates/n2b-report" },
+  { path = "crates/n2b-ai" },
+  { path = "crates/n2b-github" },
+]
+n2b = [
+  { path = "crates/n2b-core" },
+  { path = "crates/n2b-cli" },
+  { path = "crates/n2b-native" },
+]
+
 [workspace.package]
-edition = "2021"
-rust-version = "1.75"
+edition = "2024"
+rust-version = "1.85"
 license = "MIT"
 repository = "https://github.com/aphrody-code/n2b"
 authors = ["Yohan Pierre <yohanpierre15@gmail.com>"]
+
+[workspace.lints.rust]
+unsafe_code = "warn"
+
+[workspace.lints.clippy]
+needless_borrow = "warn"
+redundant_closure_for_method_calls = "warn"
 
 [workspace.dependencies]
 # Dépendances partagées entre crates — déclarer ici, inherit via `.workspace = true`.

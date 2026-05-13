@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { env, fs, path, shell } from "../src/shims";
-import { EnvError } from "../src/shims/env";
+import { env, fs, path, shell } from "@n2b/shims";
+import { EnvError } from "@n2b/shims/env";
 
 describe("shims/env", () => {
   test("str respects default when absent", () => {

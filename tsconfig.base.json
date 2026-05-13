@@ -17,7 +17,12 @@
     "allowImportingTsExtensions": true,
     "paths": {
       "@n2b/core": ["./packages/n2b/src/index.ts"],
-      "@n2b/core/*": ["./packages/n2b/src/*"]
+      "@n2b/core/*": ["./packages/n2b/src/*"],
+      "@n2b/types": ["./packages/n2b-types/src/index.ts"],
+      "@n2b/plugin": ["./packages/n2b-plugin/src/index.ts"],
+      "@n2b/plugin/*": ["./packages/n2b-plugin/src/*"],
+      "@n2b/shims": ["./packages/n2b-shims/src/index.ts"],
+      "@n2b/shims/*": ["./packages/n2b-shims/src/*"]
     }
   }
 }

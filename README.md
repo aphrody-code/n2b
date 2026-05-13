@@ -8,28 +8,33 @@
 - Migration d'idiomes Node → Bun (`fs.readFileSync` → `Bun.file().text()`, `fileURLToPath(import.meta.url)` → `import.meta.dir`, shebang `node` → `bun`, `actions/setup-node` → `oven-sh/setup-bun@v2`).
 - Détection de lockfiles concurrents et d'API Node non supportées par Bun.
 
-## Architecture (v0.3.0)
+## Architecture (v0.4.0 - Turborepo Style)
 
 ```
 n2b/
 ├── schema/v2.json                      ← source unique du contrat JSON
 ├── crates/
-│   ├── n2b-core/                       ← lib Rust : scanners, règles, report
-│   ├── n2b-cli/                        ← binaire `n2b`
-│   └── n2b-native/                     ← cdylib FFI (find_newlines_u16)
-├── packages/n2b/                       ← @n2b/core (façade TS)
-│   └── src/
-│       ├── cli.ts                      ← scan()/rules()/promptMarkdown()
-│       ├── plugin.ts                   ← Bun.plugin()
-│       ├── ffi.ts                      ← computeLineOffsets (bun:ffi → cdylib)
-│       ├── schema.ts                   ← types générés depuis schema/v2.json
-│       └── shims/                      ← env / fs / path / shell (Bun-native)
+│   ├── n2b-core/                       ← Orchestrateur
+│   ├── n2b-types/                      ← Modèles de données (Rust)
+│   ├── n2b-rules/                      ← Règles
+│   ├── n2b-scanners/                   ← Scanners AST / Fichiers
+│   ├── n2b-report/                     ← Moteurs de rendus SARIF/JSON
+│   ├── n2b-ai/                         ← Intégration AI / LLM
+│   ├── n2b-github/                     ← Intégration GitHub
+│   ├── n2b-cli/                        ← Binaire `n2b`
+│   └── n2b-native/                     ← cdylib FFI
+├── packages/
+│   ├── n2b/                            ← Wrapper TS principal (cli)
+│   ├── n2b-types/                      ← Types TypeScript générés
+│   ├── n2b-plugin/                     ← Plugin Bun natif
+│   └── n2b-shims/                      ← Shims Bun natifs
+├── turbo.json                          ← Configuration Turborepo globale
 ├── scripts/generate-schema-types.ts    ← codegen Rust + TS
 └── tests/
-    ├── fixture/                        ← projet de test couvrant toutes les règles
-    ├── rpb-dashboard-baseline/         ← snapshots CLI-as-API
-    ├── snapshots/baseline/             ← snapshots fixture
-    └── compare-baseline.sh             ← verrou contre régression
+    ├── fixture/                        ← projet de test
+    ├── rpb-dashboard-baseline/         ← snapshots
+    ├── snapshots/baseline/             
+    └── compare-baseline.sh             
 ```
 
 ## Installation
@@ -119,14 +124,15 @@ Lister les règles : `n2b rules` ou `n2b rules --report=json`.
 
 ```bash
 # Tests complets
-cargo test --workspace                    # Rust (schema + contract + proptest)
-bun test packages/n2b/                    # TS (cli + shims)
+turbo run test                            # Test complet TS et Rust via Turbo
+cargo test --workspace                    # Rust tests (schema + contract + proptest)
 bash tests/compare-baseline.sh            # baseline CLI-as-API (13 assertions)
 
-# Lint
+# Qualité (Lints & Format)
+turbo run //#quality                      # Lancement global oxlint, oxfmt, taplo
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
-bun run typecheck
+turbo run typecheck                       # Typage TypeScript
 
 # Régénérer les types depuis le schéma
 bun run codegen:schema

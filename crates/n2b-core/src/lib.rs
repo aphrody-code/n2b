@@ -1,14 +1,15 @@
-// n2b-core — moteur métier pur : types, schéma, scanners, règles, report, run.
-// Ce crate est la bibliothèque consommée par n2b-cli (binaire) et n2b-native (cdylib).
+// n2b-core — moteur métier : scanners, règles, report, run, ai, github, audit.
+// Re-export n2b-types (types + schema) pour préserver l'API publique consommée
+// par n2b-cli et n2b-native (compat).
 
-pub mod ai;
 pub mod audit;
-pub mod github;
 pub mod llmstxt;
-pub mod report;
-pub mod rules;
 pub mod run;
-pub mod scanners;
-pub mod schema;
-pub mod types;
-pub mod util;
+
+pub use n2b_ai as ai;
+pub use n2b_github as github;
+pub use n2b_report as report;
+pub use n2b_rules as rules;
+pub use n2b_scanners as scanners;
+pub use n2b_types::{schema, types};
+pub use n2b_util as util;
