@@ -2,9 +2,16 @@
 
 ## Modèle de branches — GitHub Flow
 
-`main` est la seule branche longue durée. Elle est **protégée**, toujours
-stable et releasable. Aucun commit direct : tout passe par une Pull Request
-qui doit avoir la CI verte (`CI Success`) pour être mergée.
+`main` est la seule branche longue durée : toujours stable et releasable.
+**Aucun commit direct** — tout passe par une Pull Request dont la CI
+(`CI Success`) doit être verte avant le merge.
+
+> Le blocage serveur du push direct (branch protection / rulesets) requiert
+> GitHub Pro ou un repo public. Sur repo privé en plan gratuit, c'est une
+> **convention** appliquée par discipline — activable en une commande le jour
+> où le repo passe public ou Pro. Les réglages de merge (squash/rebase only,
+> pas de merge commit, suppression auto de la branche) sont, eux, actifs
+> côté serveur.
 
 ### Branches de travail
 

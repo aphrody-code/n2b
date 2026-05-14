@@ -169,8 +169,8 @@ cp {README,CLAUDE,STRUCTURE,CHANGELOG,CONTRIBUTING,build-your-own-x}.md ~/vps/ag
 ## Contribuer
 
 Le modèle de branches, le flux PR et les commandes de test sont décrits dans
-[`CONTRIBUTING.md`](CONTRIBUTING.md). En résumé : GitHub Flow, `main` protégée,
-une PR par phase de refacto, commits conventionnels.
+[`CONTRIBUTING.md`](CONTRIBUTING.md). En résumé : GitHub Flow, flux PR sur
+`main`, une PR par phase de refacto, commits conventionnels.
 
 ## License
 
