@@ -15,7 +15,7 @@
 //!   - https://rust-for-linux.com/
 //!   - https://github.com/rust-lang/libc
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use std::path::{Path, PathBuf};
 
 pub enum LinuxCmd {

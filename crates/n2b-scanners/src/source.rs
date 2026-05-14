@@ -1,5 +1,5 @@
-use n2b_rules::{bun_apis::apply_bun_api_rules, node_imports::apply_node_import_rules};
 use crate::shebang::scan_shebang;
+use n2b_rules::{bun_apis::apply_bun_api_rules, node_imports::apply_node_import_rules};
 use n2b_types::types::{Finding, Mode, RunOptions};
 
 pub fn scan_source(path: &str, content: &str, opts: &RunOptions) -> (Vec<Finding>, String) {

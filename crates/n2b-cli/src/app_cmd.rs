@@ -7,7 +7,7 @@
 //!   - https://bun.com/docs/bundler/executables
 //!   - https://bun.com/docs/cli/build
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 

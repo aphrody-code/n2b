@@ -67,8 +67,7 @@ pub const CANARY_GAPS: &[CanaryGap] = &[
         module: "node:util",
         priority: "P1",
         issue: Some(22872),
-        description:
-            "getCallSite(s), getSystemErrorMap/Message, transferableAbortSignal/Controller",
+        description: "getCallSite(s), getSystemErrorMap/Message, transferableAbortSignal/Controller",
     },
     CanaryGap {
         pkg: "node-tls-secure-pair",

@@ -4,7 +4,7 @@ use crate::scanners::{
     components_json::{is_components_json, scan_components_json},
     dockerfile::scan_dockerfile,
     husky::{is_husky_hook, scan_husky},
-    lockfile::{check_lockfile, RIVAL_LOCKFILES},
+    lockfile::{RIVAL_LOCKFILES, check_lockfile},
     next_config::{is_next_config, scan_next_config},
     npmrc::{is_rc_file, scan_npmrc},
     nvmrc::scan_nvmrc,

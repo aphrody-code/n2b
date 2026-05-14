@@ -17,7 +17,9 @@ pub fn check_lockfile(path: &str, name: &str) -> Option<Finding> {
         &[],
         0,
         "lock/rival",
-        format!("lockfile concurrent '{name}' présent — exécuter 'bun install' puis supprimer ce fichier"),
+        format!(
+            "lockfile concurrent '{name}' présent — exécuter 'bun install' puis supprimer ce fichier"
+        ),
         name.to_string(),
         None,
         MakeFindingOpts {
