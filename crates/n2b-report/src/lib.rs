@@ -1,11 +1,11 @@
+use colored::Colorize;
 use n2b_ai::{
-    byte_offset, category, confidence, context_lines, docs_url, Context, SCHEMA_URL, SCHEMA_VERSION,
+    Context, SCHEMA_URL, SCHEMA_VERSION, byte_offset, category, confidence, context_lines, docs_url,
 };
 use n2b_types::types::{FileFix, Finding, Mode, RunOptions, Severity};
 use n2b_util::line_offsets;
-use colored::Colorize;
 use serde::Serialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 pub const TOOL: &str = "node2bun";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

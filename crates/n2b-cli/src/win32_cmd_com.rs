@@ -3,7 +3,7 @@
 //! Séparé de `win32_cmd.rs` pour limiter la taille du fichier principal.
 //! Tout ce module est `pub(super)` — il n'expose rien en dehors de `win32_cmd`.
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use std::path::PathBuf;
 
 // ---------------------------------------------------------------------------

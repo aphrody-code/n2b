@@ -4,7 +4,7 @@
 /// stderr pour construire des messages d'erreur riches.
 use std::path::{Path, PathBuf};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 
 // ---------------------------------------------------------------------------
 // Commandes Bun

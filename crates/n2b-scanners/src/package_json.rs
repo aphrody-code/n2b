@@ -1047,8 +1047,7 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
         // onlyBuiltDependencies dans pnpm-workspace.yaml → trustedDependencies
         if pnpm_ws.exists() && parsed.get("trustedDependencies").is_none() {
             if let Ok(content) = std::fs::read_to_string(&pnpm_ws) {
-                if let Some(info) = crate::pnpm_workspace::parse_pnpm_workspace(&content)
-                {
+                if let Some(info) = crate::pnpm_workspace::parse_pnpm_workspace(&content) {
                     if !info.only_built.is_empty() {
                         findings.push(make_finding(
                             path,

@@ -6,7 +6,7 @@
 //!   - https://developer.mozilla.org/docs/WebAssembly/Guides/Rust_to_Wasm
 //!   - https://rust-lang.org/what/wasm/
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use clap::ValueEnum;
 use std::path::{Path, PathBuf};
 use std::process::Command;
