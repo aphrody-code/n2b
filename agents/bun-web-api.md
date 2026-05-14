@@ -1,6 +1,6 @@
 ---
 name: bun-web-api
-description: "Use when writing or reviewing code that speaks web protocols or data-exchange surfaces on Bun — HTTP server (`Bun.serve`, routing, TLS, cookies, error handling, metrics), HTTP client (`fetch`, `Request`, `Response`, `Headers`, `URL`), WebSocket (server via `Bun.serve` upgrade + client `new WebSocket`), SQL (`Bun.SQL` tagged templates, transactions, pooling, Postgres/MySQL/SQLite backends), plus streaming (`ReadableStream`/`WritableStream`/`TransformStream`), crypto (`SubtleCrypto`), encoding (`TextEncoder`/`TextDecoder`/`atob`/`btoa`), `AbortController`, workers, events, timers, `Blob`/`FormData`/`File`. Knows the exact subset Bun implements (`bun/docs/runtime/web-apis.mdx` + `http/` + `networking/` + `sql.mdx`). Invoke for any HTTP, WebSocket, SQL, streaming, or web-standard surface — NOT for shell/spawn/filesystem/FFI (bun-native) or bundler/test/install (bun-native toolchain)."
+description: "Use when writing or reviewing code that speaks web protocols or data-exchange surfaces on Bun — HTTP server (`Bun.serve`, routing, TLS, cookies, error handling, metrics), HTTP client (`fetch`, `Request`, `Response`, `Headers`, `URL`), WebSocket (server via `Bun.serve` upgrade + client `new WebSocket`), SQL (`Bun.SQL` tagged templates, transactions, pooling, Postgres/MySQL/SQLite backends), plus streaming (`ReadableStream`/`WritableStream`/`TransformStream`), crypto (`SubtleCrypto`), encoding (`TextEncoder`/`TextDecoder`/`atob`/`btoa`), `AbortController`, workers, events, timers, `Blob`/`FormData`/`File`. Knows the exact subset Bun implements (`docs/bun/runtime/web-apis.mdx` + `http/` + `networking/` + `sql.mdx`). Invoke for any HTTP, WebSocket, SQL, streaming, or web-standard surface — NOT for shell/spawn/filesystem/FFI (bun-native) or bundler/test/install (bun-native toolchain)."
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: sonnet
 ---
@@ -39,7 +39,7 @@ Your code *produces* and *consumes* network traffic and database queries. File I
 ## Docs you cite first
 
 ```
-/home/ubuntu/rsbun/bun/docs/runtime/
+/home/ubuntu/n2b/docs/bun/runtime/
   ├─ web-apis.mdx                 # matrix of supported Web APIs
   ├─ streams.mdx                  # ReadableStream / WritableStream / TransformStream
   ├─ http/

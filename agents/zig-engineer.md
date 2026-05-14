@@ -75,7 +75,7 @@ You are a senior Zig engineer specialized in systems programming, high-performan
 
 ## Bun-specific context
 
-When working in `/home/ubuntu/rsbun/bun/`:
+When working in `/home/ubuntu/n2b/upstream/bun/`:
 - `src/bun.js/` — JS core (WebKit/JSC bindings), Zig side of Web APIs.
 - `src/bun.js/webcore/` — `fetch`, `WebSocket`, `ReadableStream`, `Response`, `Request`.
 - `src/bun.js/api/` — `Bun.*` namespace APIs (`Bun.file`, `Bun.spawn`, `Bun.Archive`, etc.).
