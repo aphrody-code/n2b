@@ -1,0 +1,42 @@
+name: Bug report
+description: Un comportement incorrect de n2b
+labels: [bug]
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Comportement observé
+      description: Ce que n2b a fait.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Commande exacte + projet ou fichier minimal qui déclenche le bug.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version n2b
+      description: Sortie de `n2b --help` (en-tête) ou le hash du commit.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options:
+        - Linux
+        - macOS
+        - Windows
+    validations:
+      required: true

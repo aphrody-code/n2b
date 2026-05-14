@@ -165,3 +165,13 @@ Cycle de re-sync (upstream → plugin) :
 rsync -a --delete docs/ ~/vps/agents/bun-agent/docs/n2b/
 cp {README,CLAUDE,STRUCTURE,CHANGELOG,CONTRIBUTING,build-your-own-x}.md ~/vps/agents/bun-agent/docs/n2b/
 ```
+
+## Contribuer
+
+Le modèle de branches, le flux PR et les commandes de test sont décrits dans
+[`CONTRIBUTING.md`](CONTRIBUTING.md). En résumé : GitHub Flow, `main` protégée,
+une PR par phase de refacto, commits conventionnels.
+
+## License
+
+[MIT](LICENSE) © 2026 Yohan Pierre.

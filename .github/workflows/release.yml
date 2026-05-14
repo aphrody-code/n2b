@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      serverless:
+        description: Build the serverless (musl static) artifact
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  BIN: n2b
+
+jobs:
+  # Cibles toujours construites : Linux + Windows (+ macOS, déjà couvert en CI).
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            archive: tar.gz
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            archive: zip
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            archive: tar.gz
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+
+      - name: Build
+        run: cargo build --release --locked -p n2b --target ${{ matrix.target }}
+
+      - name: Package (unix)
+        if: matrix.archive == 'tar.gz'
+        shell: bash
+        run: |
+          staging="${BIN}-${{ matrix.target }}"
+          mkdir -p "$staging"
+          cp "target/${{ matrix.target }}/release/${BIN}" "$staging/"
+          cp README.md LICENSE CHANGELOG.md "$staging/"
+          tar czf "$staging.tar.gz" "$staging"
+          shasum -a 256 "$staging.tar.gz" > "$staging.tar.gz.sha256"
+
+      - name: Package (windows)
+        if: matrix.archive == 'zip'
+        shell: bash
+        run: |
+          staging="${BIN}-${{ matrix.target }}"
+          mkdir -p "$staging"
+          cp "target/${{ matrix.target }}/release/${BIN}.exe" "$staging/"
+          cp README.md LICENSE CHANGELOG.md "$staging/"
+          7z a "$staging.zip" "$staging"
+          shasum -a 256 "$staging.zip" > "$staging.zip.sha256"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: |
+            ${{ env.BIN }}-${{ matrix.target }}.tar.gz*
+            ${{ env.BIN }}-${{ matrix.target }}.zip*
+
+  # Cible serverless : binaire statique musl, idéal conteneurs scratch / FaaS.
+  # Optionnelle — n'échoue jamais le release (continue-on-error).
+  serverless:
+    name: x86_64-unknown-linux-musl (serverless)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    if: ${{ github.event_name == 'push' || inputs.serverless }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: x86_64-unknown-linux-musl
+
+      - name: Install musl tools
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Build (static)
+        run: cargo build --release --locked -p n2b --target x86_64-unknown-linux-musl
+
+      - name: Package
+        run: |
+          staging="${BIN}-x86_64-unknown-linux-musl"
+          mkdir -p "$staging"
+          cp "target/x86_64-unknown-linux-musl/release/${BIN}" "$staging/"
+          cp README.md LICENSE CHANGELOG.md "$staging/"
+          tar czf "$staging.tar.gz" "$staging"
+          shasum -a 256 "$staging.tar.gz" > "$staging.tar.gz.sha256"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: x86_64-unknown-linux-musl
+          path: ${{ env.BIN }}-x86_64-unknown-linux-musl.tar.gz*
+
+  release:
+    name: Publish GitHub Release
+    needs: [build, serverless]
+    if: ${{ always() && needs.build.result == 'success' && startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -R dist
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false

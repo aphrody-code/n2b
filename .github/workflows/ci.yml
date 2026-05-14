@@ -6,18 +6,18 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
 
 jobs:
-  rust:
-    name: Rust — ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -26,67 +26,103 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Cache cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ matrix.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Fmt check
-        run: cargo fmt --all -- --check
-
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
-
-      - name: Test
-        run: cargo test --workspace
-
-      - name: Proptest (long run)
-        run: cargo test --workspace --tests -- proptest
-
-      - name: Release build (produces target/release/n2b)
-        run: cargo build --release --workspace
-
-      - name: Baseline compare (rpb-dashboard skipped on CI — local only)
-        env:
-          N2B: ${{ github.workspace }}/target/release/n2b
-          RPB_ROOT: /nonexistent
-        run: bash tests/compare-baseline.sh
-
-  bun:
-    name: Bun — ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    needs: rust
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    steps:
-      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
 
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Install Rust toolchain (for n2b binary)
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: bun install
+        run: bun install --frozen-lockfile
+
+      - name: typecheck
+        run: bun run typecheck
+
+      - name: schema codegen drift
+        run: bun run codegen:schema:check
+
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo test
+        run: cargo test --workspace
 
       - name: Build n2b binary
         run: cargo build --release -p n2b
 
-      - name: Install bun deps
+      # Bun tests + baseline compare reposent sur des scripts bash et le
+      # binaire `n2b` sur le PATH — Unix uniquement, le coeur Rust est déjà
+      # couvert sur Windows par `cargo test`.
+      - name: Install Bun
+        if: runner.os != 'Windows'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: bun install
+        if: runner.os != 'Windows'
         run: bun install --frozen-lockfile
 
-      - name: Typecheck workspace
-        run: bun run typecheck
-
-      - name: Schema codegen drift check
-        run: bun run codegen:schema:check
-
       - name: Bun tests
+        if: runner.os != 'Windows'
+        run: |
+          export PATH="$PWD/target/release:$PATH"
+          bun test packages/n2b/
+
+      - name: Baseline compare
+        if: runner.os != 'Windows'
         env:
-          PATH: ${{ github.workspace }}/target/release:${{ env.PATH }}
-        run: bun test packages/n2b/
+          N2B: ${{ github.workspace }}/target/release/n2b
+          RPB_ROOT: /nonexistent
+        run: bash tests/compare-baseline.sh
+
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo build --release --workspace
+        run: cargo build --release --workspace --locked
+
+      - name: Smoke test
+        shell: bash
+        run: ./target/release/n2b --help
+
+  ci-success:
+    name: CI Success
+    if: always()
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all jobs passed
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
+      - run: echo "lint + test + build OK"

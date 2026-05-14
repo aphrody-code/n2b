@@ -1,0 +1,25 @@
+name: Feature request
+description: Une règle, un scanner ou une capacité manquante
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin
+      description: Quel pattern Node→Bun n'est pas couvert aujourd'hui ?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposition
+      description: Règle, scanner ou réécriture envisagée (optionnel).
+    validations:
+      required: false
+  - type: input
+    id: ref
+    attributes:
+      label: Référence
+      description: Lien vers la doc Bun ou Node concernée, si applicable.
+    validations:
+      required: false
