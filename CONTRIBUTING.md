@@ -83,5 +83,5 @@ La CI rejoue tout ça sur Linux, macOS et Windows.
 
 ## License
 
-En contribuant, vous acceptez que votre code soit distribué sous license MIT
-(cf. [`LICENSE`](LICENSE)).
+En contribuant, vous acceptez que votre code soit distribué sous license
+Apache 2.0 (cf. [`LICENSE`](LICENSE)).
