@@ -34,7 +34,7 @@ n2b = [
 [workspace.package]
 edition = "2024"
 rust-version = "1.85"
-license = "MIT"
+license = "Apache-2.0"
 repository = "https://github.com/aphrody-code/n2b"
 authors = ["Yohan Pierre <yohanpierre15@gmail.com>"]
 
