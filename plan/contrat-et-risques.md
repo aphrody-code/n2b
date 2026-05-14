@@ -14,6 +14,7 @@ Surfaces consommées par `/home/ubuntu/rpb-dashboard` via subprocess. Filet de s
 | **Exit codes** | `n2b-cli/src/commands/scan.rs:52-63` | Un `imports/*` 🔴 passe `warn`→`error` → peut faire passer un exit `1`→`2`. **Changement voulu.** | 3 | documenté CHANGELOG ; baselines régénérées le capturent ; c'est le comportement correct (🔴 doit bloquer) |
 | **ABI cdylib v1** | `n2b-native/src/lib.rs` | **Aucun impact.** `n2b-native` est hors graphe, ne touche pas au schéma. | — | aucune |
 | **Sortie `--fix`** | baselines | PS4 : `--fix` ne réécrit plus les lignes commentées. **Breaking justifié (fix de bug).** | 0 | CHANGELOG + baselines régénérées + commit explicite |
+| **Manifeste `n2b.json`** | `schema/n2b.schema.json` | **Nouvelle surface publique** (pas une surface gelée existante). Opt-in, rétro-compatible avec l'absence de manifeste. Semi-gelée dès publication : évolutions additives sans bump, breaking → bump `version`. | 4, 5 | schéma versionné ; `version` du manifeste distinct de `schema_version` du `Finding` |
 
 ### Les trois changements de sortie assumés
 
@@ -49,6 +50,7 @@ baseline assumée, (c) documenté au `CHANGELOG.md`. **Jamais de changement sile
 | R8 | Le codegen recréé (PS6) produit un `schema.rs` différent du fichier commité | moyenne | faible | commit de régénération séparé *avant* le reste, pour isoler le diff | 0 |
 | R9 | Phase 1 retarde tout (chemin critique, bloque 2/3/4) | moyenne | élevé | Phase 1 = refactor pur, pas de design ouvert ; périmètre fermé ; commits fréquents | 1 |
 | R10 | Découpe `n2b-cli` (Phase 7.5) casse des chemins de module | faible | faible | optionnelle, dernier commit isolé ; si casse → retirer, non nécessaire au « parfait » | 7 |
+| R11 | Le manifeste `n2b.json` ouvre une surface de config trop large dès le v1 (scope creep) | moyenne | moyen | périmètre v1 fermé et documenté (cf. [05 §10](05-manifeste-n2b-json.md)) — `extends`, hooks, profils explicitement hors-scope, tous additifs plus tard | 4 |
 
 ## 3. Séquençage & dépendances
 

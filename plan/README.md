@@ -29,6 +29,7 @@ que seules ~8 des ~90 entrées `BUN_REPLACEMENTS` sont effectivement réécrites
 | **Comprendre la cible** | [02-architecture-cible.md](02-architecture-cible.md) | Registre data-driven, `n2b-registry`, `xtask` |
 | | [03-registre-spec.md](03-registre-spec.md) | Spec exhaustive des `.toml` + codegen `sync-coverage` |
 | | [04-compat-et-schema-v3.md](04-compat-et-schema-v3.md) | Modèle 🟢🟡🔴 → sévérité, champ `compat`, schéma |
+| | [05-manifeste-n2b-json.md](05-manifeste-n2b-json.md) | Le manifeste `n2b.json` — config par-repo, façon `turbo.json` |
 | **Exécuter** | [phases/phase-0-socle.md](phases/phase-0-socle.md) … [phase-7](phases/phase-7-garde-fous.md) | 8 phases livrables, fichiers/changements/acceptation |
 | **Données de couverture** | [coverage/modules.md](coverage/modules.md) | 47 modules Node v24 — matrice complète |
 | | [coverage/apis.md](coverage/apis.md) | 72 règles `api/*` actuelles + cibles |
@@ -80,6 +81,7 @@ n2b est parfait quand les **quatre** conditions sont vraies :
 | Terme | Définition |
 |---|---|
 | **Registre** | Les `.toml` data-driven dans `crates/n2b-registry/registry/` — source unique de vérité des règles. |
+| **Manifeste** | `n2b.json` — fichier de config racine d'un repo cible (façon `turbo.json`). État volatil dans `.n2b/`. Cf. [05](05-manifeste-n2b-json.md). |
 | **Compat 🟢/🟡/🔴** | Statut d'un module `node:*` : Fully / Partial / Missing, issu de `docs/bun/runtime/nodejs-compat.mdx`. |
 | **Rewrite** | Stratégie de réécriture d'une entrée : `template` (mécanique), `manual` (recette dans le finding), `drop` (suppression). |
 | **PS1→PS8** | Les 8 problèmes structurels à corriger avant d'ajouter de la couverture (cf. 01). |

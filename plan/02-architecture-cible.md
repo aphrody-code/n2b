@@ -132,7 +132,34 @@ Branché en CI (Phase 7).
 > Détail complet de `sync-coverage` et de la spec des `.toml` :
 > [03-registre-spec.md](03-registre-spec.md).
 
-## 6. Layout cible du workspace (après refactor)
+## 6. Le manifeste `n2b.json` — configuration par-repo
+
+Le registre data-driven résout la config *interne* de n2b (les règles). Mais n2b n'a
+aucune config *externe* — aucun moyen pour un repo cible de dire « ignore `vendor/`,
+désactive cette règle, voici mes deps internes ». Tout passe par flags CLI, à chaque
+invocation.
+
+`n2b.json` comble ce trou : un **manifeste de configuration** à la racine du repo cible,
+versionné, déclaratif — façon `turbo.json` / `tsconfig.json`. Il interagit directement
+avec le registre via son champ `registry`, qui laisse un repo **étendre le registre
+embarqué** avec ses propres règles (deps internes `@acme/*`).
+
+```
+repo-cible/
+  n2b.json          # manifeste de config — versionné, écrit par l'humain
+  .n2b/             # état & artefacts — gitignoré, écrit par n2b
+    state.json      #   migration report card persistée
+    report.json     #   dernier rapport
+    cache/          #   embeddings ML (n2b-ai)
+```
+
+Côté n2b : `n2b-core` résout et charge le manifeste **avant** l'engine walk, le valide
+contre `schema/n2b.schema.json`, et merge ses `registry.{packages,apis}` dans le registre
+embarqué. Précédence : `flags CLI > n2b.json > défauts`.
+
+> Spec complète — structure, champs, cycle de vie, schéma : [05-manifeste-n2b-json.md](05-manifeste-n2b-json.md).
+
+## 7. Layout cible du workspace (après refactor)
 
 ```
 n2b/
@@ -154,10 +181,11 @@ n2b/
     generate-schema-types.ts   # RECRÉÉ (PS6)
   registry/  →  vit dans crates/n2b-registry/registry/ (pas à la racine)
   schema/
-    v2.json               # ou v3.json après Phase 3
+    v2.json               # contrat Finding (inchangé — cf. Phase 3)
+    n2b.schema.json       # NOUVEAU — schéma du manifeste n2b.json
 ```
 
-## 7. Invariant d'architecture à préserver
+## 8. Invariant d'architecture à préserver
 
 > **Un scanner ne connaît pas les règles, un rule ne connaît pas les scanners.** Le
 > contrat reste `Finding`.
@@ -167,7 +195,7 @@ Le registre ne casse pas cet invariant — il le **renforce** :
 - `n2b-registry::engine` produit des `Finding` depuis le registre ;
 - le scanner ne sait pas quelle règle a matché, le registre ne sait pas quel fichier.
 
-## 8. Bénéfices mesurables
+## 9. Bénéfices mesurables
 
 | Avant | Après |
 |---|---|
