@@ -49,7 +49,7 @@ Ces surfaces sont consommées par `/home/ubuntu/rpb-dashboard` via subprocess. T
 |---|---|
 | Flags et subcommands CLI | `crates/n2b-cli/src/cli/args.rs` |
 | Format JSON v2 | `schema/v2.json` (schéma gelé, bumpé en v3 si breaking) |
-| Rule IDs (`cli/npm`, `imports/node-prefix`, …) | `crates/n2b-core/src/rules/*.rs` |
+| Rule IDs (`cli/npm`, `imports/node-prefix`, …) | `crates/n2b-rules/src/*.rs` |
 | Exit codes `0`/`1`/`2` | `crates/n2b-cli/src/cli/dispatch.rs` |
 | ABI cdylib v1 (`find_newlines_u16`, `node2bun_abi_version`) | `crates/n2b-native/src/lib.rs` |
 
@@ -64,28 +64,37 @@ Si tu changes une règle existante, il faut **soit** justifier le breaking et r�
 ```
   entry → crates/n2b-cli/src/main.rs (dispatch only)
         → cli::dispatch::run_from_args (args.rs → enum Cmd)
-        → commands/{scan,rules,audit,migrate,prompt,mui_to_md3}.rs
-            → n2b_core::run::run(opts)
+        → scan par défaut (pas de subcommand) ou commands/{rules,audit,prompt}.rs
+            → n2b_core::run::run(opts)                    # --migrate vit ici aussi
                 → engine walk (ignore + globset + crossbeam)
                 → dispatch scanner par extension/nom de fichier
-                    scanners/*.rs retournent Vec<Finding>
-                    rules/*.rs fournissent les regex/IDs partagés
-                → report/{text,json,jsonl,markdown,sarif}.rs
-        → rust_cmd.rs         # n2b rust {new,check,deps,doctor}
-        → commands/mui_to_md3.rs  # n2b mui-to-md3 (MUI v9 → @md3-ui/core)
+                    n2b-scanners/src/*.rs retournent Vec<Finding>
+                    n2b-rules/src/*.rs fournissent regex/IDs partagés
+                → n2b-report (text/json/jsonl/markdown/sarif)
+        → subcommands annexes (hors pipeline de scan) :
+          rust_cmd · app_cmd · bin_cmd · win32_cmd · linux_cmd
+          wasm_cmd · patch · bunpp_cmd · analyze · core/llmstxt
 ```
 
-### Commandes ajoutées en v0.3.0
+### Subcommands (13 — `crates/n2b-cli/src/cli/args.rs` fait foi)
 
-| Commande | Fichier | Description |
+| Subcommand | Fichier | Rôle |
 |---|---|---|
-| `n2b mui-to-md3 [root]` | `commands/mui_to_md3.rs` | Codemod MUI v9 → @md3-ui/core. Règles YAML embarquées depuis `rules/mui-to-md3.yaml`. Flags : `--write`, `--stage-atomic`, `--only <COMPONENT>`, `--rewrite-sx`, `--rules <path>`, `--report`. |
-| `n2b rust new <name>` | `rust_cmd.rs` | Scaffold Rust (flavors : bin/lib/cdylib/proc-macro/workspace/axum/discord/cli/tauri/leptos/tui/bevy/grpc). |
-| `n2b rust check [path]` | `rust_cmd.rs` | `cargo check` + `cargo clippy`. |
-| `n2b rust deps [path]` | `rust_cmd.rs` | `cargo outdated` + `cargo audit`. |
-| `n2b rust doctor` | `rust_cmd.rs` | Vérifie la toolchain Rust (rustc, clippy, wasm-pack…). |
+| *(défaut)* | `commands/scan.rs` | Scan Node→Bun. Flags racine : `--fix`, `--aggressive`, `--migrate`, `--report`, `--ignore`. |
+| `rules` | `commands/rules.rs` | Liste les règles connues (tableau plat). |
+| `prompt` | `commands/prompt.rs` | Génère un prompt markdown prêt pour un LLM. |
+| `audit` | `commands/audit.rs` | Scanne issues/PRs GitHub mentionnant bun/node. |
+| `analyze` | `analyze.rs` | Scan + audit + crosslink ML (embeddings `n2b-ai`) multi-repos. |
+| `rust` | `rust_cmd.rs` | Scaffold/check/deps/doctor Rust (13 flavors). |
+| `app` | `app_cmd.rs` | Scaffold apps Bun (cli/tui/gui/exe) + `bun build --compile`. |
+| `bin` | `bin_cmd.rs` | Scaffold plugin natif Bun.build / MDX→JSX / module WASM. |
+| `win32` · `linux` | `win32_cmd.rs` · `linux_cmd.rs` | Scaffold projets Bun bas-niveau (FFI Rust, inline C). |
+| `wasm` | `wasm_cmd.rs` + `commands/wasm_spec/` | Workflow Rust→WASM→Bun + référence spec WebAssembly. |
+| `patch` | `patch.rs` | Wrapper `bun patch`, ou diff unifié du repo (`--self`). |
+| `bunpp` | `bunpp_cmd.rs` | Scaffold polyfills `@bun++/node-*` pour les gaps Node de Bun. |
+| `llmstxt` | `core/src/llmstxt/` | Génère llms.txt depuis une URL (wrapper siteone-crawler). |
 
-**Règles MUI → MD3** : `rules/mui-to-md3.yaml` est la source de vérité. Embarqué via `include_str!` au build — pas de lecture runtime si `--rules` non précisé.
+> `mui-to-md3` a été retiré en v0.4.0 (déplacé vers le workspace `mui-rs`). n2b est **Node→Bun only**.
 
 **Point clé** : un scanner ne connaît pas les règles, un rule ne connaît pas les scanners. Le contrat est `Finding` (défini dans `schema/v2.json` → généré dans `schema.rs`). Pour ajouter une règle, soit tu ajoutes un scanner (nouveau type de fichier), soit tu enrichis un scanner existant avec un nouveau regex dans `rules/`.
 
@@ -105,6 +114,20 @@ Les deux fichiers générés sont **commités** et la CI échoue si drift. Jamai
 
 - **Bun uniquement** (jamais `node`/`npm`/`npx`/`pnpm`/`yarn`) — c'est ironiquement ce que n2b détecte.
 - **CLI Rust au lieu des binaires GNU** (`rg` au lieu de `grep`, `fd` au lieu de `find`, `bat` au lieu de `cat`, etc.).
+
+## Base de connaissance — `docs/` + `upstream/`
+
+Pour piloter la couverture des règles, le repo embarque la doc upstream :
+
+| Dossier | Contenu | Tracké git |
+|---|---|---|
+| `docs/bun/` | Docs Bun canary (`oven-sh/bun` `docs/`) — markdown strippé des assets | oui |
+| `docs/node/` | Docs API Node LTS v24 (`nodejs/node` `doc/api/`) | oui |
+| `upstream/bun/` · `upstream/node/` | Clones complets `--depth 1` — source pour mining | non (gitignoré) |
+
+`docs/README.md` documente les versions épinglées et la procédure de régénération.
+**Source de vérité pour décider quelle règle ajouter** : `docs/bun/runtime/nodejs-compat.mdx`
+(matrice de compat) et `docs/node/*.md` (surface API Node à détecter).
 
 ## Gotchas
 
