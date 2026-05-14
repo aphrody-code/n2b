@@ -19,6 +19,10 @@ Sortir les règles du code Rust → **registre de données embarqué**
 contre `docs/` et `upstream/`. La couverture devient une fonction de la source de
 Bun/Node, re-synchronisable via `cargo xtask sync-coverage`.
 
+Et côté repo cible : un **manifeste `n2b.json`** (façon `turbo.json`) — config par-repo
+déclarative, qui peut étendre le registre avec les deps internes. État de migration
+persisté dans `.n2b/`. Spec : [`plan/05-manifeste-n2b-json.md`](plan/05-manifeste-n2b-json.md).
+
 ## 8 problèmes structurels à corriger d'abord
 
 PS1 détection non import-aware · PS2 duplication de la logique d'édition · PS3 deux
@@ -35,8 +39,8 @@ repo**. (PS6-PS8 découverts à l'audit, absents de la v1 de ce plan.) Détail :
 | 1 | Registre data-driven | PS3 — refactor pur, sortie octet-identique |
 | 2 | Scanner source AST-first | PS1 — 0 faux positif homonyme |
 | 3 | Modèle compat → sévérité | champ `Finding.compat` **optionnel** (pas de breaking v3) |
-| 4 | Expansion couverture | `xtask sync-coverage`, 0 trou de couverture |
-| 5 | Cross-compilation complète | toute entrée a une `rewrite` + migration report card |
+| 4 | Expansion couverture | `xtask sync-coverage`, 0 trou + lecture `n2b.json` |
+| 5 | Cross-compilation complète | toute entrée a une `rewrite` + report card persistée (`.n2b/`) |
 | 6 | Intégration `bunpp` | les 🔴 pointent vers `@bun++/node-*` |
 | 7 | Garde-fous & doc | CI anti-drift, contract tests étendus |
 

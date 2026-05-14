@@ -84,6 +84,26 @@ L'audit a montré que ses Rule IDs sont construits dynamiquement (`format!`) et 
 invisibles au registre. Les expliciter dans `registry/` ou au moins les rendre
 auditables — sinon `xtask sync-coverage` ne peut pas les compter.
 
+### 4.7 — Manifeste `n2b.json` (lecture de la config)
+
+**Fichiers.** Nouveaux : `schema/n2b.schema.json`, `crates/n2b-types/src/manifest.rs`
+(généré). Modifiés : `crates/n2b-core/src/run.rs`, le codegen `scripts/generate-schema-types.ts`.
+
+Implémente le volet **lecture** du manifeste (cf. [05-manifeste-n2b-json.md](../05-manifeste-n2b-json.md)) :
+1. **Schéma** : écrire `schema/n2b.schema.json` (draft-07). Étendre le codegen (réparé en
+   Phase 0) pour produire le type Rust `N2bManifest` dans `n2b-types`.
+2. **Résolution** : `n2b-core` cherche `n2b.json` en remontant l'arbre depuis le `root`
+   du scan, le valide contre le schéma (erreur de config claire + exit `2` si invalide).
+3. **Merge de config** : `flags CLI > n2b.json > défauts` — appliquer `mode`, `include`,
+   `ignore`, `targets` à l'engine walk ; appliquer les overrides `rules`
+   (`off`/`info`/`warn`/`error`) au moment de l'émission des findings.
+4. **Merge de registre** : injecter `registry.packages` / `registry.apis` du manifeste
+   dans le registre embarqué (dépend du registre — Phase 1). Un `id` du manifeste ne peut
+   pas écraser un `id` embarqué (erreur de validation).
+5. Le walk **ignore `n2b.json` et `.n2b/`** — ce n'est pas du code à migrer.
+
+> Le volet **écriture** (`.n2b/state.json` après `--migrate`) est en [phase-5](phase-5-cross-compilation.md) §5.6.
+
 ## Critères d'acceptation
 
 - **`cargo xtask sync-coverage --check` rapporte 0 module Node sans entrée registre.**
@@ -93,6 +113,10 @@ auditables — sinon `xtask sync-coverage` ne peut pas les compter.
   fixture contient `.env`/`docker-compose.yml`/etc. — sinon inchangées). Ajouter des cas
   à `test/fixture/` pour couvrir les nouveaux scanners.
 - `n2b rules` liste les nouvelles règles.
+- **Manifeste** : un `test/fixture/n2b.json` (avec `ignore`, un override `rules`, une
+  entrée `registry.packages`) est lu et appliqué — vérifié par un test : la règle
+  désactivée n'émet plus, le glob `ignore` exclut bien, la dep interne est détectée. Un
+  `n2b.json` invalide → exit `2` + message clair.
 
 ## Commits attendus
 
@@ -103,6 +127,7 @@ feat(n2b-scanners): scanners .env, docker-compose, Procfile, configs jest/vitest
 feat(n2b-scanners): embedded_js — extrait les <script> de .vue/.svelte/.astro
 feat(n2b-scanners): shell.rs — vrai scanner (node script.js, nvm, NODE_OPTIONS)
 feat(n2b-registry): globals.toml — __dirname/require/process.* comme surface complète
+feat(n2b-core): manifeste n2b.json — résolution, validation, merge config + registre
 chore(baselines): régénère après expansion de couverture
 ```
 
@@ -114,3 +139,4 @@ chore(baselines): régénère après expansion de couverture
 | `embedded_js` (Vue/Svelte/Astro) — extraction `<script>` imparfaite | viser le cas simple (`<script>` standard) ; documenter les limites ; ne pas bloquer la phase sur les SFC exotiques |
 | Explosion du nombre de findings sur les repos témoins | attendu — c'est l'objectif ; trier les baselines, vérifier qu'aucun n'est un faux positif |
 | `xtask` lit `upstream/` qui est gitignoré → CI sans `upstream/` | `--check` en CI doit soit cloner `upstream/` en amont, soit comparer contre un snapshot commité de la matrice. Décision : commiter un `registry/.upstream-snapshot.toml` que `--check` utilise hors-ligne |
+| Le merge `registry.*` du manifeste introduit un conflit d'`id` avec le registre embarqué | validation au chargement : un `id` du manifeste qui collisionne → erreur de config explicite (exit 2), jamais un écrasement silencieux |

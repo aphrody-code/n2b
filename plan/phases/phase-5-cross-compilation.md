@@ -99,6 +99,29 @@ Flag : le `report_card` est additif (n'apparaît qu'avec `--migrate`). Pas de br
 
 Tout side-effect passe par `BackupGuard` (déjà en place — `subprocess/bun.rs`).
 
+### 5.6 — Persistance de l'état dans `.n2b/`
+
+**Fichiers.** `crates/n2b-core/src/commands/migrate.rs`, `crates/n2b-core/src/run.rs`.
+
+La report card (5.4) est éphémère — elle ne vit que dans la sortie d'une invocation.
+`.n2b/state.json` la **persiste** entre les runs (cf.
+[05-manifeste-n2b-json.md](../05-manifeste-n2b-json.md) §6) :
+
+1. Après `--migrate`, n2b crée `.n2b/` à la racine du repo cible (si absent) et y écrit
+   `state.json` : `status`, `last_run`, `n2b_version`, `auto_migratable_pct`,
+   `manual_residue`, `migrated_files`.
+2. Si `.gitignore` existe et n'ignore pas `.n2b/`, n2b y ajoute `.n2b/` (sinon le
+   suggère en fin de rapport).
+3. Au run suivant, n2b lit `.n2b/state.json` s'il existe : il peut afficher la
+   **progression** (« 124/142 findings déjà migrés depuis le dernier run ») et marquer
+   `status: "complete"` quand `manual_residue` est vide.
+4. L'écriture de `.n2b/state.json` passe par `BackupGuard` comme tout side-effect de
+   `--migrate` — rollback si le run échoue.
+
+`state.json` réutilise le **même schéma** que le `report_card` JSON (5.4) + des champs
+de suivi (`status`, `last_run`, `migrated_files`). Type Rust `N2bState` dans `n2b-types`,
+généré par le codegen.
+
 ## Critères d'acceptation
 
 - **Toute entrée registre 🟢/🟡 a une `rewrite` non-`manual`** *ou* un `codemod_hint`
@@ -111,6 +134,8 @@ Tout side-effect passe par `BackupGuard` (déjà en place — `subprocess/bun.rs
 - `cargo test --workspace` vert, baselines régénérées.
 - Le rollback `BackupGuard` testé : `--migrate` sur un projet qui fait échouer
   `bun install` → restore complet.
+- `.n2b/state.json` écrit après `--migrate`, relu au run suivant pour afficher la
+  progression ; `.n2b/` ajouté au `.gitignore` du repo cible.
 
 ## Repo témoin
 
@@ -127,6 +152,7 @@ feat(n2b-registry): templates haute valeur — child_process, pg, ioredis, glob,
 feat(n2b-registry): CJS→ESM — __dirname, require statique/dynamique, module.exports
 feat(n2b-core): migration report card — auto_migratable_pct + manual_residue
 feat(n2b-cli): --migrate applique template/drop, route manual vers le report card
+feat(n2b-core): persiste l'état de migration dans .n2b/state.json
 chore(baselines): régénère après complétion des rewrites
 ```
 
