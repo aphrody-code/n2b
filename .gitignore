@@ -8,3 +8,8 @@ target/
 packages/*/dist/
 packages/*/.turbo/
 packages/*/node_modules/
+
+# machine-specific / AI cruft
+plugins-installed.json
+claude-global.md
+task.json
