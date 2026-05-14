@@ -72,7 +72,7 @@ jobs:
           7z a "$staging.zip" "$staging"
           shasum -a 256 "$staging.zip" > "$staging.zip.sha256"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target }}
           path: |
@@ -113,7 +113,7 @@ jobs:
           tar czf "$staging.tar.gz" "$staging"
           shasum -a 256 "$staging.tar.gz" > "$staging.tar.gz.sha256"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: x86_64-unknown-linux-musl
           path: ${{ env.BIN }}-x86_64-unknown-linux-musl.tar.gz*
