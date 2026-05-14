@@ -19,7 +19,7 @@ regex = { workspace = true }
 once_cell = { workspace = true }
 memchr = { workspace = true }
 oxc_allocator = "0.126"
-oxc_parser = "0.126"
+oxc_parser = "0.130"
 oxc_ast = "0.126"
 oxc_ast_visit = "0.126"
 oxc_span = "0.126"
