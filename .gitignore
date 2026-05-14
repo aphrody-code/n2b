@@ -13,3 +13,6 @@ packages/*/node_modules/
 plugins-installed.json
 claude-global.md
 task.json
+
+# upstream source clones — reference material, regenerable, not n2b's code
+upstream/
