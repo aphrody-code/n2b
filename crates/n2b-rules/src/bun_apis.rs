@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use n2b_types::types::{Finding, MakeFindingOpts, Severity};
-use n2b_util::{line_offsets, make_finding};
+use n2b_util::{Edit, apply_edits, line_offsets, make_finding};
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 
@@ -607,11 +607,6 @@ static RULES: Lazy<Vec<ApiRule>> = Lazy::new(|| {
 pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<Finding>, String) {
     let offsets = line_offsets(source);
     let mut findings: Vec<Finding> = Vec::new();
-    struct Edit {
-        index: usize,
-        len: usize,
-        replacement: String,
-    }
     let mut edits: Vec<Edit> = Vec::new();
 
     for r in RULES.iter() {
@@ -681,27 +676,10 @@ pub fn apply_bun_api_rules(path: &str, source: &str, aggressive: bool) -> (Vec<F
         }
     }
 
-    let mut out = source.to_string();
-    if !edits.is_empty() {
-        // Résout les overlaps : quand deux règles matchent des ranges imbriqués
-        // (ex. api/fs-readFileSync à l'intérieur de api/json-parse-readFileSync),
-        // on garde le range le plus large. Tri (index asc, len desc) puis filtre.
-        edits.sort_by(|a, b| a.index.cmp(&b.index).then(b.len.cmp(&a.len)));
-        let mut kept: Vec<Edit> = Vec::with_capacity(edits.len());
-        for e in edits {
-            let overlaps_prev = kept
-                .last()
-                .map(|p| p.index + p.len > e.index)
-                .unwrap_or(false);
-            if !overlaps_prev {
-                kept.push(e);
-            }
-        }
-        kept.sort_unstable_by_key(|e| std::cmp::Reverse(e.index));
-        for e in kept {
-            out.replace_range(e.index..e.index + e.len, &e.replacement);
-        }
-    }
+    // Résout les overlaps : quand deux règles matchent des ranges imbriqués
+    // (ex. api/fs-readFileSync à l'intérieur de api/json-parse-readFileSync),
+    // apply_edits garde le range le plus large à index égal.
+    let out = apply_edits(source, edits);
     (findings, out)
 }
 
