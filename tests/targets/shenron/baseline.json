@@ -1,0 +1,1109 @@
+{
+  "schema_version": 2,
+  "$schema": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json",
+  "tool": "node2bun",
+  "version": "0.5.0",
+  "mode": "check",
+  "root": "/home/ubuntu/vps/apps/shenron",
+  "files_scanned": 12,
+  "findings_total": 39,
+  "files": [
+    {
+      "path": "drizzle.config.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 8,
+          "col": 10,
+          "start_byte": 186,
+          "end_byte": 211,
+          "original": "process.env.DATABASE_PATH",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "  schema: \"./src/db/schema.ts\",",
+              "  out: \"./src/db/migrations\",",
+              "  dbCredentials: {"
+            ],
+            "line": "    url: process.env.DATABASE_PATH ?? \"./data/bot.db\",",
+            "after": [
+              "  },",
+              "  strict: true,",
+              "  verbose: true,"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "package.json",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "ecosystem/cva",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "CVA (variants Tailwind) — compagnon shadcn détecté — guide d'intégration Bun : https://cva.style/",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 24,
+          "original": "class-variance-authority",
+          "replacement": "https://cva.style/",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/clsx",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "clsx (className concat) détecté — guide d'intégration Bun : https://github.com/lukeed/clsx",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 4,
+          "original": "clsx",
+          "replacement": "https://github.com/lukeed/clsx",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/discord-bot",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "discord.js détecté — guide d'intégration Bun : https://bun.sh/guides/ecosystem/discordjs",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 10,
+          "original": "discord.js",
+          "replacement": "https://bun.sh/guides/ecosystem/discordjs",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/drizzle",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "Drizzle détecté — guide d'intégration Bun : https://bun.sh/guides/ecosystem/drizzle",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 11,
+          "original": "drizzle-orm",
+          "replacement": "https://bun.sh/guides/ecosystem/drizzle",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/lucide",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "Lucide icons (default shadcn) détecté — guide d'intégration Bun : https://lucide.dev/",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 12,
+          "original": "lucide-react",
+          "replacement": "https://lucide.dev/",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/tailwind-merge",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "tailwind-merge — dédupe classes détecté — guide d'intégration Bun : https://github.com/dcastil/tailwind-merge",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 14,
+          "original": "tailwind-merge",
+          "replacement": "https://github.com/dcastil/tailwind-merge",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/zod",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "Zod (schema validation) détecté — guide d'intégration Bun : https://zod.dev/",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 3,
+          "original": "zod",
+          "replacement": "https://zod.dev/",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        },
+        {
+          "rule_id": "ecosystem/oxlint",
+          "category": "ecosystem",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "oxlint (linter Rust OXC, ~50× ESLint) détecté — guide d'intégration Bun : https://oxc.rs/docs/guide/usage/linter.html",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 6,
+          "original": "oxlint",
+          "replacement": "https://oxc.rs/docs/guide/usage/linter.html",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/ecosystem",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"name\": \"shenron\",",
+              "  \"version\": \"0.1.0\",",
+              "  \"private\": true,"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "scripts/deploy.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/process-stdout-write",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.stdout.write() est l'équivalent natif Bun de process.stdout.write",
+          "line": 152,
+          "col": 2,
+          "start_byte": 3964,
+          "end_byte": 3985,
+          "original": "process.stdout.write(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/console",
+          "context": {
+            "before": [
+              "",
+              "for (const step of planned) {",
+              "\tconst tStep = performance.now();"
+            ],
+            "line": "\tprocess.stdout.write(`\\n▸ ${step.name}…`);",
+            "after": [
+              "\ttry {",
+              "\t\tconst cmd = step.run();",
+              "\t\tif ("
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 34,
+          "col": 12,
+          "start_byte": 1052,
+          "end_byte": 1069,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "import { $ } from \"bun\";",
+              "import { parseArgs } from \"node:util\";",
+              ""
+            ],
+            "line": "const t0 = performance.now();",
+            "after": [
+              "",
+              "const { values: opts } = parseArgs({",
+              "\targs: Bun.argv.slice(2),"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 151,
+          "col": 16,
+          "start_byte": 3944,
+          "end_byte": 3961,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "}",
+              "",
+              "for (const step of planned) {"
+            ],
+            "line": "\tconst tStep = performance.now();",
+            "after": [
+              "\tprocess.stdout.write(`\\n▸ ${step.name}…`);",
+              "\ttry {",
+              "\t\tconst cmd = step.run();"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 163,
+          "col": 16,
+          "start_byte": 4243,
+          "end_byte": 4260,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\t\t} else {",
+              "\t\t\tawait cmd;",
+              "\t\t}"
+            ],
+            "line": "\t\tconst dt = ((performance.now() - tStep) / 1000).toFixed(2);",
+            "after": [
+              "\t\tconsole.log(` ok (${dt}s)`);",
+              "\t} catch (err) {",
+              "\t\tconsole.log(\" ✗\");"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 172,
+          "col": 17,
+          "start_byte": 4424,
+          "end_byte": 4441,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\t}",
+              "}",
+              ""
+            ],
+            "line": "const total = ((performance.now() - t0) / 1000).toFixed(2);",
+            "after": [
+              "console.log(`\\n✓ Deploy ok (${total}s)`);",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "scripts/install.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 23,
+          "col": 2,
+          "start_byte": 699,
+          "end_byte": 723,
+          "original": "process.env.SHENRON_REPO",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "import { resolve } from \"node:path\";",
+              "",
+              "const REPO ="
+            ],
+            "line": "\tprocess.env.SHENRON_REPO ?? \"https://github.com/aphrody-code/shenron.git\";",
+            "after": [
+              "const BRANCH = process.env.SHENRON_BRANCH ?? \"main\";",
+              "const TARGET = resolve(process.env.SHENRON_DIR ?? `${process.cwd()}/shenron`);",
+              "const SKIP_WIKI = process.env.SKIP_WIKI_SEED === \"1\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 24,
+          "col": 16,
+          "start_byte": 789,
+          "end_byte": 815,
+          "original": "process.env.SHENRON_BRANCH",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "",
+              "const REPO =",
+              "\tprocess.env.SHENRON_REPO ?? \"https://github.com/aphrody-code/shenron.git\";"
+            ],
+            "line": "const BRANCH = process.env.SHENRON_BRANCH ?? \"main\";",
+            "after": [
+              "const TARGET = resolve(process.env.SHENRON_DIR ?? `${process.cwd()}/shenron`);",
+              "const SKIP_WIKI = process.env.SKIP_WIKI_SEED === \"1\";",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 25,
+          "col": 24,
+          "start_byte": 850,
+          "end_byte": 873,
+          "original": "process.env.SHENRON_DIR",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "const REPO =",
+              "\tprocess.env.SHENRON_REPO ?? \"https://github.com/aphrody-code/shenron.git\";",
+              "const BRANCH = process.env.SHENRON_BRANCH ?? \"main\";"
+            ],
+            "line": "const TARGET = resolve(process.env.SHENRON_DIR ?? `${process.cwd()}/shenron`);",
+            "after": [
+              "const SKIP_WIKI = process.env.SKIP_WIKI_SEED === \"1\";",
+              "",
+              "const C = {"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 26,
+          "col": 19,
+          "start_byte": 924,
+          "end_byte": 950,
+          "original": "process.env.SKIP_WIKI_SEED",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "\tprocess.env.SHENRON_REPO ?? \"https://github.com/aphrody-code/shenron.git\";",
+              "const BRANCH = process.env.SHENRON_BRANCH ?? \"main\";",
+              "const TARGET = resolve(process.env.SHENRON_DIR ?? `${process.cwd()}/shenron`);"
+            ],
+            "line": "const SKIP_WIKI = process.env.SKIP_WIKI_SEED === \"1\";",
+            "after": [
+              "",
+              "const C = {",
+              "\tblue: \"\\x1b[1;34m\","
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "scripts/log-watcher.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 51,
+          "col": 14,
+          "start_byte": 1852,
+          "end_byte": 1881,
+          "original": "process.env.GITHUB_REPOSITORY",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "\tprocess.exit(0);",
+              "}",
+              ""
+            ],
+            "line": "const REPO = process.env.GITHUB_REPOSITORY ?? \"aphrody-code/shenron\";",
+            "after": [
+              "const TOKEN = process.env.GITHUB_TOKEN;",
+              "const DRY = opts[\"dry-run\"];",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 52,
+          "col": 15,
+          "start_byte": 1923,
+          "end_byte": 1947,
+          "original": "process.env.GITHUB_TOKEN",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "}",
+              "",
+              "const REPO = process.env.GITHUB_REPOSITORY ?? \"aphrody-code/shenron\";"
+            ],
+            "line": "const TOKEN = process.env.GITHUB_TOKEN;",
+            "after": [
+              "const DRY = opts[\"dry-run\"];",
+              "",
+              "if (!DRY && !TOKEN) {"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/child-process-spawn",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.spawn offre une API plus ergonomique (streams Web, ipc, preload)",
+          "line": 63,
+          "col": 20,
+          "start_byte": 2373,
+          "end_byte": 2379,
+          "original": "spawn(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/process/spawn",
+          "context": {
+            "before": [
+              "// ── Extracteur de stream ────────────────────────────────────────────────",
+              "async function* streamLines(): AsyncGenerator<string> {",
+              "\tif (opts.systemd) {"
+            ],
+            "line": "\t\tconst proc = Bun.spawn(",
+            "after": [
+              "\t\t\t[\"journalctl\", \"-fu\", opts.systemd, \"-o\", \"short-iso\"],",
+              "\t\t\t{",
+              "\t\t\t\tstdout: \"pipe\","
+            ]
+          }
+        },
+        {
+          "rule_id": "api/child-process-spawn",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.spawn offre une API plus ergonomique (streams Web, ipc, preload)",
+          "line": 81,
+          "col": 20,
+          "start_byte": 2856,
+          "end_byte": 2862,
+          "original": "spawn(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/process/spawn",
+          "context": {
+            "before": [
+              "\t\t\tfor (const l of lines) yield l;",
+              "\t\t}",
+              "\t} else if (positionals.length > 0) {"
+            ],
+            "line": "\t\tconst proc = Bun.spawn([\"tail\", \"-F\", \"-n\", \"0\", positionals[0]!], {",
+            "after": [
+              "\t\t\tstdout: \"pipe\",",
+              "\t\t});",
+              "\t\tconst reader = proc.stdout.getReader();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "src/api/cron-registry.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 116,
+          "col": 14,
+          "start_byte": 3807,
+          "end_byte": 3824,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\t): Promise<{ ok: boolean; durationMs: number; error: string | null }> {",
+              "\t\tconst job = this.jobs.get(name);",
+              "\t\tif (!job) return { ok: false, durationMs: 0, error: \"job inconnu\" };"
+            ],
+            "line": "\t\tconst t0 = performance.now();",
+            "after": [
+              "\t\ttry {",
+              "\t\t\tawait job.fn();",
+              "\t\t\tconst duration = Math.round(performance.now() - t0);"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 119,
+          "col": 32,
+          "start_byte": 3884,
+          "end_byte": 3901,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\t\tconst t0 = performance.now();",
+              "\t\ttry {",
+              "\t\t\tawait job.fn();"
+            ],
+            "line": "\t\t\tconst duration = Math.round(performance.now() - t0);",
+            "after": [
+              "\t\t\tjob.lastRunAt = Date.now();",
+              "\t\t\tjob.lastDurationMs = duration;",
+              "\t\t\tjob.runCount++;"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 131,
+          "col": 36,
+          "start_byte": 4334,
+          "end_byte": 4351,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\t\t} catch (err) {",
+              "\t\t\tconst msg = err instanceof Error ? err.message : String(err);",
+              "\t\t\tjob.lastRunAt = Date.now();"
+            ],
+            "line": "\t\t\tjob.lastDurationMs = Math.round(performance.now() - t0);",
+            "after": [
+              "\t\t\tjob.runCount++;",
+              "\t\t\tjob.lastError = msg;",
+              "\t\t\tlogger.warn({ err, name }, \"cron job failed\");"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "src/api/server.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/child-process-spawn",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.spawn offre une API plus ergonomique (streams Web, ipc, preload)",
+          "line": 735,
+          "col": 24,
+          "start_byte": 25858,
+          "end_byte": 25864,
+          "original": "spawn(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/process/spawn",
+          "context": {
+            "before": [
+              "\t\t\t\t\tconst url = new URL(req.url);",
+              "\t\t\t\t\tconst lines = Math.min(500, Number(url.searchParams.get(\"lines\")) || 100);",
+              "\t\t\t\t\ttry {"
+            ],
+            "line": "\t\t\t\t\t\tconst proc = Bun.spawn(",
+            "after": [
+              "\t\t\t\t\t\t\t[",
+              "\t\t\t\t\t\t\t\t\"journalctl\",",
+              "\t\t\t\t\t\t\t\t\"-u\","
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "src/dashboard/lib/event-stream.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/eventsource-new",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.5,
+          "message": "EventSource est global dans Bun (Bun.EventSource) — plus besoin de la dep 'eventsource'",
+          "line": 48,
+          "col": 16,
+          "start_byte": 1460,
+          "end_byte": 1476,
+          "original": "new EventSource(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/reference/bun/EventSource",
+          "context": {
+            "before": [
+              "    if (!enabled) return;",
+              "    if (typeof window === \"undefined\" || !(\"EventSource\" in window)) return;",
+              ""
+            ],
+            "line": "    const es = new EventSource(\"/api/events\", { withCredentials: true });",
+            "after": [
+              "",
+              "    es.onmessage = (msg) => {",
+              "      try {"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "src/services/StatsService.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 57,
+          "col": 14,
+          "start_byte": 1820,
+          "end_byte": 1837,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\tgetLatency(): LatencyStats {",
+              "\t\tconst ws = Math.max(0, this.client.ws.ping);",
+              "\t\t// Latence DB : ping query simple"
+            ],
+            "line": "\t\tconst t0 = performance.now();",
+            "after": [
+              "\t\ttry {",
+              "\t\t\tthis.dbs.sqlite.query(\"SELECT 1\").get();",
+              "\t\t} catch (err) {"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/performance-now",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.nanoseconds() offre une horloge haute précision (retourne nanosecondes depuis démarrage)",
+          "line": 63,
+          "col": 14,
+          "start_byte": 1979,
+          "end_byte": 1996,
+          "original": "performance.now()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/api/utils#bun-nanoseconds",
+          "context": {
+            "before": [
+              "\t\t} catch (err) {",
+              "\t\t\tlogger.debug({ err }, \"DB latency probe failed\");",
+              "\t\t}"
+            ],
+            "line": "\t\tconst db = performance.now() - t0;",
+            "after": [
+              "\t\treturn { ws, db: Math.round(db * 100) / 100 };",
+              "\t}",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "api/os-platform",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "process.platform (global) retourne la même chose sans import 'os'",
+          "line": 104,
+          "col": 14,
+          "start_byte": 3340,
+          "end_byte": 3353,
+          "original": "os.platform()",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/nodejs-apis",
+          "context": {
+            "before": [
+              "\t\t\t\tused: totalMem - freeMem,",
+              "\t\t\t\tusage: Math.round(((totalMem - freeMem) / totalMem) * 10_000) / 100,",
+              "\t\t\t},"
+            ],
+            "line": "\t\t\tplatform: os.platform(),",
+            "after": [
+              "\t\t\tuptime: Math.round(os.uptime()),",
+              "\t\t};",
+              "\t}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "src/services/TranslateService.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/child-process-spawn",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.spawn offre une API plus ergonomique (streams Web, ipc, preload)",
+          "line": 134,
+          "col": 24,
+          "start_byte": 4862,
+          "end_byte": 4868,
+          "original": "spawn(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/process/spawn",
+          "context": {
+            "before": [
+              "  async probe(): Promise<TranslateProbe> {",
+              "    // 1. Tesseract présent ?",
+              "    try {"
+            ],
+            "line": "      const proc = Bun.spawn([\"tesseract\", \"--version\"], { stdout: \"pipe\", stderr: \"pipe\" });",
+            "after": [
+              "      const exitCode = await proc.exited;",
+              "      this.tesseractAvailable = exitCode === 0;",
+              "    } catch {"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/child-process-spawn",
+          "category": "api",
+          "severity": "warn",
+          "confidence": 0.5,
+          "message": "Bun.spawn offre une API plus ergonomique (streams Web, ipc, preload)",
+          "line": 273,
+          "col": 24,
+          "start_byte": 9754,
+          "end_byte": 9760,
+          "original": "spawn(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/process/spawn",
+          "context": {
+            "before": [
+              "    }",
+              "",
+              "    try {"
+            ],
+            "line": "      const proc = Bun.spawn([\"tesseract\", \"stdin\", \"stdout\", \"-l\", langs, \"--psm\", \"6\"], {",
+            "after": [
+              "        stdin: \"pipe\",",
+              "        stdout: \"pipe\",",
+              "        stderr: \"pipe\","
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "tests/setup.ts",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 7,
+          "col": 1,
+          "start_byte": 172,
+          "end_byte": 192,
+          "original": "process.env.NODE_ENV",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              " */",
+              "import { mkdirSync, unlinkSync, existsSync } from \"node:fs\";",
+              ""
+            ],
+            "line": "process.env.NODE_ENV = \"test\";",
+            "after": [
+              "process.env.DISCORD_TOKEN ??= \"test-token\";",
+              "process.env.GUILD_ID ??= \"1497167233280118896\";",
+              "process.env.OWNER_ID ??= \"11111111111111111\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 8,
+          "col": 1,
+          "start_byte": 203,
+          "end_byte": 228,
+          "original": "process.env.DISCORD_TOKEN",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "import { mkdirSync, unlinkSync, existsSync } from \"node:fs\";",
+              "",
+              "process.env.NODE_ENV = \"test\";"
+            ],
+            "line": "process.env.DISCORD_TOKEN ??= \"test-token\";",
+            "after": [
+              "process.env.GUILD_ID ??= \"1497167233280118896\";",
+              "process.env.OWNER_ID ??= \"11111111111111111\";",
+              "process.env.DATABASE_PATH = \"./data/test.db\";"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 9,
+          "col": 1,
+          "start_byte": 247,
+          "end_byte": 267,
+          "original": "process.env.GUILD_ID",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "",
+              "process.env.NODE_ENV = \"test\";",
+              "process.env.DISCORD_TOKEN ??= \"test-token\";"
+            ],
+            "line": "process.env.GUILD_ID ??= \"1497167233280118896\";",
+            "after": [
+              "process.env.OWNER_ID ??= \"11111111111111111\";",
+              "process.env.DATABASE_PATH = \"./data/test.db\";",
+              "process.env.LOG_LEVEL = \"error\"; // silence pino pendant les tests"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 10,
+          "col": 1,
+          "start_byte": 295,
+          "end_byte": 315,
+          "original": "process.env.OWNER_ID",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "process.env.NODE_ENV = \"test\";",
+              "process.env.DISCORD_TOKEN ??= \"test-token\";",
+              "process.env.GUILD_ID ??= \"1497167233280118896\";"
+            ],
+            "line": "process.env.OWNER_ID ??= \"11111111111111111\";",
+            "after": [
+              "process.env.DATABASE_PATH = \"./data/test.db\";",
+              "process.env.LOG_LEVEL = \"error\"; // silence pino pendant les tests",
+              ""
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 11,
+          "col": 1,
+          "start_byte": 341,
+          "end_byte": 366,
+          "original": "process.env.DATABASE_PATH",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "process.env.DISCORD_TOKEN ??= \"test-token\";",
+              "process.env.GUILD_ID ??= \"1497167233280118896\";",
+              "process.env.OWNER_ID ??= \"11111111111111111\";"
+            ],
+            "line": "process.env.DATABASE_PATH = \"./data/test.db\";",
+            "after": [
+              "process.env.LOG_LEVEL = \"error\"; // silence pino pendant les tests",
+              "",
+              "// Créé ./data/ si absent (CI fresh clone)"
+            ]
+          }
+        },
+        {
+          "rule_id": "api/process-env",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.30000001192092896,
+          "message": "Bun.env est un alias plus court de process.env (préférence stylistique)",
+          "line": 12,
+          "col": 1,
+          "start_byte": 387,
+          "end_byte": 408,
+          "original": "process.env.LOG_LEVEL",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/runtime/env",
+          "context": {
+            "before": [
+              "process.env.GUILD_ID ??= \"1497167233280118896\";",
+              "process.env.OWNER_ID ??= \"11111111111111111\";",
+              "process.env.DATABASE_PATH = \"./data/test.db\";"
+            ],
+            "line": "process.env.LOG_LEVEL = \"error\"; // silence pino pendant les tests",
+            "after": [
+              "",
+              "// Créé ./data/ si absent (CI fresh clone)",
+              "mkdirSync(\"./data\", { recursive: true });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "tsconfig.json",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "tsconfig/verbatim-module-syntax",
+          "category": "tsconfig",
+          "severity": "info",
+          "confidence": 0.75,
+          "message": "moduleResolution=bundler + verbatimModuleSyntax=true est le combo recommandé Bun (force `import type` explicite)",
+          "line": 1,
+          "col": 1,
+          "start_byte": 0,
+          "end_byte": 20,
+          "original": "verbatimModuleSyntax",
+          "replacement": "true",
+          "autofix": false,
+          "docs_url": "https://bun.sh/docs/typescript",
+          "context": {
+            "before": [],
+            "line": "{",
+            "after": [
+              "  \"compilerOptions\": {",
+              "    \"target\": \"ESNext\",",
+              "    \"module\": \"ESNext\","
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -35,6 +35,7 @@ que seules ~8 des ~90 entrées `BUN_REPLACEMENTS` sont effectivement réécrites
 | | [coverage/apis.md](coverage/apis.md) | 72 règles `api/*` actuelles + cibles |
 | | [coverage/packages.md](coverage/packages.md) | ~90 deps npm — stratégie de réécriture |
 | **Cadrage** | [contrat-et-risques.md](contrat-et-risques.md) | Contrat gelé, registre de risques, séquençage |
+| | [test-targets.md](test-targets.md) | Fixtures réelles : shenron (Pilier 1), gemini-cli (Pilier 2) — baselines + critères |
 
 ## Status board
 
