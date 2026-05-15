@@ -51,8 +51,17 @@ pub fn run(cli: &Cli) -> Result<ExitCode> {
 
     // Mode --migrate : applique les side-effects après le scan+fix +
     // génère/persiste le report card (Phase 5 §5.4 + §5.6).
+    // Phase 6 §6.3 : `--scaffold-polyfills` opt-in pour bunpp scaffold.
     let report_card = if cli.migrate {
-        crate::commands::migrate::run_migrate_side_effects(&opts.root, &fixes, opts.quiet)?;
+        let migrate_opts = crate::commands::migrate::MigrateOpts {
+            scaffold_polyfills: cli.scaffold_polyfills,
+        };
+        crate::commands::migrate::run_migrate_side_effects_with_opts(
+            &opts.root,
+            &fixes,
+            opts.quiet,
+            migrate_opts,
+        )?;
         let card = n2b_core::report_card::build(&fixes);
         let state = n2b_core::report_card::N2bState::from_card(&card, &fixes);
         if let Err(e) = state.write_to(&opts.root) {
