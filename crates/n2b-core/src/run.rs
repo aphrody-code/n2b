@@ -16,14 +16,18 @@ use crate::scanners::{
     bunfig::scan_bunfig,
     cargo_toml::{is_cargo_toml, scan_cargo_toml},
     components_json::{is_components_json, scan_components_json},
+    docker_compose::{is_docker_compose, scan_docker_compose},
     dockerfile::scan_dockerfile,
+    env_file::{is_env_file, scan_env_file},
     husky::{is_husky_hook, scan_husky},
+    js_config::{is_js_config, scan_js_config},
     lockfile::{RIVAL_LOCKFILES, check_lockfile},
     next_config::{is_next_config, scan_next_config},
     npmrc::{is_rc_file, scan_npmrc},
     nvmrc::scan_nvmrc,
     package_json::scan_package_json,
     pnpm_workspace::scan_pnpm_workspace,
+    procfile::{is_procfile, scan_procfile},
     shell::scan_shell,
     source::scan_source,
     tauri_conf::{is_tauri_conf, scan_tauri_conf},
@@ -67,6 +71,12 @@ fn is_workflow(rel: &str) -> bool {
 }
 
 pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
+    // Phase 4 §4.7 : résout n2b.json (parent-first), valide, applique
+    // `ignore` + `rules` overrides. Précédence : flags CLI > n2b.json > défauts.
+    let manifest = crate::manifest::resolve_and_load(&opts.root)?;
+    let manifest_overrides: Arc<crate::manifest::RuleOverrideMap> =
+        Arc::new(manifest.as_ref().map(|m| m.manifest.rules.clone()).unwrap_or_default());
+
     // Build matcher for default + user ignore globs.
     let mut gsb = GlobSetBuilder::new();
     for p in DEFAULT_IGNORE.iter().copied() {
@@ -77,6 +87,20 @@ pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
     for p in opts.ignore.iter() {
         if let Ok(g) = Glob::new(p) {
             gsb.add(g);
+        }
+    }
+    // Merge ignore globs depuis le manifeste (additif aux flags CLI).
+    if let Some(m) = manifest.as_ref() {
+        for p in &m.manifest.ignore {
+            if let Ok(g) = Glob::new(p) {
+                gsb.add(g);
+            }
+        }
+        // n2b ignore lui-même son manifeste + .n2b/.
+        for p in &["**/n2b.json", "**/.n2b/**"] {
+            if let Ok(g) = Glob::new(p) {
+                gsb.add(g);
+            }
         }
     }
     let ignore_set: Arc<GlobSet> = Arc::new(gsb.build()?);
@@ -141,6 +165,12 @@ pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
     // Restore deterministic order (parallel walk produces non-deterministic order).
     fixes.sort_unstable_by(|a, b| a.file.cmp(&b.file));
 
+    // Phase 4 §4.7 : applique les overrides de règles du manifeste — drop les
+    // findings dont la règle est `"off"`, ré-ajuste severity/autofix.
+    if !manifest_overrides.is_empty() {
+        crate::manifest::apply_rule_overrides(&mut fixes, &manifest_overrides);
+    }
+
     Ok(fixes)
 }
 
@@ -181,6 +211,10 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
     let is_turbo = is_turbo_json(name);
     let is_tauri = is_tauri_conf(name);
     let is_components = is_components_json(name);
+    let is_env = is_env_file(name);
+    let is_compose = is_docker_compose(name);
+    let is_proc = is_procfile(name);
+    let is_jsconf = is_js_config(name);
 
     if !is_pkg
         && !is_source
@@ -198,6 +232,10 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         && !is_turbo
         && !is_tauri
         && !is_components
+        && !is_env
+        && !is_compose
+        && !is_proc
+        && !is_jsconf
     {
         return Ok(None);
     }
@@ -245,6 +283,14 @@ fn process_file(abs: &Path, rel: &str, opts: &RunOptions) -> Result<Option<FileF
         scan_tauri_conf(rel, &before)
     } else if is_components {
         scan_components_json(rel, &before)
+    } else if is_env {
+        scan_env_file(rel, &before)
+    } else if is_compose {
+        scan_docker_compose(rel, &before)
+    } else if is_proc {
+        scan_procfile(rel, &before)
+    } else if is_jsconf {
+        scan_js_config(rel, &before)
     } else {
         scan_shell(rel, &before)
     };

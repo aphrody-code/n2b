@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "$schema": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/v2.json",
+  "tool": "node2bun",
+  "version": "0.5.0",
+  "mode": "check",
+  "root": "/home/ubuntu/n2b/tests/targets/bun-full",
+  "files_scanned": 1,
+  "findings_total": 1,
+  "files": [
+    {
+      "path": "app.tsx",
+      "changed": false,
+      "findings": [
+        {
+          "rule_id": "api/child-process-spawn",
+          "category": "api",
+          "severity": "info",
+          "confidence": 0.5,
+          "message": "Bun.spawn offre une API plus ergonomique (streams Web, ipc, preload)",
+          "line": 268,
+          "col": 19,
+          "start_byte": 9182,
+          "end_byte": 9188,
+          "original": "spawn(",
+          "autofix": false,
+          "docs_url": "https://bun.sh/guides/process/spawn",
+          "context": {
+            "before": [
+              "// ---------------------------------------------------------------------------",
+              "",
+              "async function gitHead(): Promise<string> {"
+            ],
+            "line": "\tconst proc = Bun.spawn([\"git\", \"rev-parse\", \"HEAD\"], {",
+            "after": [
+              "\t\tstdout: \"pipe\",",
+              "\t\tstderr: \"inherit\",",
+              "\t});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

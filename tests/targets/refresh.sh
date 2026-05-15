@@ -7,14 +7,12 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TARGETS="$ROOT/tests/targets"
 N2B="${N2B:-/usr/local/bin/n2b}"
 
-# --- shenron (lives in ~/vps/apps/shenron, not cloned here) ---
-SHENRON="/home/ubuntu/vps/apps/shenron"
-if [[ -d "$SHENRON" ]]; then
-  mkdir -p "$TARGETS/shenron"
-  "$N2B" "$SHENRON" --report=json > "$TARGETS/shenron/baseline.json"
-  echo "shenron: $(jq -r '.findings_total' "$TARGETS/shenron/baseline.json") findings"
+# --- bun-full (single-file canonical fixture, committed) ---
+if [[ -f "$TARGETS/bun-full/app.tsx" ]]; then
+  "$N2B" "$TARGETS/bun-full" --report=json > "$TARGETS/bun-full/baseline.json"
+  echo "bun-full: $(jq -r '.findings_total' "$TARGETS/bun-full/baseline.json") findings"
 else
-  echo "shenron: SKIP (not found at $SHENRON)"
+  echo "bun-full: SKIP (app.tsx introuvable)"
 fi
 
 # --- gemini-cli (clone, gitignored) ---

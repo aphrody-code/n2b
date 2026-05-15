@@ -1,32 +1,59 @@
 # Cibles de test du refactor — fixtures réelles
 
-Deux dépôts servent de banc d'essai canonique pour valider la progression des deux
+Deux fixtures servent de banc d'essai canonique pour valider la progression des deux
 piliers du refactor (cf. [REFACTOR_PLAN.md](../REFACTOR_PLAN.md)).
 
 | Cible | Pilier | Phases | Profil |
 |---|---|---|---|
-| **shenron** (`/home/ubuntu/vps/apps/shenron`) | 1 — couverture entrée | 2, 4 | Bot Discord déjà majoritairement Bun. Tout résidu détecté = vrai trou de couverture, pas du bruit. |
+| **bun-full** (`tests/targets/bun-full/`) | 1 — couverture entrée | 2, 3, 4 | Fixture canonique tout-Bun + Material Design 3 (motion/elevation/tokens). Tout résidu détecté = vrai bonus / faux positif à corriger. |
 | **gemini-cli** (`tests/targets/gemini-cli`, gitignored) | 2 — cross-compilation sortie | 5, 6 | CLI Node 100 % monorepo (`packages/*`). Cible single-file exe `bun build --compile --target=bun-{linux,windows}-x64`. Mesure le ratio APIs réécrites vs résidus manuels. |
 
-Les baselines vivent sous `tests/targets/<cible>/baseline.json` (commitées). Les clones lourds (`gemini-cli/`) restent gitignored — régénérables via `tests/targets/refresh.sh`.
+> shenron retiré comme cible (2026-05-15) — remplacé par `bun-full/` qui couvre
+> exhaustivement les surfaces Bun (Bun.serve, bun:sqlite, bun:ffi, bun:test, HMR,
+> bundler, macros, single-file exe) + un design system M3 fidèle à m3.material.io.
 
-## Baseline initiale (n2b 0.5.0, 2026-05-15)
+Les baselines vivent sous `tests/targets/<cible>/baseline.json` (commitées). Les clones
+lourds (`gemini-cli/`) restent gitignored — régénérables via `tests/targets/refresh.sh`.
 
-### shenron — Pilier 1
-- `files_scanned` : **12** (sur ~146 .ts/.tsx) — `files_scanned` ne compte que les fichiers **avec** findings.
-- `findings_total` : **39** (0 errors, 6 warns, 33 infos).
-- Top : `api/process-env` (13), `api/performance-now` (9), `api/child-process-spawn` (5).
-- **Critère de succès Pilier 1** : après Phase 2 (AST-aware) + Phase 4 (sync-coverage), tout finding restant doit être *justifié* (résidu fonctionnel impossible à réécrire) — pas un trou de règle.
+## Fixture bun-full — Pilier 1
 
-### gemini-cli — Pilier 2
-- `files_scanned` : **1308**.
-- `findings_total` : **3239**.
-- Top : `imports/bun-native` (1075), `api/fs-writeFileSync` (335), `api/fs-existsSync` (331), `api/chalk-call` (145), `api/execSync` (139), `cli/npm-run` (116).
-- **Critère de succès Pilier 2** :
-  1. `n2b --aggressive --migrate` réécrit ≥ 95 % des findings sans intervention.
-  2. `bun build --compile --target=bun-linux-x64 --outfile=gemini-cli-linux` produit un binaire qui répond à `--help` en < 200 ms cold-start.
-  3. Idem `--target=bun-windows-x64`.
-  4. Tailles binaires linux/windows reportées dans la report card Phase 5 (`.n2b/report.json`).
+**Fichier unique** : `tests/targets/bun-full/app.tsx` (~430 lignes, single-file).
+
+Couvre :
+- **HTTP/WS** : `Bun.serve` full-stack (typed routes, WebSocket upgrade, error)
+- **JSX natif** : composants M3 (`FilledButton`, `Card`, `App`) — runtime `react-jsx`
+- **CSS natif** : `import "./styles/m3-tokens.css"` (Bun bundler natif)
+- **Hot reload** : `Bun.serve { development.hmr: true }` + `import.meta.hot`
+- **Bundler** : `Bun.build` avec plugins, minifier, loader, splitting, define, naming
+- **Macros** : `import { buildId } from "./macros/build-id.ts" with { type: "macro" }`
+- **Test runner** : `bun:test` describe/it/expect/mock.module
+- **DB** : `bun:sqlite` (file-backed, WAL, `using db = ...`, `.iterate()`)
+- **SQL/Cache** : `Bun.SQL` tagged templates, `Bun.RedisClient`
+- **Shell** : `Bun.spawn`, `Bun.$\`cmd\`` (parametrized, no injection)
+- **Files** : `Bun.file`, `Bun.write` (lazy, atomic, sendfile/copy_file_range)
+- **Crypto** : `Bun.password` (argon2id), `Bun.CryptoHasher`, `Bun.hash.xxHash3`
+- **Misc** : `Bun.Glob`, `Bun.cron`, `Bun.S3Client`, `Bun.CookieMap`
+- **HTML** : `HTMLRewriter` streaming
+- **FFI** : `bun:ffi` `dlopen` + `cc()` inline
+- **Single-file executable** : commentaires `bun build --compile --target=bun-{linux,windows,darwin-arm64}`
+- **Design tokens M3** : `MotionDuration` (short1..extraLong4), `MotionEasing` (standard, emphasized, decelerate, accelerate — bezier curves de m3.material.io), `ColorRole`, `Elevation`, `Shape`
+
+**Critère de succès** :
+- Aucun finding `imports/bun-native` (déjà tout-Bun).
+- Aucun finding `api/*` réel — les ~2 findings actuels (`api/process-env` dans le `define` du bundler, `api/child-process-spawn` dans le `Bun.spawn(["git", ...])`) sont dans le bruit du pattern regex, à filtrer en Phase 7.
+- Findings `api/node-*` granulaires (Phase 4) sur les sous-APIs documentées comme manquantes — *aucun ici*, la fixture est volontairement clean.
+
+## Fixture gemini-cli — Pilier 2
+
+- `files_scanned` : **1303** (post-Phase 2 AST filter).
+- `findings_total` : **3232** (post-Phase 2 — 7 faux positifs supprimés).
+- Top : `imports/bun-native`, `api/fs-writeFileSync`, `api/fs-existsSync`, `api/chalk-call`, `api/execSync`, `cli/npm-run`.
+
+**Critère de succès Pilier 2** :
+1. `n2b --aggressive --migrate` réécrit ≥ 95 % des findings sans intervention.
+2. `bun build --compile --target=bun-linux-x64 --outfile=gemini-cli-linux` produit un binaire qui répond à `--help` en < 200 ms cold-start.
+3. Idem `--target=bun-windows-x64`.
+4. Tailles binaires linux/windows reportées dans la report card Phase 5 (`.n2b/report.json`).
 
 ## Workflow
 
@@ -35,10 +62,10 @@ Les baselines vivent sous `tests/targets/<cible>/baseline.json` (commitées). Le
 bash tests/targets/refresh.sh
 
 # baseline
-n2b /home/ubuntu/vps/apps/shenron --report=json > tests/targets/shenron/baseline.json
-n2b tests/targets/gemini-cli       --report=json > tests/targets/gemini-cli-out/baseline.json
+n2b tests/targets/bun-full           --report=json > tests/targets/bun-full/baseline.json
+n2b tests/targets/gemini-cli         --report=json > tests/targets/gemini-cli-out/baseline.json
 
-# diff de progression (une fois Phase 2/4/5 livrées)
+# diff de progression (une fois Phase 5 livrée)
 n2b tests/targets/gemini-cli --aggressive --report=json | jq '.findings_total'
 ```
 
@@ -47,5 +74,3 @@ n2b tests/targets/gemini-cli --aggressive --report=json | jq '.findings_total'
 Chaque phase qui touche aux scanners/règles **doit** régénérer les deux baselines et
 diff. Drift accepté = nouvelle règle qui ajoute des findings (gain de couverture) ;
 drift refusé = règle existante qui en perd (faux négatif introduit).
-
-À automatiser dans `tests/compare-baseline.sh` une fois Phase 1 livrée.

@@ -348,3 +348,28 @@ id     = "imports/node-timers-promises"
 module = "timers/promises"
 compat = "full"
 bun_reimpl = true
+
+# Phase 4 — modules Node v24 nouveaux/non classés ailleurs
+
+[[modules]]
+id     = "imports/node-sqlite"
+module = "sqlite"
+compat = "missing"
+bun_reimpl = false
+equivalent = "bun:sqlite"
+bunpp = "@bun++/node-sqlite"
+
+[[modules]]
+id     = "imports/node-quic"
+module = "quic"
+compat = "missing"
+bun_reimpl = false
+docs = "absent de docs/bun/runtime/nodejs-compat.mdx (décalage v23/v24) — angle mort upstream"
+
+[[modules]]
+id     = "imports/node-sea"
+module = "sea"
+compat = "missing"
+bun_reimpl = false
+equivalent = "bun build --compile"
+docs = "single-executable applications — Bun expose --compile au CLI plutôt qu'une API module"
