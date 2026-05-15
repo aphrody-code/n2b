@@ -1,0 +1,116 @@
+{
+  "description": "Bun Agent hooks — session tracking, memory context, Bun hints, and auto-dream",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && mkdir -p \"$DIR\" && echo '{\"type\":\"session_start\",\"ts\":\"'$(date -Iseconds)'\",\"cwd\":\"'$PWD'\",\"session\":\"'$CLAUDE_SESSION_ID'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\"",
+            "timeout": 5,
+            "async": true,
+            "statusMessage": "Initializing bun-agent session"
+          }
+        ]
+      }
+    ],
+    "Setup": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p \"${CLAUDE_PLUGIN_DATA}/memory\" \"${CLAUDE_PLUGIN_DATA}/sessions\"",
+            "timeout": 5,
+            "async": true,
+            "once": true,
+            "statusMessage": "Setting up bun-agent directories"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"user_prompt\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"stop\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"tool_use\",\"tool\":\"Bash\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"tool_use\",\"tool\":\"Write\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"tool_use\",\"tool\":\"Edit\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"tool_failure\",\"tool\":\"Bash\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIR=\"${CLAUDE_PLUGIN_DATA}/sessions\" && [ -d \"$DIR\" ] && echo '{\"type\":\"subagent_stop\",\"ts\":\"'$(date -Iseconds)'\"}' >> \"$DIR/$CLAUDE_SESSION_ID.jsonl\" 2>/dev/null",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

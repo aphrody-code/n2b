@@ -1,0 +1,24 @@
+{
+	"name": "bun-agent",
+	"version": "2.3.0",
+	"description": "Bun-native Claude Code plugin co-located with the n2b migration tool (Rust + TS). Ships 7 agents (bun-runner, bun-explorer, bun-dreamer, bun-deployer, bun-reviewer, n2b, move), 8 skills (analyze, run, dream, deploy, n2b, move, gemini-cli-jsx, gemini-cli-cli), session/memory hooks, autonomous output-style, and the n2b binary itself (cargo build --release -p n2b). Reusable across any repo — paths via ${CLAUDE_PLUGIN_ROOT}, project root via git, n2b binary via $PATH.",
+	"author": {
+		"name": "RPB Dev",
+		"url": "https://rpbey.fr"
+	},
+	"license": "MIT",
+	"keywords": [
+		"bun",
+		"agent",
+		"autonomous",
+		"memory",
+		"n2b",
+		"node-to-bun",
+		"migration",
+		"bun-native",
+		"gemini-cli",
+		"claude-code",
+		"plugin",
+		"rust"
+	]
+}
