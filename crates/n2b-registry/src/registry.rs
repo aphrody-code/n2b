@@ -147,12 +147,23 @@ mod tests {
 
     #[test]
     fn modules_count_matches_baseline() {
-        // Source : node_imports.rs BUILTINS — 53 modules
-        // (42 top-level + 11 sub-paths Bun-shimmés).
+        // Phase 4 : 56 modules = 53 historiques + 3 nouveaux Node v24
+        // (sqlite, quic, sea). 42 top-level + 11 sub-paths + 3 v24.
         assert_eq!(
             MODULES.len(),
-            53,
-            "modules.toml a divergé de node_imports.rs BUILTINS"
+            56,
+            "modules.toml a divergé du baseline (Phase 4 = 56 modules)"
+        );
+    }
+
+    #[test]
+    fn globals_phase4_populated() {
+        // Phase 4 : globals.toml passe de 0 à 9 entrées (cf. plan/phase-4-couverture.md §4.5).
+        assert_eq!(
+            GLOBALS.len(),
+            9,
+            "globals.toml doit avoir 9 entrées Phase 4 — trouvé: {}",
+            GLOBALS.len()
         );
     }
 

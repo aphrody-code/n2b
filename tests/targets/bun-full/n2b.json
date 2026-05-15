@@ -1,0 +1,8 @@
+{
+	"$schema": "https://raw.githubusercontent.com/aphrody-code/n2b/main/schema/n2b.schema.json",
+	"ignore": ["node_modules/**", "dist/**", "vendor/**"],
+	"rules": {
+		"api/process-env": "off",
+		"api/child-process-spawn": { "severity": "info" }
+	}
+}
