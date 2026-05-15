@@ -691,3 +691,80 @@ package     = "@modelcontextprotocol/sdk"
 replacement = "rmcp"
 note        = "SDK Rust officiel pour le Model Context Protocol. https://github.com/modelcontextprotocol/rust-sdk — workspace Cargo, transports stdio + HTTP+SSE + WebSocket, idéal pour serveurs MCP performants."
 aggressive  = false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section : écosystème Tokio (https://github.com/tokio-rs) — alternatives
+# Rust natives aux libs async Node les plus communes. Pertinent quand on
+# build un service standalone perf-critical (broker A2A/MCP, gRPC, edge
+# proxy) plutôt que d'empiler du Node sur Bun. `aggressive = false`.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "express"
+replacement = "axum"
+note        = "Framework web async basé sur hyper + tower. https://github.com/tokio-rs/axum — extracteurs typés, middleware composable, perf >100k req/s en mono-core."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "fastify"
+replacement = "axum"
+note        = "https://github.com/tokio-rs/axum — équivalent Rust de l'approche perf-first de Fastify (router radix + tower middleware)."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "koa"
+replacement = "axum"
+note        = "https://github.com/tokio-rs/axum — chaîne middleware tower équivalente à l'idiome compose Koa."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "@grpc/grpc-js"
+replacement = "tonic"
+note        = "https://github.com/hyperium/tonic — client/serveur gRPC Rust async sur hyper + prost. Compatible proto3, streaming bidi natif."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "protobufjs"
+replacement = "prost"
+note        = "https://github.com/tokio-rs/prost — codegen + runtime protobuf Rust. Sortie idiomatic Rust, derive Serialize/Deserialize."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "ws"
+replacement = "tokio-tungstenite"
+note        = "https://github.com/snapview/tokio-tungstenite — WebSocket client + serveur sur tokio. Compatible RFC 6455, perf comparable."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "axios"
+replacement = "reqwest"
+note        = "https://github.com/seanmonstar/reqwest — client HTTP sur hyper + tokio. JSON helper, cookies, multipart, async + blocking."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "pino"
+replacement = "tracing"
+note        = "https://github.com/tokio-rs/tracing — instrumentation structurée (spans + events) avec subscribers JSON/console. Plus puissant qu'un logger plat type pino."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "winston"
+replacement = "tracing"
+note        = "https://github.com/tokio-rs/tracing — équivalent Rust avec spans hiérarchiques. Subscribers : tracing-subscriber, OpenTelemetry."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "bullmq"
+replacement = "tokio + redis-rs"
+note        = "Pas de drop-in 1:1 — l'équivalent Rust idiomatique est tokio comme runtime + https://github.com/redis-rs/redis-rs pour Redis async + un worker custom (~50 LOC)."
+aggressive  = false
