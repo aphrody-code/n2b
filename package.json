@@ -14,7 +14,6 @@
 		"build:native:plugin": "cargo build --release -p node2bun-native",
 		"build:compile": "turbo run build:compile",
 		"install:cli:rust": "cargo build --release -p n2b && sudo install -m755 target/release/n2b /usr/local/bin/n2b",
-		"install:cli:ts": "bun run --filter @n2b/cli build:compile && sudo install -m755 packages/n2b-cli/dist/node2bun /usr/local/bin/node2bun",
 		"test": "turbo run test",
 		"test:rust": "cargo test --workspace",
 		"lint": "turbo run lint",
