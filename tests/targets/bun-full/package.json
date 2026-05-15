@@ -1,0 +1,21 @@
+{
+	"name": "n2b-fixture-bun-full",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"module": "app.tsx",
+	"scripts": {
+		"dev": "bun --hot app.tsx",
+		"build": "bun build --compile --target=bun-linux-x64 --minify --outfile=dist/bun-full app.tsx",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
+	},
+	"devDependencies": {
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"typescript": "^5.6.0"
+	}
+}

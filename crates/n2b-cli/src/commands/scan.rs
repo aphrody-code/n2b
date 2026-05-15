@@ -49,17 +49,35 @@ pub fn run(cli: &Cli) -> Result<ExitCode> {
 
     let fixes = run::run(&opts)?;
 
-    // Mode --migrate : applique les side-effects après le scan+fix.
-    if cli.migrate {
+    // Mode --migrate : applique les side-effects après le scan+fix +
+    // génère/persiste le report card (Phase 5 §5.4 + §5.6).
+    let report_card = if cli.migrate {
         crate::commands::migrate::run_migrate_side_effects(&opts.root, &fixes, opts.quiet)?;
-    }
+        let card = n2b_core::report_card::build(&fixes);
+        let state = n2b_core::report_card::N2bState::from_card(&card, &fixes);
+        if let Err(e) = state.write_to(&opts.root) {
+            eprintln!("note: impossible d'écrire .n2b/state.json: {e}");
+        }
+        Some(card)
+    } else {
+        None
+    };
 
+    let card_value = report_card.as_ref().and_then(|c| serde_json::to_value(c).ok());
     match opts.report {
-        Report::Json => println!("{}", report::render_json(&fixes, &opts)),
+        Report::Json => println!(
+            "{}",
+            report::render_json_with_card(&fixes, &opts, card_value.as_ref())
+        ),
         Report::Jsonl => print!("{}", report::render_jsonl(&fixes, &opts)),
         Report::Markdown => println!("{}", report::render_markdown(&fixes, &opts)),
         Report::Sarif => println!("{}", report::render_sarif(&fixes, &opts)),
-        Report::Text if !opts.quiet => print!("{}", report::render_text(&fixes, &opts)),
+        Report::Text if !opts.quiet => {
+            print!("{}", report::render_text(&fixes, &opts));
+            if let Some(card) = &report_card {
+                print!("{}", report::render_report_card_text(card));
+            }
+        }
         _ => {}
     }
 

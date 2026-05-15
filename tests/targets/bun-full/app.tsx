@@ -8,14 +8,17 @@
 //   - Loader CSS natif (Bun bundler) — `import "./globals.css"`
 //   - Hot reload (Bun.serve { development.hmr } + import.meta.hot)
 //   - Bun.build avec plugins, minifier, loader custom, macros
-//   - bun:test runner (describe/it/expect/mock.module)
-//   - bun:sqlite (file-backed embedded DB, WAL, using statements)
+//   - bun:test runner — séparé dans `app.test.tsx` (sinon pollution morte
+//     quand on lance `bun app.tsx` hors mode test)
+//   - bun:sqlite (file-backed embedded DB, WAL — `using` côté call-site
+//     uniquement, pas dans le constructeur factory)
 //   - Bun.SQL (Postgres tagged template literals)
-//   - Bun.RedisClient
+//   - Bun.redis (singleton client lazy — pas Bun.RedisClient)
 //   - Bun.spawn / Bun.$ shell
 //   - Bun.file/Bun.write (lazy, atomic, sendfile/copy_file_range)
 //   - Bun.password (bcrypt/argon2id natif)
-//   - Bun.Glob, Bun.cron, Bun.S3Client, Bun.CookieMap
+//   - Bun.Glob, Bun.S3Client (NB : Bun.cron n'existe pas — schedule via
+//     systemd timer / cron Linux)
 //   - HTMLRewriter (streaming HTML rewriting)
 //   - Bun.CryptoHasher, Bun.hash (xxHash3, wyhash)
 //   - bun:ffi (dlopen + inline cc())
@@ -36,8 +39,11 @@
 
 import { Database } from "bun:sqlite";
 import { sql } from "bun";
-import { describe, expect, it, mock, test } from "bun:test";
 import { dlopen, FFIType } from "bun:ffi";
+import { renderToReadableStream } from "react-dom/server";
+
+// NOTE: les tests bun:test vivent dans `app.test.tsx` (séparation pour
+// éviter la pollution morte si on lance `bun app.tsx` hors mode test).
 
 // ---------------------------------------------------------------------------
 // 1. CSS imports (Bun natif — pas de webpack/vite/postcss)
@@ -209,7 +215,11 @@ export function App() {
 // ---------------------------------------------------------------------------
 
 function openDb(path: string): Database {
-	using db = new Database(path, { create: true, strict: true });
+	// NOTE : pas de `using` ici — le scope de cette fonction se termine au
+	// `return`, ce qui appellerait `Symbol.dispose` AVANT que les appelants
+	// utilisent la DB. Le `using` se justifie côté call-site, dans le bloc
+	// qui englobe l'usage complet.
+	const db = new Database(path, { create: true, strict: true });
 	db.exec("PRAGMA journal_mode = WAL;");
 	db.exec(`
     CREATE TABLE IF NOT EXISTS posts (
@@ -251,13 +261,9 @@ async function fetchUser(id: number) {
 }
 
 async function cacheGet(key: string): Promise<string | null> {
-	const r = new Bun.RedisClient();
-	await r.connect();
-	try {
-		return await r.get(key);
-	} finally {
-		await r.close();
-	}
+	// Bun.redis = singleton client lazy (Bun 1.2+). Pas besoin de
+	// connect/close manuel — Bun gère le pool en interne.
+	return await Bun.redis.get(key);
 }
 
 // ---------------------------------------------------------------------------
@@ -319,10 +325,13 @@ async function findTsxFiles(): Promise<string[]> {
 	return matches;
 }
 
-const dailyCron = Bun.cron("0 9 * * *", async () => {
+// Bun n'expose pas d'API `Bun.cron` — schedule via setInterval ou un
+// cron côté infra (systemd timer, cron Linux). On garde une fonction
+// déclenchable manuellement à des fins de démonstration.
+async function dailyJob() {
 	const head = await gitHead();
-	console.log(`[cron] daily run on ${head}`);
-});
+	console.log(`[daily] run on ${head}`);
+}
 
 async function uploadAvatar(userId: number, body: ReadableStream) {
 	const s3 = new Bun.S3Client({
@@ -336,8 +345,18 @@ async function uploadAvatar(userId: number, body: ReadableStream) {
 }
 
 function parseCookies(header: string): Map<string, string> {
-	const map = new Bun.CookieMap(header);
-	return new Map(map.entries());
+	// Bun.CookieMap accepte un objet/array, pas une string Cookie header
+	// directement. Pour parser un header, on splitte explicitement.
+	const out = new Map<string, string>();
+	for (const part of header.split(";")) {
+		const eq = part.indexOf("=");
+		if (eq < 0) continue;
+		out.set(
+			part.slice(0, eq).trim(),
+			decodeURIComponent(part.slice(eq + 1).trim()),
+		);
+	}
+	return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -436,9 +455,11 @@ const server = Bun.serve({
 			return ok ? undefined : new Response("upgrade failed", { status: 400 });
 		}
 
-		// SSR JSX
+		// SSR JSX — passe par react-dom/server (Bun n'a PAS de
+		// Bun.renderToReadableStream natif). React 19 sait exploiter le
+		// ReadableStream optimisé exposé par Bun (cf. facebook/react#28941).
 		if (url.pathname === "/") {
-			const stream = await Bun.renderToReadableStream(<App />);
+			const stream = await renderToReadableStream(<App />);
 			return new Response(stream, {
 				headers: { "content-type": "text/html; charset=utf-8" },
 			});
@@ -521,35 +542,9 @@ export async function buildBundle() {
 //   bun build --compile --target=bun-darwin-arm64 ./app.tsx
 
 // ---------------------------------------------------------------------------
-// 15. Test runner (bun:test) — describe/it/expect + mock.module
+// 15. Test runner — voir `app.test.tsx` (séparé pour éviter pollution morte
+//     hors `bun test`).
 // ---------------------------------------------------------------------------
-
-describe("M3 motion tokens", () => {
-	it("respecte la spec M3 (durations en ms)", () => {
-		expect(MotionDuration.short1).toBe(50);
-		expect(MotionDuration.extraLong4).toBe(1000);
-	});
-
-	it("emphasized = bezier (0.2, 0, 0, 1)", () => {
-		expect(MotionEasing.emphasized).toContain("cubic-bezier");
-	});
-});
-
-describe("FilledButton", () => {
-	it("retourne du JSX renderable", () => {
-		const node = <FilledButton label="OK" />;
-		expect(node).toBeTruthy();
-	});
-});
-
-test("Bun.password roundtrip", async () => {
-	const hash = await hashPassword("super-secret");
-	expect(await verifyPassword("super-secret", hash)).toBe(true);
-	expect(await verifyPassword("wrong", hash)).toBe(false);
-});
-
-// Mock un module entier (Bun 1.2+).
-mock.module("./styles/m3-tokens.css", () => ({}));
 
 // ---------------------------------------------------------------------------
 // 16. Macros (Bun) — résolus à la compilation, non au runtime
@@ -578,8 +573,10 @@ export {
 	nativeCos,
 	findTsxFiles,
 	parseCookies,
-	dailyCron,
+	dailyJob,
 	buildBundle,
 	openDb,
 	insertPost,
+	hashPassword,
+	verifyPassword,
 };
