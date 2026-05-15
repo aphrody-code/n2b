@@ -14,10 +14,10 @@ cargo build --release -p n2b                      # binaire CLI seul
 cargo build --release --workspace                 # + cdylib
 sudo install -m755 target/release/n2b /usr/local/bin/n2b
 
-# Tests (34 tests au total répartis comme suit)
+# Tests (40 au total répartis comme suit)
 cargo test --workspace                            # 14 Rust (schema_test + contract + 3 proptest)
 bun test packages/n2b/                            # 14 TS (cli + shims)
-bash tests/compare-baseline.sh                    # 13 assertions snapshot CLI-as-API
+bash tests/compare-baseline.sh                    # 12 comparaisons snapshot (5 rpb skippées si rpb-dashboard absent)
 
 # Test ciblé
 cargo test --workspace contract                   # juste les contract tests
@@ -30,7 +30,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 bun run typecheck
 
 # Codegen depuis schema/v2.json (source unique)
-bun run codegen:schema                            # régénère schema.rs + schema.ts
+bun run codegen:schema                            # régénère schema.rs + index.ts
 bun run codegen:schema:check                      # --check (CI drift detection)
 
 # Régénérer les baselines après bump version ou changement de sortie légitime
@@ -50,12 +50,13 @@ Ces surfaces sont consommées par `/home/ubuntu/rpb-dashboard` via subprocess. T
 | Flags et subcommands CLI | `crates/n2b-cli/src/cli/args.rs` |
 | Format JSON v2 | `schema/v2.json` (schéma gelé, bumpé en v3 si breaking) |
 | Rule IDs (`cli/npm`, `imports/node-prefix`, …) | `crates/n2b-rules/src/*.rs` |
-| Exit codes `0`/`1`/`2` | `crates/n2b-cli/src/cli/dispatch.rs` |
+| Exit codes `0`/`1`/`2` | `crates/n2b-cli/src/commands/scan.rs` |
 | ABI cdylib v1 (`find_newlines_u16`, `node2bun_abi_version`) | `crates/n2b-native/src/lib.rs` |
 
-Le filet de sécurité est **double** :
+Le filet de sécurité est **triple** :
 - `tests/compare-baseline.sh` — diff octet-à-octet contre `tests/snapshots/baseline/` et `tests/rpb-dashboard-baseline/`
 - `crates/n2b-cli/tests/contract.rs` — 9 tests `assert_cmd` + validation `jsonschema` contre `schema/v2.json`
+- `crates/n2b-cli/src/schema_test.rs` — `include_str!` des baselines + round-trip `serde_json` vers `N2bReport` (échoue à la **compilation** du CLI si le schéma diverge)
 
 Si tu changes une règle existante, il faut **soit** justifier le breaking et régénérer les baselines, **soit** ajouter une nouvelle règle. Jamais modifier silencieusement.
 
@@ -101,10 +102,12 @@ Si tu changes une règle existante, il faut **soit** justifier le breaking et r�
 ## Codegen schema-first
 
 `schema/v2.json` est la source de vérité unique. `scripts/generate-schema-types.ts` produit :
-- `crates/n2b-core/src/schema.rs` via `cargo-typify`
-- `packages/n2b/src/schema.ts` via `json-schema-to-typescript`
+- `crates/n2b-types/src/schema.rs` (re-exporté par `n2b-core` via `pub use n2b_types::schema`)
+- `packages/n2b-types/src/index.ts` (le type TS consommé par `@n2b/core`)
 
 Les deux fichiers générés sont **commités** et la CI échoue si drift. Jamais éditer ces fichiers à la main — modifier `schema/v2.json` puis relancer le codegen.
+
+La chaîne (figée Phase 0.4) : `cargo-typify` (default flags) pour `schema.rs`, `json-schema-to-typescript --unreachableDefinitions` pour `index.ts`, bannière `@generated` swappée.
 
 ## Rollback transactionnel des migrations
 
