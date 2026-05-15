@@ -2253,6 +2253,7 @@ name = "n2b-rules"
 version = "0.5.0"
 dependencies = [
  "memchr",
+ "n2b-registry",
  "n2b-types",
  "n2b-util",
  "once_cell",
