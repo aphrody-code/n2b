@@ -42,7 +42,7 @@ que seules ~8 des ~90 entrées `BUN_REPLACEMENTS` sont effectivement réécrites
 
 | Phase | Titre | Dépend de | État | Commit |
 |---|---|---|---|---|
-| 0 | Socle propre (PS1→PS8) | — | ☐ à faire | — |
+| 0 | Socle propre (PS1→PS8) | — | ✅ fait | e8e1dcf |
 | 1 | Registre data-driven | 0 | ☐ à faire | — |
 | 2 | Scanner source AST-first | 1 | ☐ à faire | — |
 | 3 | Modèle compat → sévérité (schéma) | 1 | ☐ à faire | — |
