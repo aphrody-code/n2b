@@ -19,6 +19,7 @@
 pub mod audit;
 pub mod llmstxt;
 pub mod manifest;
+pub mod report_card;
 pub mod run;
 
 pub use n2b_ai as ai;

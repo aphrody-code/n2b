@@ -223,6 +223,18 @@ fn meta(opts: &RunOptions, fixes: &[FileFix]) -> Value {
 }
 
 pub fn render_json(fixes: &[FileFix], opts: &RunOptions) -> String {
+    render_json_with_card(fixes, opts, None)
+}
+
+/// Variante consommée par `--migrate` — ajoute le `report_card` (Phase 5 §5.4)
+/// sans toucher à la sortie pour les autres modes. Le card est passé en
+/// `serde_json::Value` (sérialisé en amont) pour rester decoupled de
+/// `n2b-core::report_card` au niveau du crate `n2b-report`.
+pub fn render_json_with_card(
+    fixes: &[FileFix],
+    opts: &RunOptions,
+    card: Option<&Value>,
+) -> String {
     let files: Vec<Value> = fixes
         .iter()
         .map(|f| {
@@ -245,8 +257,47 @@ pub fn render_json(fixes: &[FileFix], opts: &RunOptions) -> String {
     let mut m = meta(opts, fixes);
     if let Some(obj) = m.as_object_mut() {
         obj.insert("files".to_string(), Value::Array(files));
+        if let Some(c) = card {
+            if let Ok(v) = serde_json::to_value(c) {
+                obj.insert("report_card".to_string(), v);
+            }
+        }
     }
     serde_json::to_string_pretty(&m).unwrap_or_default()
+}
+
+/// Affiche le report card en mode text (Phase 5 §5.4 §5.6).
+pub fn render_report_card_text<C: serde::Serialize>(card: &C) -> String {
+    let v = serde_json::to_value(card).unwrap_or_default();
+    let pct = v
+        .get("auto_migratable_pct")
+        .and_then(|x| x.as_f64())
+        .unwrap_or(0.0);
+    let total = v.get("total_findings").and_then(|x| x.as_u64()).unwrap_or(0);
+    let blocking = v
+        .get("blocking_findings")
+        .and_then(|x| x.as_u64())
+        .unwrap_or(0);
+    let migrated = v
+        .get("auto_migrated")
+        .and_then(|x| x.as_u64())
+        .unwrap_or(0);
+    let residue = v
+        .get("manual_residue")
+        .and_then(|x| x.as_array())
+        .map(|a| a.len())
+        .unwrap_or(0);
+    let mut out = String::new();
+    out.push_str(&format!(
+        "\n{}\n  auto-migratable : {} ({}/{} blocking, {} info+)\n  résidu manuel   : {}\n",
+        "Migration report card".bold(),
+        format!("{:.1}%", pct * 100.0).cyan(),
+        migrated,
+        blocking,
+        total - blocking,
+        residue,
+    ));
+    out
 }
 
 /// JSON Lines : 1 objet par ligne, streamable.
