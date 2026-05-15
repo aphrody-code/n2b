@@ -27,7 +27,31 @@ use anyhow::{Context, Result};
 use crate::subprocess::bun::{self, BackupGuard};
 use n2b_core::types::FileFix;
 
+/// Wrapper rétrocompatible (sans options Phase 6) — conservé pour les
+/// appelants externes qui ne consomment pas encore `MigrateOpts`.
+#[allow(dead_code)]
 pub fn run_migrate_side_effects(root: &Path, fixes: &[FileFix], quiet: bool) -> Result<()> {
+    run_migrate_side_effects_with_opts(
+        root,
+        fixes,
+        quiet,
+        MigrateOpts::default(),
+    )
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct MigrateOpts {
+    /// Phase 6 §6.3 : appelle `bunpp scaffold <module>` pour les modules 🔴
+    /// trouvés dans les findings. Crée des fichiers visibles — opt-in.
+    pub scaffold_polyfills: bool,
+}
+
+pub fn run_migrate_side_effects_with_opts(
+    root: &Path,
+    fixes: &[FileFix],
+    quiet: bool,
+    opts: MigrateOpts,
+) -> Result<()> {
     let log = |msg: &str| {
         if !quiet {
             eprintln!("[migrate] {msg}");
@@ -125,6 +149,32 @@ pub fn run_migrate_side_effects(root: &Path, fixes: &[FileFix], quiet: bool) -> 
                         log(&format!("  ✗ bun add -d @types/bun: {e}"));
                     } else {
                         log("  ✓ @types/bun ajouté");
+                    }
+                }
+            }
+        }
+    }
+
+    // 5. Phase 6 §6.3 : scaffold polyfills bunpp pour les modules 🔴
+    //    Opt-in (--scaffold-polyfills). Sous BackupGuard global.
+    if opts.scaffold_polyfills {
+        let mut scaffolded: std::collections::HashSet<String> = std::collections::HashSet::new();
+        for fix in fixes {
+            for f in &fix.findings {
+                if let Some(c) = &f.compat {
+                    use n2b_core::types::CompatStatus;
+                    if c.status == CompatStatus::Missing {
+                        if let Some(bunpp) = &c.bunpp {
+                            let module = bunpp.trim_start_matches("@bun++/node-").to_string();
+                            if scaffolded.insert(module.clone()) {
+                                log(&format!("  → bunpp scaffold node-{module}"));
+                                if let Err(e) = bun::bunpp_scaffold(root, &module) {
+                                    log(&format!("  ✗ bunpp scaffold node-{module}: {e}"));
+                                } else {
+                                    log(&format!("  ✓ polyfill {bunpp} scaffolded"));
+                                }
+                            }
+                        }
                     }
                 }
             }

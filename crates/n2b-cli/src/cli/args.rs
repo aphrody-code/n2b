@@ -91,6 +91,12 @@ pub struct Cli {
     #[arg(long, conflicts_with_all = ["fix", "aggressive"])]
     pub migrate: bool,
 
+    /// Phase 6 §6.3 : appelle `bunpp scaffold <module>` pour chaque module
+    /// 🔴 trouvé. Crée des fichiers visibles dans le projet — opt-in
+    /// explicite, sous BackupGuard. Requiert `--migrate`.
+    #[arg(long, requires = "migrate")]
+    pub scaffold_polyfills: bool,
+
     /// Format du rapport de sortie.
     #[arg(long, value_enum, default_value = "text")]
     pub report: ReportArg,

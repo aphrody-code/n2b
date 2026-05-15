@@ -63,6 +63,30 @@ pub fn install(cwd: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Phase 6 §6.3 : appelle `n2b bunpp scaffold node-<module>` dans `cwd`.
+/// Crée des fichiers visibles (`@bun++/node-<module>.ts` dans le projet).
+/// Sous BackupGuard côté appelant.
+pub fn bunpp_scaffold(cwd: &Path, module: &str) -> Result<()> {
+    // n2b se ré-invoque lui-même — chemin du binaire courant.
+    let exe = std::env::current_exe().context("current_exe")?;
+    let out = std::process::Command::new(&exe)
+        .args(["bunpp", "scaffold", &format!("node-{module}")])
+        .current_dir(cwd)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .output()
+        .with_context(|| format!("impossible de lancer `n2b bunpp scaffold node-{module}`"))?;
+    if !out.status.success() {
+        bail!(
+            "`n2b bunpp scaffold node-{module}` a échoué (exit {}) dans {}:\n{}",
+            out.status,
+            cwd.display(),
+            String::from_utf8_lossy(&out.stderr)
+        );
+    }
+    Ok(())
+}
+
 /// Lance `bun add -d <pkg>` dans `cwd`.
 /// Capture stdout/stderr ; renvoie une erreur riche si le processus échoue.
 pub fn add_dev(cwd: &Path, pkg: &str) -> Result<()> {
