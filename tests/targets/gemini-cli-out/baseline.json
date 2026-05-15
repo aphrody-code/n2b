@@ -813,6 +813,15 @@
               "const isDryRun = process.argv.includes('--dry-run');",
               "const REPO = 'google-gemini/gemini-cli';"
             ]
+          },
+          "compat": {
+            "status": "partial",
+            "module": "child_process",
+            "missing_apis": [
+              "proc.gid",
+              "proc.uid",
+              "ipc-handle"
+            ]
           }
         }
       ]
@@ -846,6 +855,15 @@
               "",
               "const isDryRun = process.argv.includes('--dry-run');",
               "const REPO = 'google-gemini/gemini-cli';"
+            ]
+          },
+          "compat": {
+            "status": "partial",
+            "module": "child_process",
+            "missing_apis": [
+              "proc.gid",
+              "proc.uid",
+              "ipc-handle"
             ]
           }
         }
@@ -85937,6 +85955,10 @@
               "const configPath = process.argv[2];",
               "if (!configPath) {"
             ]
+          },
+          "compat": {
+            "status": "full",
+            "module": "fs"
           }
         },
         {

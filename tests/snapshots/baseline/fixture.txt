@@ -40,10 +40,14 @@ node2bun (mode: check)
     ! 1:1 shebang/node shebang 'node' → 'bun' → #!/usr/bin/env bun
     ! 9:31 imports/bun-native remplacer 'uuid' par Bun.randomUUIDv7 — utiliser Bun.randomUUIDv7() ou crypto.randomUUID() → Bun.randomUUIDv7
     ! 4:19 imports/node-prefix préfixer 'path' avec 'node:' (recommandé) → node:path
+        ↳ compat: 🟢 full (node:path)
     ! 5:32 imports/node-prefix préfixer 'url' avec 'node:' (recommandé) → node:url
+        ↳ compat: 🟢 full (node:url)
     ! 6:20 imports/bun-native remplacer 'node-fetch' par <global fetch> — fetch est global dans Bun — supprimer l'import → <global fetch>
     ! 2:17 imports/node-prefix préfixer 'fs' avec 'node:' (recommandé) → node:fs
+        ↳ compat: 🟢 full (node:fs)
     ! 7:21 imports/node-prefix préfixer 'crypto' avec 'node:' (recommandé) → node:crypto
+        ↳ compat: 🟡 partial (node:crypto) — manque secureHeapUsed, setEngine, setFips
     ! 8:23 imports/bun-native remplacer 'better-sqlite3' par bun:sqlite — préférer bun:sqlite (API similaire) → bun:sqlite
     ! 15:16 api/fs-readFileSync remplacer fs.readFileSync(path, 'utf8') par await Bun.file(path).text() → await Bun.file("./config.json").text()
     ! 16:1 api/fs-writeFileSync remplacer fs.writeFileSync(path, data) par await Bun.write(path, data) → await Bun.write("./last.json", JSON.stringify({ run: Date.n…

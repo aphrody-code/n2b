@@ -107,6 +107,7 @@ export interface Finding {
    */
   docs_url: string;
   context: Context;
+  compat?: Compat;
 }
 /**
  * Source context around a finding: up to 3 lines before, the finding's line, up to 3 lines after. Consumed by LLM/IDE integrations.
@@ -118,4 +119,57 @@ export interface Context {
   before: string[];
   line: string;
   after: string[];
+}
+/**
+ * Phase 3+ : statut de compat Bun du module hôte. Présent uniquement sur les findings imports/node-* et api/node-*. Optionnel (rétro-compat schema_version=2).
+ */
+export interface Compat {
+  /**
+   * Statut de couverture Bun du module Node host. full = tout passe, partial = bug-free sur les chemins courants, missing = pas d'équivalent natif.
+   */
+  status: "full" | "partial" | "missing";
+  /**
+   * Nom du module Node concerné (sans le préfixe node:).
+   */
+  module: string;
+  /**
+   * Sous-APIs documentées comme non implémentées par Bun. Vide quand status=full.
+   */
+  missing_apis?: string[];
+  /**
+   * Équivalent Bun natif suggéré (ex: 'bun:sqlite', 'Bun.serve').
+   */
+  equivalent?: string;
+  /**
+   * Polyfill @bun++/node-* recommandé quand status=missing. Optionnel.
+   */
+  bunpp?: string;
+}
+/**
+ * Bun↔Node compatibility metadata of the host module — Phase 3+. Optional (rétro-compat). Le champ status pilote la sévérité dérivée.
+ *
+ * This interface was referenced by `N2BReport`'s JSON-Schema
+ * via the `definition` "Compat".
+ */
+export interface Compat1 {
+  /**
+   * Statut de couverture Bun du module Node host. full = tout passe, partial = bug-free sur les chemins courants, missing = pas d'équivalent natif.
+   */
+  status: "full" | "partial" | "missing";
+  /**
+   * Nom du module Node concerné (sans le préfixe node:).
+   */
+  module: string;
+  /**
+   * Sous-APIs documentées comme non implémentées par Bun. Vide quand status=full.
+   */
+  missing_apis?: string[];
+  /**
+   * Équivalent Bun natif suggéré (ex: 'bun:sqlite', 'Bun.serve').
+   */
+  equivalent?: string;
+  /**
+   * Polyfill @bun++/node-* recommandé quand status=missing. Optionnel.
+   */
+  bunpp?: string;
 }

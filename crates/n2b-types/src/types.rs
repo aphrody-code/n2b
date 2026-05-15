@@ -54,6 +54,34 @@ pub struct Finding {
     pub autofix: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub aggressive: Option<bool>,
+    /// Phase 3+ : statut de compat Bun du module hôte. Présent uniquement sur
+    /// les findings `imports/node-*` et (Phase 4+) `api/node-*`. Optionnel —
+    /// rétro-compat schema_version=2.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compat: Option<CompatInfo>,
+}
+
+/// Métadonnée de compat attachée à un Finding (Phase 3+). Mirror du
+/// `Compat` du schéma JSON v2 — pas généré pour préserver la simplicité
+/// d'API runtime (les types générés sont consommés au boundary I/O).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CompatInfo {
+    pub status: CompatStatus,
+    pub module: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub missing_apis: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub equivalent: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bunpp: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum CompatStatus {
+    Full,
+    Partial,
+    Missing,
 }
 
 #[derive(Debug, Clone)]
@@ -84,4 +112,5 @@ pub struct MakeFindingOpts {
     pub severity: Option<Severity>,
     pub autofix: Option<bool>,
     pub aggressive: Option<bool>,
+    pub compat: Option<CompatInfo>,
 }

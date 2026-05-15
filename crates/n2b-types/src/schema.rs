@@ -33,6 +33,152 @@ pub mod error {
         }
     }
 }
+#[doc = "Bun↔Node compatibility metadata of the host module — Phase 3+. Optional (rétro-compat). Le champ status pilote la sévérité dérivée."]
+#[doc = r""]
+#[doc = r" <details><summary>JSON schema</summary>"]
+#[doc = r""]
+#[doc = r" ```json"]
+#[doc = "{"]
+#[doc = "  \"description\": \"Bun↔Node compatibility metadata of the host module — Phase 3+. Optional (rétro-compat). Le champ status pilote la sévérité dérivée.\","]
+#[doc = "  \"type\": \"object\","]
+#[doc = "  \"required\": ["]
+#[doc = "    \"module\","]
+#[doc = "    \"status\""]
+#[doc = "  ],"]
+#[doc = "  \"properties\": {"]
+#[doc = "    \"bunpp\": {"]
+#[doc = "      \"description\": \"Polyfill @bun++/node-* recommandé quand status=missing. Optionnel.\","]
+#[doc = "      \"type\": \"string\""]
+#[doc = "    },"]
+#[doc = "    \"equivalent\": {"]
+#[doc = "      \"description\": \"Équivalent Bun natif suggéré (ex: 'bun:sqlite', 'Bun.serve').\","]
+#[doc = "      \"type\": \"string\""]
+#[doc = "    },"]
+#[doc = "    \"missing_apis\": {"]
+#[doc = "      \"description\": \"Sous-APIs documentées comme non implémentées par Bun. Vide quand status=full.\","]
+#[doc = "      \"type\": \"array\","]
+#[doc = "      \"items\": {"]
+#[doc = "        \"type\": \"string\""]
+#[doc = "      }"]
+#[doc = "    },"]
+#[doc = "    \"module\": {"]
+#[doc = "      \"description\": \"Nom du module Node concerné (sans le préfixe node:).\","]
+#[doc = "      \"type\": \"string\""]
+#[doc = "    },"]
+#[doc = "    \"status\": {"]
+#[doc = "      \"description\": \"Statut de couverture Bun du module Node host. full = tout passe, partial = bug-free sur les chemins courants, missing = pas d'équivalent natif.\","]
+#[doc = "      \"type\": \"string\","]
+#[doc = "      \"enum\": ["]
+#[doc = "        \"full\","]
+#[doc = "        \"partial\","]
+#[doc = "        \"missing\""]
+#[doc = "      ]"]
+#[doc = "    }"]
+#[doc = "  },"]
+#[doc = "  \"additionalProperties\": false"]
+#[doc = "}"]
+#[doc = r" ```"]
+#[doc = r" </details>"]
+#[derive(:: serde :: Deserialize, :: serde :: Serialize, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Compat {
+    #[doc = "Polyfill @bun++/node-* recommandé quand status=missing. Optionnel."]
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub bunpp: ::std::option::Option<::std::string::String>,
+    #[doc = "Équivalent Bun natif suggéré (ex: 'bun:sqlite', 'Bun.serve')."]
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub equivalent: ::std::option::Option<::std::string::String>,
+    #[doc = "Sous-APIs documentées comme non implémentées par Bun. Vide quand status=full."]
+    #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
+    pub missing_apis: ::std::vec::Vec<::std::string::String>,
+    #[doc = "Nom du module Node concerné (sans le préfixe node:)."]
+    pub module: ::std::string::String,
+    #[doc = "Statut de couverture Bun du module Node host. full = tout passe, partial = bug-free sur les chemins courants, missing = pas d'équivalent natif."]
+    pub status: CompatStatus,
+}
+impl Compat {
+    pub fn builder() -> builder::Compat {
+        Default::default()
+    }
+}
+#[doc = "Statut de couverture Bun du module Node host. full = tout passe, partial = bug-free sur les chemins courants, missing = pas d'équivalent natif."]
+#[doc = r""]
+#[doc = r" <details><summary>JSON schema</summary>"]
+#[doc = r""]
+#[doc = r" ```json"]
+#[doc = "{"]
+#[doc = "  \"description\": \"Statut de couverture Bun du module Node host. full = tout passe, partial = bug-free sur les chemins courants, missing = pas d'équivalent natif.\","]
+#[doc = "  \"type\": \"string\","]
+#[doc = "  \"enum\": ["]
+#[doc = "    \"full\","]
+#[doc = "    \"partial\","]
+#[doc = "    \"missing\""]
+#[doc = "  ]"]
+#[doc = "}"]
+#[doc = r" ```"]
+#[doc = r" </details>"]
+#[derive(
+    :: serde :: Deserialize,
+    :: serde :: Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum CompatStatus {
+    #[serde(rename = "full")]
+    Full,
+    #[serde(rename = "partial")]
+    Partial,
+    #[serde(rename = "missing")]
+    Missing,
+}
+impl ::std::fmt::Display for CompatStatus {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Full => f.write_str("full"),
+            Self::Partial => f.write_str("partial"),
+            Self::Missing => f.write_str("missing"),
+        }
+    }
+}
+impl ::std::str::FromStr for CompatStatus {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "full" => Ok(Self::Full),
+            "partial" => Ok(Self::Partial),
+            "missing" => Ok(Self::Missing),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for CompatStatus {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for CompatStatus {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for CompatStatus {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
 #[doc = "Source context around a finding: up to 3 lines before, the finding's line, up to 3 lines after. Consumed by LLM/IDE integrations."]
 #[doc = r""]
 #[doc = r" <details><summary>JSON schema</summary>"]
@@ -164,6 +310,10 @@ impl FileFix {
 #[doc = "      \"type\": \"integer\","]
 #[doc = "      \"minimum\": 1.0"]
 #[doc = "    },"]
+#[doc = "    \"compat\": {"]
+#[doc = "      \"description\": \"Phase 3+ : statut de compat Bun du module hôte. Présent uniquement sur les findings imports/node-* et api/node-*. Optionnel (rétro-compat schema_version=2).\","]
+#[doc = "      \"$ref\": \"#/definitions/Compat\""]
+#[doc = "    },"]
 #[doc = "    \"confidence\": {"]
 #[doc = "      \"description\": \"Heuristic confidence 0..1.\","]
 #[doc = "      \"type\": \"number\","]
@@ -226,6 +376,9 @@ pub struct Finding {
     #[doc = "Top-level category derived from rule_id prefix."]
     pub category: ::std::string::String,
     pub col: ::std::num::NonZeroU64,
+    #[doc = "Phase 3+ : statut de compat Bun du module hôte. Présent uniquement sur les findings imports/node-* et api/node-*. Optionnel (rétro-compat schema_version=2)."]
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub compat: ::std::option::Option<Compat>,
     pub confidence: f64,
     pub context: Context,
     #[doc = "Stable Bun (or external) docs URL for this rule."]
@@ -549,6 +702,107 @@ impl ::std::convert::TryFrom<::std::string::String> for Severity {
 #[doc = r" Types for composing complex structures."]
 pub mod builder {
     #[derive(Clone, Debug)]
+    pub struct Compat {
+        bunpp: ::std::result::Result<
+            ::std::option::Option<::std::string::String>,
+            ::std::string::String,
+        >,
+        equivalent: ::std::result::Result<
+            ::std::option::Option<::std::string::String>,
+            ::std::string::String,
+        >,
+        missing_apis:
+            ::std::result::Result<::std::vec::Vec<::std::string::String>, ::std::string::String>,
+        module: ::std::result::Result<::std::string::String, ::std::string::String>,
+        status: ::std::result::Result<super::CompatStatus, ::std::string::String>,
+    }
+    impl ::std::default::Default for Compat {
+        fn default() -> Self {
+            Self {
+                bunpp: Ok(Default::default()),
+                equivalent: Ok(Default::default()),
+                missing_apis: Ok(Default::default()),
+                module: Err("no value supplied for module".to_string()),
+                status: Err("no value supplied for status".to_string()),
+            }
+        }
+    }
+    impl Compat {
+        pub fn bunpp<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.bunpp = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for bunpp: {e}"));
+            self
+        }
+        pub fn equivalent<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.equivalent = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for equivalent: {e}"));
+            self
+        }
+        pub fn missing_apis<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::vec::Vec<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.missing_apis = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for missing_apis: {e}"));
+            self
+        }
+        pub fn module<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::string::String>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.module = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for module: {e}"));
+            self
+        }
+        pub fn status<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<super::CompatStatus>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.status = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for status: {e}"));
+            self
+        }
+    }
+    impl ::std::convert::TryFrom<Compat> for super::Compat {
+        type Error = super::error::ConversionError;
+        fn try_from(value: Compat) -> ::std::result::Result<Self, super::error::ConversionError> {
+            Ok(Self {
+                bunpp: value.bunpp?,
+                equivalent: value.equivalent?,
+                missing_apis: value.missing_apis?,
+                module: value.module?,
+                status: value.status?,
+            })
+        }
+    }
+    impl ::std::convert::From<super::Compat> for Compat {
+        fn from(value: super::Compat) -> Self {
+            Self {
+                bunpp: Ok(value.bunpp),
+                equivalent: Ok(value.equivalent),
+                missing_apis: Ok(value.missing_apis),
+                module: Ok(value.module),
+                status: Ok(value.status),
+            }
+        }
+    }
+    #[derive(Clone, Debug)]
     pub struct Context {
         after: ::std::result::Result<::std::vec::Vec<::std::string::String>, ::std::string::String>,
         before:
@@ -687,6 +941,7 @@ pub mod builder {
         autofix: ::std::result::Result<bool, ::std::string::String>,
         category: ::std::result::Result<::std::string::String, ::std::string::String>,
         col: ::std::result::Result<::std::num::NonZeroU64, ::std::string::String>,
+        compat: ::std::result::Result<::std::option::Option<super::Compat>, ::std::string::String>,
         confidence: ::std::result::Result<f64, ::std::string::String>,
         context: ::std::result::Result<super::Context, ::std::string::String>,
         docs_url: ::std::result::Result<::std::string::String, ::std::string::String>,
@@ -709,6 +964,7 @@ pub mod builder {
                 autofix: Err("no value supplied for autofix".to_string()),
                 category: Err("no value supplied for category".to_string()),
                 col: Err("no value supplied for col".to_string()),
+                compat: Ok(Default::default()),
                 confidence: Err("no value supplied for confidence".to_string()),
                 context: Err("no value supplied for context".to_string()),
                 docs_url: Err("no value supplied for docs_url".to_string()),
@@ -762,6 +1018,16 @@ pub mod builder {
             self.col = value
                 .try_into()
                 .map_err(|e| format!("error converting supplied value for col: {e}"));
+            self
+        }
+        pub fn compat<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::Compat>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.compat = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for compat: {e}"));
             self
         }
         pub fn confidence<T>(mut self, value: T) -> Self
@@ -883,6 +1149,7 @@ pub mod builder {
                 autofix: value.autofix?,
                 category: value.category?,
                 col: value.col?,
+                compat: value.compat?,
                 confidence: value.confidence?,
                 context: value.context?,
                 docs_url: value.docs_url?,
@@ -904,6 +1171,7 @@ pub mod builder {
                 autofix: Ok(value.autofix),
                 category: Ok(value.category),
                 col: Ok(value.col),
+                compat: Ok(value.compat),
                 confidence: Ok(value.confidence),
                 context: Ok(value.context),
                 docs_url: Ok(value.docs_url),

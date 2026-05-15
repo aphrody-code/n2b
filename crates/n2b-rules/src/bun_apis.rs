@@ -191,7 +191,8 @@ pub fn apply_bun_api_rules_with_imports(
                     autofix: Some(has_repl),
                     aggressive: if r.aggressive { Some(true) } else { None },
                     severity: Some(r.severity),
-                },
+                ..Default::default()
+            },
             ));
             if let Some(repl) = replacement_for_edit {
                 edits.push(Edit {
