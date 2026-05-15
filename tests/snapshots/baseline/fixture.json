@@ -4,7 +4,7 @@
   "tool": "node2bun",
   "version": "0.5.0",
   "mode": "check",
-  "root": "/home/ubuntu/vps/packages/n2b/test/fixture",
+  "root": "/home/ubuntu/n2b/test/fixture",
   "files_scanned": 5,
   "findings_total": 46,
   "files": [

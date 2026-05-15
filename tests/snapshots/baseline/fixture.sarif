@@ -2354,7 +2354,7 @@
         {
           "executionSuccessful": true,
           "workingDirectory": {
-            "uri": "/home/ubuntu/vps/packages/n2b/test/fixture"
+            "uri": "/home/ubuntu/n2b/test/fixture"
           }
         }
       ]

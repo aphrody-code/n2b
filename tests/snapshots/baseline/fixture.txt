@@ -1,5 +1,5 @@
 node2bun (mode: check)
-  racine : /home/ubuntu/vps/packages/n2b/test/fixture
+  racine : /home/ubuntu/n2b/test/fixture
   fichiers scannés : 5
   findings : 46
   fichiers modifiés : 3
