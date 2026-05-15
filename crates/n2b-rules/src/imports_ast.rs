@@ -61,7 +61,8 @@ impl RequireCollect {
 
 impl<'a> Visit<'a> for RequireCollect {
     fn visit_call_expression(&mut self, it: &oxc_ast::ast::CallExpression<'a>) {
-        let is_require = matches!(&it.callee, Expression::Identifier(ident) if ident.name.as_str() == "require");
+        let is_require =
+            matches!(&it.callee, Expression::Identifier(ident) if ident.name.as_str() == "require");
         if is_require {
             if let Some(oxc_ast::ast::Argument::StringLiteral(lit)) = it.arguments.first() {
                 self.push_string_literal(lit);
@@ -197,7 +198,8 @@ impl GraphCollect {
 }
 
 fn extract_require_arg<'a>(call: &oxc_ast::ast::CallExpression<'a>) -> Option<String> {
-    let is_require = matches!(&call.callee, Expression::Identifier(id) if id.name.as_str() == "require");
+    let is_require =
+        matches!(&call.callee, Expression::Identifier(id) if id.name.as_str() == "require");
     if !is_require {
         return None;
     }

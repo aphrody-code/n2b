@@ -18,13 +18,13 @@
 //! `include_str!`, chargés et validés au premier accès via `once_cell::Lazy`.
 //! Cf. plan/03-registre-spec.md pour la spec complète.
 
-pub mod schema;
-pub mod registry;
 pub mod engine;
+pub mod registry;
+pub mod schema;
 
-pub use schema::{
-    ApiEntry, BindingKind, CliEntry, Compat, Confidence, GlobalEntry, GlobalContext,
-    ImportBinding, ImportGraph, MatchInput, ModuleEntry, PackageEntry, PackageStrategy,
-    ReplaceKind, Rewrite, derive_severity,
-};
 pub use registry::{APIS, CLI, GLOBALS, MODULES, PACKAGES};
+pub use schema::{
+    ApiEntry, BindingKind, CliEntry, Compat, Confidence, GlobalContext, GlobalEntry, ImportBinding,
+    ImportGraph, MatchInput, ModuleEntry, PackageEntry, PackageStrategy, ReplaceKind, Rewrite,
+    derive_severity,
+};

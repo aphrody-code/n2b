@@ -74,8 +74,12 @@ pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
     // Phase 4 §4.7 : résout n2b.json (parent-first), valide, applique
     // `ignore` + `rules` overrides. Précédence : flags CLI > n2b.json > défauts.
     let manifest = crate::manifest::resolve_and_load(&opts.root)?;
-    let manifest_overrides: Arc<crate::manifest::RuleOverrideMap> =
-        Arc::new(manifest.as_ref().map(|m| m.manifest.rules.clone()).unwrap_or_default());
+    let manifest_overrides: Arc<crate::manifest::RuleOverrideMap> = Arc::new(
+        manifest
+            .as_ref()
+            .map(|m| m.manifest.rules.clone())
+            .unwrap_or_default(),
+    );
 
     // Build matcher for default + user ignore globs.
     let mut gsb = GlobSetBuilder::new();

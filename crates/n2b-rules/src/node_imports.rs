@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::imports_ast;
-use n2b_registry::{Compat, ModuleEntry, MODULES, PACKAGES};
+use n2b_registry::{Compat, MODULES, ModuleEntry, PACKAGES};
 use n2b_types::types::{CompatInfo, CompatStatus, Finding, MakeFindingOpts, Severity};
 use n2b_util::{Edit, apply_edits, line_offsets, make_finding};
 use once_cell::sync::Lazy;
@@ -25,12 +25,8 @@ static BUILTINS: Lazy<HashSet<String>> =
     Lazy::new(|| MODULES.iter().map(|m| m.module.clone()).collect());
 
 /// Index `module → ModuleEntry` pour récupérer le statut compat d'un import.
-static MODULE_INDEX: Lazy<HashMap<String, &'static ModuleEntry>> = Lazy::new(|| {
-    MODULES
-        .iter()
-        .map(|m| (m.module.clone(), m))
-        .collect()
-});
+static MODULE_INDEX: Lazy<HashMap<String, &'static ModuleEntry>> =
+    Lazy::new(|| MODULES.iter().map(|m| (m.module.clone(), m)).collect());
 
 /// Convertit un `Compat` du registre vers le `CompatStatus` runtime/JSON.
 fn compat_status(c: Compat) -> CompatStatus {

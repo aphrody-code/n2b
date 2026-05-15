@@ -97,7 +97,11 @@ mod tests {
     fn detects_node_image_alpine() {
         let src = "services:\n  app:\n    image: node:20-alpine\n";
         let (findings, _) = scan_docker_compose("docker-compose.yml", src);
-        assert!(findings.iter().any(|f| f.rule_id == "docker-compose/node-image"));
+        assert!(
+            findings
+                .iter()
+                .any(|f| f.rule_id == "docker-compose/node-image")
+        );
         let f = findings
             .iter()
             .find(|f| f.rule_id == "docker-compose/node-image")
@@ -120,7 +124,11 @@ mod tests {
     fn ignores_non_node_image() {
         let src = "services:\n  db:\n    image: postgres:16\n";
         let (findings, _) = scan_docker_compose("docker-compose.yml", src);
-        assert!(!findings.iter().any(|f| f.rule_id == "docker-compose/node-image"));
+        assert!(
+            !findings
+                .iter()
+                .any(|f| f.rule_id == "docker-compose/node-image")
+        );
     }
 
     #[test]

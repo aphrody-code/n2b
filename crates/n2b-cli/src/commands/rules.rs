@@ -669,13 +669,22 @@ pub fn run_rules(report: Report) -> Result<ExitCode> {
             "options lockfile obsolètes avec bun.lock",
         ),
         // Phase 4 — nouvelles règles
-        ("env/node-only-var", "vars Node-only dans .env (NODE_OPTIONS, NODE_PATH, etc.)"),
+        (
+            "env/node-only-var",
+            "vars Node-only dans .env (NODE_OPTIONS, NODE_PATH, etc.)",
+        ),
         ("docker-compose/node-image", "image: node:* → oven/bun:*"),
-        ("js-config/jest", "jest.config → bun:test (compatible Jest API)"),
+        (
+            "js-config/jest",
+            "jest.config → bun:test (compatible Jest API)",
+        ),
         ("js-config/vitest", "vitest.config → bun:test"),
         ("js-config/webpack", "webpack.config → Bun.build"),
         ("js-config/rollup", "rollup.config → Bun.build"),
-        ("js-config/babel", "babel.config / .babelrc → transpile natif Bun"),
+        (
+            "js-config/babel",
+            "babel.config / .babelrc → transpile natif Bun",
+        ),
         ("js-config/mocha", ".mocharc → bun:test"),
         ("globals/__dirname", "__dirname → import.meta.dir (ESM)"),
         ("globals/__filename", "__filename → import.meta.path (ESM)"),
@@ -683,9 +692,15 @@ pub fn run_rules(report: Report) -> Result<ExitCode> {
         ("globals/process-platform", "process.platform — natif"),
         ("globals/process-argv", "process.argv → Bun.argv (alias)"),
         ("globals/process-env", "process.env → Bun.env (alias)"),
-        ("globals/module-exports", "module.exports → export default (CJS → ESM)"),
+        (
+            "globals/module-exports",
+            "module.exports → export default (CJS → ESM)",
+        ),
         ("globals/exports", "exports.X → export const X (CJS → ESM)"),
-        ("globals/require-dynamic", "require(<expr>) → await import(<expr>)"),
+        (
+            "globals/require-dynamic",
+            "require(<expr>) → await import(<expr>)",
+        ),
     ];
     match report {
         Report::Json | Report::Jsonl => {

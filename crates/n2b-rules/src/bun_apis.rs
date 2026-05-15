@@ -23,12 +23,12 @@
 //! provient effectivement d'un import du specifier attendu — l'AST
 //! tranche, plus de regex contextuelle ad-hoc.
 
-use n2b_registry::{ApiEntry, ImportGraph, APIS, MODULES};
-use std::collections::HashSet;
+use n2b_registry::{APIS, ApiEntry, ImportGraph, MODULES};
 use n2b_types::types::{Finding, MakeFindingOpts, Severity};
 use n2b_util::{Edit, apply_edits, line_offsets, make_finding};
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
+use std::collections::HashSet;
 
 enum ReplaceKind {
     None,
@@ -138,8 +138,8 @@ pub fn apply_bun_api_rules_with_imports(
                 // n'est pas un namespace valide — `marked` peut être un objet
                 // local. Pour les builtins (`child_process.exec(`), le préfixe
                 // EST sa propre preuve.
-                let explicit_ok = original.starts_with(&explicit_prefix)
-                    && NODE_BUILTINS.contains(from_norm);
+                let explicit_ok =
+                    original.starts_with(&explicit_prefix) && NODE_BUILTINS.contains(from_norm);
                 let resolves = if explicit_ok {
                     true
                 } else {
@@ -258,11 +258,7 @@ fn first_meaningful_ident(matched: &str) -> Option<&str> {
             break;
         }
     }
-    if end == 0 {
-        None
-    } else {
-        Some(&s[..end])
-    }
+    if end == 0 { None } else { Some(&s[..end]) }
 }
 
 /// Le `root` (binding local) résout-il vers le specifier `from` ?
@@ -309,8 +305,14 @@ mod tests {
             Some("express")
         );
         assert_eq!(first_meaningful_ident("await fetch()"), Some("fetch"));
-        assert_eq!(first_meaningful_ident("let x = new S3Client()"), Some("S3Client"));
-        assert_eq!(first_meaningful_ident("child_process.exec("), Some("child_process"));
+        assert_eq!(
+            first_meaningful_ident("let x = new S3Client()"),
+            Some("S3Client")
+        );
+        assert_eq!(
+            first_meaningful_ident("child_process.exec("),
+            Some("child_process")
+        );
     }
 
     #[test]
@@ -321,7 +323,13 @@ mod tests {
 
     #[test]
     fn binding_resolves_node_prefix_canonical() {
-        let g = graph_with("readFileSync", "node:fs", BindingKind::Named { imported: "readFileSync".to_string() });
+        let g = graph_with(
+            "readFileSync",
+            "node:fs",
+            BindingKind::Named {
+                imported: "readFileSync".to_string(),
+            },
+        );
         // import_from = "fs" devrait résoudre malgré le préfixe node: dans le binding
         assert!(binding_resolves(&g, "readFileSync", "fs"));
     }
@@ -339,7 +347,13 @@ mod tests {
     #[test]
     fn binding_resolves_renamed_named_import() {
         // import { v4 } from "uuid"
-        let g = graph_with("v4", "uuid", BindingKind::Named { imported: "v4".to_string() });
+        let g = graph_with(
+            "v4",
+            "uuid",
+            BindingKind::Named {
+                imported: "v4".to_string(),
+            },
+        );
         assert!(binding_resolves(&g, "v4", "uuid"));
     }
 }

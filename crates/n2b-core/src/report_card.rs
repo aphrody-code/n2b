@@ -114,7 +114,10 @@ fn derive_residue_explanation(f: &n2b_types::types::Finding) -> (String, String)
             if let Some(bunpp) = &c.bunpp {
                 return (
                     format!("module {} (compat: missing)", c.module),
-                    format!("scaffold polyfill : `bunx n2b bunpp scaffold {}` (puis `import` depuis le polyfill)", bunpp.trim_start_matches("@bun++/")),
+                    format!(
+                        "scaffold polyfill : `bunx n2b bunpp scaffold {}` (puis `import` depuis le polyfill)",
+                        bunpp.trim_start_matches("@bun++/")
+                    ),
                 );
             }
             return (
@@ -263,14 +266,21 @@ mod tests {
         FileFix {
             file: "x.ts".into(),
             before: "before".into(),
-            after: if changed { "after".into() } else { "before".into() },
+            after: if changed {
+                "after".into()
+            } else {
+                "before".into()
+            },
             findings,
         }
     }
 
     #[test]
     fn pct_is_one_when_no_blocking_findings() {
-        let card = build(&[fix(vec![finding("api/x", Severity::Info, None, false)], false)]);
+        let card = build(&[fix(
+            vec![finding("api/x", Severity::Info, None, false)],
+            false,
+        )]);
         assert_eq!(card.auto_migratable_pct, 1.0);
         assert_eq!(card.blocking_findings, 0);
         assert_eq!(card.total_findings, 1);
@@ -300,10 +310,13 @@ mod tests {
             vec![finding("api/a", Severity::Warn, Some("BunX"), true)],
             true,
         )]);
-        let state = N2bState::from_card(&card, &[fix(
-            vec![finding("api/a", Severity::Warn, Some("BunX"), true)],
-            true,
-        )]);
+        let state = N2bState::from_card(
+            &card,
+            &[fix(
+                vec![finding("api/a", Severity::Warn, Some("BunX"), true)],
+                true,
+            )],
+        );
         assert_eq!(state.status, StateStatus::Complete);
         assert_eq!(state.migrated_files, vec!["x.ts".to_string()]);
     }
