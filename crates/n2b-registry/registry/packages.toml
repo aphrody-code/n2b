@@ -768,3 +768,66 @@ package     = "bullmq"
 replacement = "tokio + redis-rs"
 note        = "Pas de drop-in 1:1 — l'équivalent Rust idiomatique est tokio comme runtime + https://github.com/redis-rs/redis-rs pour Redis async + un worker custom (~50 LOC)."
 aggressive  = false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section : Leptos (https://github.com/leptos-rs/leptos) — framework full-stack
+# Rust (signals + hydration SSR + server functions). Alternative à React/Next.js
+# pour projets où on veut un binaire natif compilé, déployable sans Node runtime.
+# Pair idiomatique avec axum côté serveur + hydratation client via WASM.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "react"
+replacement = "leptos"
+note        = "https://github.com/leptos-rs/leptos — framework Rust reactive (signals fine-grained, pas de VDOM). SSR + CSR + hydration intégrés."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "react-dom"
+replacement = "leptos (intégré)"
+note        = "Hydration et rendu DOM gérés nativement par leptos via leptos_dom / wasm-bindgen — pas de package séparé."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "next"
+replacement = "leptos + axum"
+note        = "https://github.com/leptos-rs/leptos + https://github.com/tokio-rs/axum — équivalent Next.js : SSR via integration leptos_axum, server functions typées, file-based routing via leptos_router. Déploiement standalone binary (Fly.io / Shuttle / Cloudflare Workers WASM)."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "@tanstack/react-router"
+replacement = "leptos_router"
+note        = "Router fourni par l'écosystème Leptos — composants <Route>, <A>, hooks use_params/use_query, nested layouts. https://docs.rs/leptos_router"
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "@tanstack/react-query"
+replacement = "leptos resources / server functions"
+note        = "Leptos a un primitive natif `create_resource()` (signals async) qui couvre le data-fetching cache pattern de react-query. Combiné avec server functions (#[server]) pour le SSR fetch."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "zod"
+replacement = "serde + validator"
+note        = "https://github.com/serde-rs/serde + https://github.com/Keats/validator — validation déclarative via derive macros. Plus puissant car type-safe à la compile."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "prisma"
+replacement = "sqlx ou diesel ou sea-orm"
+note        = "Pas d'équivalent 1:1 — choix : sqlx (https://github.com/launchbadge/sqlx, async, type-checked SQL à la compile), diesel (sync, mature), ou sea-orm (active-record + migrations). Pour stack tokio + axum + leptos → sqlx idiomatique."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "drizzle-orm"
+replacement = "sqlx"
+note        = "https://github.com/launchbadge/sqlx — query builder + raw SQL type-checked à la compile via macro query!(). Bindings Postgres/MySQL/SQLite. Plus proche philosophiquement de Drizzle (SQL-first) que diesel (DSL)."
+aggressive  = false
