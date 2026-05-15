@@ -689,11 +689,18 @@ fn expand(caps: &Captures, template: &str) -> String {
     out
 }
 
-/// Retourne true si un fs.mkdirSync(<arg>, ...) apparaît dans les ~600 octets
-/// (≈ 15 lignes) qui suivent la position `pos` — indicateur qu'il s'agit d'un
-/// dossier et non d'un fichier.
+/// Fenêtre de recherche (en octets) pour décider si un `fs.existsSync` vise un
+/// dossier. Heuristique : portée d'un bloc `fs.mkdir` typiquement proche du test
+/// d'existence (≈ 15 lignes).
+/// TODO(phase-2) : supprimable une fois le matching AST en place — l'AST sait si
+/// le même symbole est passé à fs.mkdir sans fenêtre arbitraire.
+const DIR_CONTEXT_WINDOW_BYTES: usize = 600;
+
+/// Retourne true si un fs.mkdirSync(<arg>, ...) apparaît dans la fenêtre
+/// `DIR_CONTEXT_WINDOW_BYTES` qui suit la position `pos` — indicateur qu'il
+/// s'agit d'un dossier et non d'un fichier.
 fn looks_like_dir_context(source: &str, pos: usize, arg: &str) -> bool {
-    let end = (pos + 600).min(source.len());
+    let end = (pos + DIR_CONTEXT_WINDOW_BYTES).min(source.len());
     let window = &source[pos..end];
     let needle_sync = format!("fs.mkdirSync({arg}");
     let needle_async = format!("fs.mkdir({arg}");
