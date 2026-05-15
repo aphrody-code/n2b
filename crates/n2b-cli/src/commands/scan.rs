@@ -72,7 +72,9 @@ pub fn run(cli: &Cli) -> Result<ExitCode> {
         None
     };
 
-    let card_value = report_card.as_ref().and_then(|c| serde_json::to_value(c).ok());
+    let card_value = report_card
+        .as_ref()
+        .and_then(|c| serde_json::to_value(c).ok());
     match opts.report {
         Report::Json => println!(
             "{}",

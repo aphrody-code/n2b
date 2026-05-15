@@ -79,9 +79,7 @@ impl JsConfigKind {
             Self::Webpack => {
                 "Bun.build remplace webpack pour la plupart des cas (esbuild-like, plugins n2b-compatibles)"
             }
-            Self::Rollup => {
-                "Bun.build remplace rollup (bundling ESM + tree-shaking natif)"
-            }
+            Self::Rollup => "Bun.build remplace rollup (bundling ESM + tree-shaking natif)",
             Self::Babel => {
                 "Bun transpile TS/JSX/decorators nativement — supprimer babel.config / .babelrc"
             }

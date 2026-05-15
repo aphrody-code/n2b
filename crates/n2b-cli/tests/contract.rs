@@ -190,7 +190,10 @@ fn category_globals_is_listed() {
     // Phase 4 — globals.toml peuplé avec 9 entrées.
     let ids = rule_ids_in_rules_listing();
     let cat: Vec<_> = ids.iter().filter(|i| i.starts_with("globals/")).collect();
-    assert!(!cat.is_empty(), "catégorie globals/* doit être listée (Phase 4)");
+    assert!(
+        !cat.is_empty(),
+        "catégorie globals/* doit être listée (Phase 4)"
+    );
 }
 
 // ─── Phase 7 §7.1 — rétro-compat schéma : Finding sans `compat` valide ──
@@ -256,13 +259,13 @@ fn report_card_present_with_migrate() {
         r#"{"name":"n2b-card-test","version":"0.0.1","private":true}"#,
     )
     .unwrap();
-    std::fs::write(tmp.join("foo.ts"), "import {readFileSync} from 'fs';\nreadFileSync('x','utf8');\n").unwrap();
+    std::fs::write(
+        tmp.join("foo.ts"),
+        "import {readFileSync} from 'fs';\nreadFileSync('x','utf8');\n",
+    )
+    .unwrap();
 
-    let (stdout, stderr, _code) = run_n2b(&[
-        tmp.to_str().unwrap(),
-        "--migrate",
-        "--report=json",
-    ]);
+    let (stdout, stderr, _code) = run_n2b(&[tmp.to_str().unwrap(), "--migrate", "--report=json"]);
     // Si bun install échoue, on a rollback + exit code != 0. Dans ce cas,
     // on relâche le test (CI sans bun installé).
     if stderr.contains("bun install") && stderr.contains("a échoué") {
@@ -272,7 +275,9 @@ fn report_card_present_with_migrate() {
     }
     let v: serde_json::Value = serde_json::from_str(&stdout)
         .unwrap_or_else(|e| panic!("JSON parse failed: {e}\nstdout: {stdout}"));
-    let card = v.get("report_card").expect("report_card doit être présent en mode --migrate");
+    let card = v
+        .get("report_card")
+        .expect("report_card doit être présent en mode --migrate");
     assert!(card.get("auto_migratable_pct").is_some());
     assert!(card.get("manual_residue").is_some());
     assert!(card.get("auto_migratable_pct").unwrap().as_f64().unwrap() >= 0.0);
@@ -280,7 +285,10 @@ fn report_card_present_with_migrate() {
 
     // .n2b/state.json doit être écrit.
     let state_path = tmp.join(".n2b/state.json");
-    assert!(state_path.exists(), ".n2b/state.json doit exister après --migrate");
+    assert!(
+        state_path.exists(),
+        ".n2b/state.json doit exister après --migrate"
+    );
 
     let _ = std::fs::remove_dir_all(&tmp);
 }

@@ -159,8 +159,8 @@ pub fn find_manifest(start: &Path) -> Option<PathBuf> {
 /// Charge et désérialise un manifeste depuis `path`. Erreur explicite avec
 /// numéro de ligne si JSON invalide.
 pub fn load_manifest(path: &Path) -> Result<N2bManifest> {
-    let bytes = std::fs::read(path)
-        .with_context(|| format!("lire le manifeste: {}", path.display()))?;
+    let bytes =
+        std::fs::read(path).with_context(|| format!("lire le manifeste: {}", path.display()))?;
     let manifest: N2bManifest = serde_json::from_slice(&bytes).map_err(|e| {
         anyhow!(
             "manifeste {} invalide: {} (ligne {}, col {})",
@@ -189,10 +189,7 @@ pub type RuleOverrideMap = HashMap<String, RuleOverride>;
 /// Applique les overrides de règles à un set de FileFix. Phase 4 §4.7 :
 /// `"off"` → drop le finding ; sévérité différente → ré-ajuste ; autofix
 /// override → ré-ajuste. Ne touche pas aux findings sans override.
-pub fn apply_rule_overrides(
-    fixes: &mut [n2b_types::types::FileFix],
-    overrides: &RuleOverrideMap,
-) {
+pub fn apply_rule_overrides(fixes: &mut [n2b_types::types::FileFix], overrides: &RuleOverrideMap) {
     use n2b_types::types::Severity;
 
     for fix in fixes.iter_mut() {

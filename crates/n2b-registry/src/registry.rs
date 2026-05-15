@@ -17,8 +17,8 @@
 //! de `cargo test --workspace`.
 
 use crate::schema::{
-    ApiEntry, ApisFile, CliEntry, CliFile, GlobalEntry, GlobalsFile, ModuleEntry,
-    ModulesFile, PackageEntry, PackagesFile,
+    ApiEntry, ApisFile, CliEntry, CliFile, GlobalEntry, GlobalsFile, ModuleEntry, ModulesFile,
+    PackageEntry, PackagesFile,
 };
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -31,12 +31,8 @@ const CLI_TOML: &str = include_str!("../registry/cli.toml");
 const GLOBALS_TOML: &str = include_str!("../registry/globals.toml");
 
 pub static APIS: Lazy<Vec<ApiEntry>> = Lazy::new(|| {
-    let parsed: ApisFile =
-        toml::from_str(APIS_TOML).expect("registry/apis.toml: TOML invalide");
-    validate_unique_ids_and_patterns(
-        parsed.apis.iter().map(|e| (&e.id, &e.pattern)),
-        "apis.toml",
-    );
+    let parsed: ApisFile = toml::from_str(APIS_TOML).expect("registry/apis.toml: TOML invalide");
+    validate_unique_ids_and_patterns(parsed.apis.iter().map(|e| (&e.id, &e.pattern)), "apis.toml");
     for e in &parsed.apis {
         Regex::new(&e.pattern).unwrap_or_else(|err| {
             panic!("registry/apis.toml: regex invalide pour '{}': {err}", e.id)
@@ -70,12 +66,8 @@ pub static MODULES: Lazy<Vec<ModuleEntry>> = Lazy::new(|| {
 });
 
 pub static CLI: Lazy<Vec<CliEntry>> = Lazy::new(|| {
-    let parsed: CliFile =
-        toml::from_str(CLI_TOML).expect("registry/cli.toml: TOML invalide");
-    validate_unique_ids_and_patterns(
-        parsed.cli.iter().map(|e| (&e.id, &e.pattern)),
-        "cli.toml",
-    );
+    let parsed: CliFile = toml::from_str(CLI_TOML).expect("registry/cli.toml: TOML invalide");
+    validate_unique_ids_and_patterns(parsed.cli.iter().map(|e| (&e.id, &e.pattern)), "cli.toml");
     for e in &parsed.cli {
         Regex::new(&e.pattern).unwrap_or_else(|err| {
             panic!("registry/cli.toml: regex invalide pour '{}': {err}", e.id)
@@ -170,6 +162,10 @@ mod tests {
     #[test]
     fn cli_count_matches_baseline() {
         // Source : cli_commands.rs MAPPINGS — 47 entrées.
-        assert_eq!(CLI.len(), 47, "cli.toml a divergé de cli_commands.rs MAPPINGS");
+        assert_eq!(
+            CLI.len(),
+            47,
+            "cli.toml a divergé de cli_commands.rs MAPPINGS"
+        );
     }
 }

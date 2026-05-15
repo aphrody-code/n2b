@@ -46,9 +46,9 @@ proptest! {
 
 /// Helper : true si findings ne contient aucune règle api/* ciblant `from`.
 fn has_no_api_finding_from(findings: &[n2b_core::types::Finding], hint: &str) -> bool {
-    !findings.iter().any(|f| {
-        f.rule_id.starts_with("api/") && f.message.contains(hint)
-    })
+    !findings
+        .iter()
+        .any(|f| f.rule_id.starts_with("api/") && f.message.contains(hint))
 }
 
 #[test]
@@ -64,7 +64,10 @@ fn local_function_named_marked_does_not_trigger_api_marked() {
     assert!(
         has_no_api_finding_from(&findings, "Bun.markdown"),
         "fonction locale 'marked' ne doit pas déclencher api/marked-* — trouvé: {:?}",
-        findings.iter().filter(|f| f.rule_id.starts_with("api/marked")).collect::<Vec<_>>()
+        findings
+            .iter()
+            .filter(|f| f.rule_id.starts_with("api/marked"))
+            .collect::<Vec<_>>()
     );
 }
 
@@ -113,7 +116,10 @@ fn local_method_named_exec_does_not_trigger_child_process_exec() {
     assert!(
         !findings.iter().any(|f| f.rule_id == "api/exec"),
         "exec() méthode/RegExp sans import 'child_process' ne doit pas déclencher api/exec — findings: {:?}",
-        findings.iter().filter(|f| f.rule_id == "api/exec").collect::<Vec<_>>()
+        findings
+            .iter()
+            .filter(|f| f.rule_id == "api/exec")
+            .collect::<Vec<_>>()
     );
 }
 

@@ -31,12 +31,7 @@ use n2b_core::types::FileFix;
 /// appelants externes qui ne consomment pas encore `MigrateOpts`.
 #[allow(dead_code)]
 pub fn run_migrate_side_effects(root: &Path, fixes: &[FileFix], quiet: bool) -> Result<()> {
-    run_migrate_side_effects_with_opts(
-        root,
-        fixes,
-        quiet,
-        MigrateOpts::default(),
-    )
+    run_migrate_side_effects_with_opts(root, fixes, quiet, MigrateOpts::default())
 }
 
 #[derive(Debug, Clone, Default)]

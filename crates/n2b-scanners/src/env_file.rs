@@ -49,9 +49,7 @@ const NODE_ONLY_VARS: &[(&str, &str)] = &[
 ];
 
 pub fn is_env_file(name: &str) -> bool {
-    name == ".env"
-        || name == ".env.local"
-        || name.starts_with(".env.")
+    name == ".env" || name == ".env.local" || name.starts_with(".env.")
 }
 
 pub fn scan_env_file(path: &str, content: &str) -> (Vec<Finding>, String) {
@@ -127,7 +125,11 @@ mod tests {
         let (findings, _) = scan_env_file(".env", src);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].rule_id, "env/node-only-var");
-        assert!(findings[0].message.contains("Bun n'interprète pas NODE_OPTIONS"));
+        assert!(
+            findings[0]
+                .message
+                .contains("Bun n'interprète pas NODE_OPTIONS")
+        );
     }
 
     #[test]

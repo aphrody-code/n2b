@@ -79,10 +79,7 @@ pub fn apply_cli_rules(path: &str, source: &str) -> (Vec<Finding>, String) {
 
             let text = mat.as_str().to_string();
             // Rejoue la regex sur le hit pour conserver les back-refs ($1, $2).
-            let rewritten = rule
-                .re
-                .replace(&text, rule.replace.as_str())
-                .to_string();
+            let rewritten = rule.re.replace(&text, rule.replace.as_str()).to_string();
             findings.push(make_finding(
                 path,
                 &offsets,
