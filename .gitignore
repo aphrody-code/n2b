@@ -16,3 +16,7 @@ task.json
 
 # upstream source clones — reference material, regenerable, not n2b's code
 upstream/
+
+# real-world test targets — clones, not n2b's code (baselines tracked under tests/targets/*/baseline.json)
+tests/targets/gemini-cli/
+tests/targets/gemini-cli-out/raw-*.json
