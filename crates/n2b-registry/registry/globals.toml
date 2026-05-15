@@ -1,0 +1,9 @@
+# registry/globals.toml — globals Node (CJS / ESM) à part entière.
+#
+# Phase 1 : vide. Les règles `api/dirname-esm` et `api/filename-esm`
+# restent dans `apis.toml` pour l'instant — Phase 4 les déplacera ici
+# avec les nouveaux globals (`__dirname`, `require`, `process.*`,
+# `module.exports`, ...). Le crate charge ce fichier mais ne fait rien
+# tant qu'il est vide.
+
+# (intentionnellement vide en Phase 1)
