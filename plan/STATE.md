@@ -20,7 +20,23 @@ Prérequis environnementaux (committés avant Phase 0) :
 
 ## In progress
 
-Phase 1 — Registre data-driven : à démarrer.
+**Phase 1 — Registre data-driven** : non démarrée. Handoff à la session suivante.
+
+Fichiers modifiés non commités : aucun (`git status` propre).
+
+Prochaine action exacte (Phase 1 sub-step 1.1 — création du crate `n2b-registry`) :
+1. Créer `crates/n2b-registry/Cargo.toml` avec `[lib]`, deps `serde`/`toml`/`once_cell`/`regex` + `n2b-types`/`n2b-util` workspace.
+2. Ajouter `crates/n2b-registry` aux `members` de `/home/ubuntu/n2b/Cargo.toml` (déjà couvert par `crates/*` — vérifier).
+3. Ajouter `toml = "0.8"` aux `[workspace.dependencies]` du root `Cargo.toml`.
+4. Scaffolder `src/{lib.rs,schema.rs,registry.rs,engine.rs}` selon `plan/02-architecture-cible.md` §2 et `plan/03-registre-spec.md`.
+
+Données à migrer (zero-drift requirement — diff baseline doit rester vide) :
+- `crates/n2b-rules/src/bun_apis.rs` static `RULES` (72 entrées api/* + 2 next/*) → `registry/apis.toml`
+- `crates/n2b-rules/src/node_imports.rs` static `BUILTINS` (47 modules) → `registry/modules.toml`
+- `crates/n2b-rules/src/node_imports.rs` static `BUN_REPLACEMENTS` (~40 entrées) → `registry/packages.toml`
+- `crates/n2b-rules/src/cli_commands.rs` static `MAPPINGS` (~50 entrées cli/*) → `registry/cli.toml`
+
+## Decisions
 
 ## Decisions
 
