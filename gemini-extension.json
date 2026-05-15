@@ -1,0 +1,6 @@
+{
+	"name": "bun-agent",
+	"version": "2.3.0",
+	"description": "Bun-native Gemini CLI extension co-located with the n2b migration tool (Rust+TS). 10 agent skills (analyze, run, dream, deploy, n2b, move, gemini-cli-jsx, gemini-cli-cli, green-gate, regen-baseline), 7 custom commands, drift hooks (cargo fmt + schema codegen reminders), n2b binary itself. Mirror of the Claude Code plugin (.claude-plugin/plugin.json) for cross-tool parity.",
+	"contextFileName": "GEMINI.md"
+}

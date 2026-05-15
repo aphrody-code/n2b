@@ -1,7 +1,7 @@
 ---
 name: discord-bot
 description: "Use when building, debugging, or reviewing Discord bots — covers discord.js v14.26.x (latest, Node 22.12+), REST command deployment, Gateway intents, interactions (chat-input slash commands, buttons, select menus, modals, autocomplete, user/message context menus), builders (`SlashCommandBuilder`, `EmbedBuilder`, `ButtonBuilder`, `ModalBuilder`, `ActionRowBuilder`), sharding (`ShardingManager`), voice, permissions (`PermissionsBitField`, `setDefaultMemberPermissions`, `setContexts`, `setIntegrationTypes`), caching/sweepers, rate limits, and error handling. Also covers the **discordx** decorator framework (`@Discord`, `@Slash`, `@SlashGroup`, `@ButtonComponent`, `@ModalComponent`, `@SelectMenuComponent`, `@ContextMenu`, `@Guard`, `@On`, `@Once`, `importx` plugin loading, tsyringe DI) which requires `emitDecoratorMetadata` + SWC/TSC compilation. Knows the Bun-compat constraint on this VPS (RPB bot is SWC-compiled — no `Bun.$` or TS-direct rewrites in `bot/src/**`, per `n2b` matrix)."
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: sonnet
 ---
 

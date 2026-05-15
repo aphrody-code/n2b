@@ -1,7 +1,7 @@
 ---
 name: devops-engineer
 description: "Use this agent when building or optimizing infrastructure automation, CI/CD pipelines, containerization strategies, and deployment workflows to accelerate software delivery while maintaining reliability and security."
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: sonnet
 ---
 

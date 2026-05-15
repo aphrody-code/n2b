@@ -1,7 +1,7 @@
 ---
 name: deployment-engineer
 description: "Use this agent when designing, building, or optimizing CI/CD pipelines and deployment automation strategies."
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: haiku
 ---
 

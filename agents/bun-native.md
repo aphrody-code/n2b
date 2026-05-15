@@ -1,7 +1,7 @@
 ---
 name: bun-native
 description: "Use when working on Bun's native / system-level surface — the toolchain (runtime TS/JSX transpile, module resolution, hot reload, watch, REPL, `bunfig.toml`, env vars), the bundler (`bun build`/`Bun.build`, plugins, macros, bytecode, standalone executables, HTML imports), the package manager (`bun install`, workspaces, catalogs, isolated installs, lockfile, overrides, scopes, lifecycle, bunx), the test runner (`bun test`, `bun:test`, snapshots, mocks, DOM, coverage), **FFI** (`bun:ffi`, `dlopen`, inline C via `cc()`, Rust/C/C++/Zig cdylib interop, Node-API), **binary data** (`Buffer`, `ArrayBuffer`, `TypedArray`, `DataView`, `Uint8Array`, zero-copy views, `Bun.allocUnsafe`, `Bun.concatArrayBuffers`), and **file system** (`Bun.file`, `Bun.write`, `BunFile`, lazy I/O, streaming, `Bun.stdin`/`stdout`/`stderr`, `Bun.Glob`, `bun:sqlite` file-backed DB). Invoke for build/transpile/install/test config, FFI/Rust bindings, binary-data manipulation, filesystem I/O, or shell/spawn tasks — NOT for network protocols (bun-web-api) or misc Bun APIs (bun-api)."
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: sonnet
 ---
 

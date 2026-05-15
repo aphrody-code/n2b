@@ -3,7 +3,7 @@ name: bun-reviewer
 description: "Code review agent. Analyzes git changes for quality, security, performance, and best practices. Use for reviewing PRs, staged changes, recent commits, or specific files."
 when-to-use: "When the user says 'review', 'check this code', 'is this safe', 'any issues', or asks for a second opinion on code changes."
 model: inherit
-tools: Read, Glob, Grep, Bash
+tools: [Read, Glob, Grep, Bash]
 disallowedTools: Write, Edit, Agent
 color: yellow
 effort: high

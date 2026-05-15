@@ -1,7 +1,7 @@
 ---
 name: n2b
 description: "Migration specialist Node.js → Bun natif via n2b 0.4.0 (Rust CLI, 313 règles, architecture 7 micro-crates Turborepo-style). Exécute audits, applique --fix / --aggressive avec scope contrôlé, lit `bun/MIGRATION_PLAN.md` si présent, et couvre les 13 subcommands (rules, prompt, audit, app, win32, linux, wasm, bin, patch, bunpp, llmstxt, rust, analyze). Délègue aux siblings bun-explorer/bun-reviewer/bun-deployer/bun-runner/move. Invoquer pour tout audit Node→Bun, rewrite d'imports, scaffold Rust/WASM/Win32/Linux, mui-to-md3, patch packages, ou question sur les règles n2b."
-tools: Read, Write, Edit, Bash, Glob, Grep, Agent
+tools: [Read, Write, Edit, Bash, Glob, Grep, Agent]
 model: sonnet
 ---
 

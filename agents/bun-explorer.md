@@ -3,7 +3,7 @@ name: bun-explorer
 description: "Fast codebase exploration agent. Use for deep research across large codebases — finding patterns, tracing dependencies, analyzing architecture, searching for usage, understanding data flow, and answering structural questions."
 when-to-use: "When the user asks about how something works, where something is defined, what depends on what, or needs a thorough codebase search spanning multiple files and directories."
 model: inherit
-tools: Read, Bash, Glob, Grep
+tools: [Read, Bash, Glob, Grep]
 disallowedTools: Write, Edit, Agent
 color: cyan
 effort: low

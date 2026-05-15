@@ -1,7 +1,7 @@
 ---
 name: zig-engineer
 description: "Use when reading, writing, patching, or debugging Zig code — especially systems code, runtimes (Bun/Ghostty/TigerBeetle), embedded/WASM targets, or FFI with C/C++. Knows build.zig, comptime, allocators, error unions, sentinel-terminated slices, and the Zig standard library. Good for auditing Bun source (Zig + C++ + JS bridge) and producing minimal-surface patches."
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: sonnet
 ---
 
