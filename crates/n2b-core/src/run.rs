@@ -58,6 +58,7 @@ const DEFAULT_IGNORE: &[&str] = &[
     "**/coverage/**",
     "**/.bun/**",
     "**/target/**",
+    "**/upstream/**",
 ];
 
 fn is_workflow(rel: &str) -> bool {
@@ -117,7 +118,7 @@ pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
 
     WalkBuilder::new(opts.root.clone())
         .hidden(false)
-        .git_ignore(false)
+        .git_ignore(true)
         .git_global(false)
         .git_exclude(false)
         .parents(false)

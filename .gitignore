@@ -73,7 +73,6 @@ desktop.ini
 plugins-installed.json
 claude-global.md
 task.json
-GEMINI.md
 .gemini/
 .aider*
 .cursor/
