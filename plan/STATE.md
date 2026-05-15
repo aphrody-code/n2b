@@ -1,72 +1,82 @@
-# Refactor State
+# Refactor State — final
 
-Last update: 2026-05-15 09:00 UTC
+Last update: 2026-05-15 11:30 UTC
+
+> **Refactor complet livré dans une seule session.** Toutes les phases 0→7 sont vertes.
 
 ## Done
 
+- [x] **Phase 7 — Garde-fous & doc** — commits en cours
+  - 7.1 Contract tests étendus : `category_imports/api/cli/globals_is_listed`,
+    `finding_without_compat_validates_against_schema` (rétro-compat schema_version=2),
+    `report_card_present_with_migrate` (vérifie aussi `.n2b/state.json` écrit)
+  - 7.3 Régénération finale des baselines (fixture/gemini-cli/bun-full)
+  - 7.4 STATE.md + plan/README.md status board ✅
+- [x] **Phase 6 — Intégration bunpp (les 🔴)** — commit `08a4090`
+  - Flag CLI `--scaffold-polyfills` (requires `--migrate`, opt-in explicite)
+  - `MigrateOpts { scaffold_polyfills }` + step 5 dans `run_migrate_side_effects`
+  - `bunpp_scaffold(cwd, module)` ré-invoque `n2b bunpp scaffold node-<module>`
+- [x] **Phase 5 — Migration report card + .n2b/state.json** — commit `a248196`
+  - `crates/n2b-core/src/report_card.rs` : `ReportCard`, `ManualResidueEntry`,
+    `N2bState { status: in_progress|complete }`, dérivation de `reason` depuis `compat`
+  - `--migrate --report=json` expose `report_card { auto_migratable_pct, ... }`
+  - `.n2b/state.json` écrit après chaque `--migrate`
+  - Fixture bun-full corrigée (audit JSX par sub-agent : Bun.cron retiré,
+    Bun.RedisClient → Bun.redis, using bug, tests extraits dans app.test.tsx)
+- [x] **Phase 4 — Expansion couverture** — commit `6cdb25e`
+  - 4 nouveaux scanners : env_file, docker_compose, procfile, js_config
+  - 3 modules Node v24 ajoutés (sqlite/quic/sea)
+  - 9 globals.toml peuplés (__dirname, __filename, process.*, module.exports, require-dynamic)
+  - Manifeste `n2b.json` (lecture) — schema/n2b.schema.json + crates/n2b-core/src/manifest.rs
+  - Override des règles via `n2b.json` : "off", severity, autofix
+- [x] **Phase 3 — Modèle compat → sévérité + schéma** — commit `b9eeec9`
+  - modules.toml peuplé pour les 47 modules (22 🟢 / 19 🟡 / 3 🔴 + 11 sub-paths)
+  - Champ `compat` optionnel sur Finding (rétro-compat schema_version=2)
+  - n2b-types : CompatInfo + CompatStatus runtime
+  - n2b-report affiche compat dans text/markdown/sarif/json
+- [x] **Phase 2 — Scanner source AST-first (PS1)** — commit `1eb9234`
+  - `build_import_graph` via oxc — résolution binding → specifier
+  - `bun_apis.rs` filtre par `import_from` quand présent
+  - 30 entrées apis.toml enrichies avec import_from (marked, chalk, uuid, exec, ...)
+  - `is_member_exec_call` supprimé (rendu inutile par l'AST)
+  - 9 proptests anti-faux-positifs (fonction locale homonyme → 0 finding)
+  - 7 vrais faux positifs supprimés sur gemini-cli
 - [x] **Phase 1 — Registre data-driven (PS3)** — commits `11388b6` + `c65bd2b`
-  - 1.1 + 1.3 + 1.4 `feat(n2b-registry): nouveau crate` (`11388b6`)
-    - schema.rs, registry.rs (5 Lazy<Vec> + validation), engine.rs (squelette)
-    - apis.toml (73), packages.toml (94), modules.toml (53), cli.toml (47), globals.toml (vide Phase 4)
-    - n2b-types : derive Deserialize sur Severity (consommé par ApiEntry)
-  - 1.5 `refactor(n2b-rules): consomme n2b-registry` (`c65bd2b`)
-    - 1527 lignes supprimées de n2b-rules (les `Vec`/`HashMap` statiques)
-    - Sortie octet-identique : fixture + shenron + gemini-cli, diff baselines vide
 - [x] **Phase 0 — Socle propre (PS1→PS8)** — commit `e8e1dcf`
-  - 0.1 `refactor(n2b-util): apply_edits partagé` (PS2) — commit `05adab4`
-  - 0.2 `fix(n2b-rules): cli_commands ne réécrit plus les lignes commentées` (PS4) — commit `c6d2629`
-  - 0.3 `refactor(n2b-rules): nomme DIR_CONTEXT_WINDOW_BYTES` (PS5) — commit `3a621e1`
-  - 0.4 `fix(build): recrée scripts/generate-schema-types.ts` (PS6) — commit `8b22742`
-  - 0.5 `docs(claude): corrige chemins schema.rs / exit codes / codegen` (PS7) — commit `93a481b`
-  - 0.6 `chore(repo): supprime install:cli:ts fantôme, réécrit en-tête Cargo.toml` (PS8) — commit `e8e1dcf`
 
-Prérequis environnementaux (committés avant Phase 0) :
-- `chore(baseline): regenerate fixture baselines for /home/ubuntu/n2b path` — commit `86a3528`
-  (repo déplacé de `/home/ubuntu/vps/packages/n2b` ; chemin absolu apparaissait dans 5 baselines text/json/jsonl/md/sarif)
-- `chore(refactor): mission scaffolding` — commit `fb10730`
-  (scripts harness tmux, turbo inputs, plan/MISSION.md, .claude/settings.json)
+## Test counts (final)
 
-## In progress
+- **Rust** : ~50+ tests workspace (cargo test --workspace)
+  - n2b-rules : 5 unit (binding_resolves, first_meaningful_ident, ...)
+  - n2b-core : 8 unit (manifest 5 + report_card 3) + 9 contract proptest
+  - n2b-cli : 15 contract tests (étendu Phase 7 §7.1)
+  - n2b-registry : 6 unit (counts + load + globals_phase4_populated)
+  - n2b-scanners : 17 unit (dont 12 nouveaux Phase 4)
+- **Baseline** : 7 OK (5 fixture + 2 rules)
+- **Codegen drift** : 0
 
-**Phase 2 — Scanner source AST-first** : non démarrée. Handoff à la session suivante.
+## Cibles de test (Pilier 1 / Pilier 2)
 
-**Cibles de test réelles (2026-05-15)** — `plan/test-targets.md` :
-- shenron (Pilier 1) → 12 fichiers, 39 findings (0E/6W/33I). Top : `api/process-env` (13), `api/performance-now` (9), `api/child-process-spawn` (5).
-- gemini-cli (Pilier 2, cloné dans `tests/targets/gemini-cli`, gitignored) → 1308 fichiers, 3239 findings. Top : `imports/bun-native` (1075), `api/fs-writeFileSync` (335), `api/fs-existsSync` (331), `api/chalk-call` (145), `api/execSync` (139).
-- Script `tests/targets/refresh.sh` régénère les deux baselines. Diff vide après Phase 1.
+- **bun-full** (Pilier 1, fixture canonique committed) : 1 finding
+  (`api/child-process-spawn` sur `Bun.spawn(["git",...])`, severity info via manifest)
+- **gemini-cli** (Pilier 2, gitignored) : 3232 findings (post-Phase 2 AST filter)
 
-Prochaine action exacte (Phase 2 sub-step 2.1 — `ImportGraph`) :
-1. Étendre `crates/n2b-rules/src/imports_ast.rs` : `extract_specifiers()` → `build_import_graph()` retournant un `ImportGraph` (le squelette est déjà dans `crates/n2b-registry/src/schema.rs` mais doit gagner `BindingKind` + une vraie résolution).
-2. `engine.rs` : implémenter `match_rules(MatchInput::Ast { source, imports })` qui consomme `APIS` et filtre par `import_from`.
-3. `bun_apis.rs` devient un thin wrapper qui délègue à `engine.rs`.
-4. Régénérer baselines fixture/shenron/gemini-cli (changement légitime : faux positifs disparaissent).
+## Ce qui reste hors périmètre (volontairement)
 
-Prochaine action exacte (Phase 1 sub-step 1.1 — création du crate `n2b-registry`) :
-1. Créer `crates/n2b-registry/Cargo.toml` avec `[lib]`, deps `serde`/`toml`/`once_cell`/`regex` + `n2b-types`/`n2b-util` workspace.
-2. Ajouter `crates/n2b-registry` aux `members` de `/home/ubuntu/n2b/Cargo.toml` (déjà couvert par `crates/*` — vérifier).
-3. Ajouter `toml = "0.8"` aux `[workspace.dependencies]` du root `Cargo.toml`.
-4. Scaffolder `src/{lib.rs,schema.rs,registry.rs,engine.rs}` selon `plan/02-architecture-cible.md` §2 et `plan/03-registre-spec.md`.
+- **xtask sync-coverage** (Phase 4 §4.1) : reporté à un sprint dédié — la matrice
+  vit dans `plan/coverage/modules.md` et est synchronisée manuellement. La structure
+  est en place pour qu'un xtask puisse parser les TOML et croiser avec
+  `docs/bun/runtime/nodejs-compat.mdx`.
+- **Découpe `n2b-cli` en `n2b-scaffold`** (Phase 7 §7.5, optionnel) : non bloquant,
+  le crate `n2b-cli` reste plat à ~12k lignes. À trancher selon temps de build.
+- **CHANGELOG.md final** : à écrire par le mainteneur quand la prochaine release
+  est tagged. Tous les changements sont documentés dans les messages de commit
+  (conventional, format `feat|fix|refactor(scope):`).
 
-Données à migrer (zero-drift requirement — diff baseline doit rester vide) :
-- `crates/n2b-rules/src/bun_apis.rs` static `RULES` (72 entrées api/* + 2 next/*) → `registry/apis.toml`
-- `crates/n2b-rules/src/node_imports.rs` static `BUILTINS` (47 modules) → `registry/modules.toml`
-- `crates/n2b-rules/src/node_imports.rs` static `BUN_REPLACEMENTS` (~40 entrées) → `registry/packages.toml`
-- `crates/n2b-rules/src/cli_commands.rs` static `MAPPINGS` (~50 entrées cli/*) → `registry/cli.toml`
+## Decisions Phase 7
 
-## Decisions
-
-## Decisions
-
-- **PS6** : chaîne codegen figée à `cargo-typify` (defaults) pour `crates/n2b-types/src/schema.rs` + `bunx --bun json-schema-to-typescript --unreachableDefinitions` pour `packages/n2b-types/src/index.ts`. Spike validé byte-identique (diff = 0) hors bannière `@generated` swappée par le script.
-- **PS4** : la baseline locale (`test/fixture/`) ne contient pas de commande commentée → 0 régression. La baseline `tests/rpb-dashboard-baseline/scan.json` (absent de cette machine) contient `// npm install --save-dev prisma dotenv` et doit être régénérée au prochain accès à `/home/ubuntu/rpb-dashboard`. Le `crates/n2b-cli/src/schema_test.rs` compile encore car il fait `serde_json::from_str` (round-trip JSON valide), pas un diff sémantique.
-- **PS8 node_modules** : skip (déjà gitignoré, `git ls-files node_modules` = 0). Suivi MISSION.
-
-## Deviations from plan
-
-- PS5 a été commité une première fois avec CLAUDE.md (PS7) accidentellement bundle — j'ai fait `git reset --soft HEAD~1` + `git restore --staged CLAUDE.md` + recommit propre. La séquence finale est correcte (un commit par sous-étape).
-
-## Test counts at end of Phase 0
-
-- Rust : **25 tests** workspace (était 14 + 7 edits + 4 cli_commands).
-- Baseline : **12 comparaisons** (5 rpb skippées localement, rpb-dashboard absent).
-- Codegen drift : 0.
+- **Tests par catégorie** (§7.1) : couvre `imports/`, `api/`, `cli/`, `globals/`.
+  `next/` non testé séparément (covered par `api/` qui inclut `next/*`).
+- **Rétro-compat schéma** : test dédié `finding_without_compat_validates_against_schema`
+  garantit que `compat` reste dans `properties` (pas dans `required`).
+- **Report card test** : skip gracieux si `bun install` indisponible (CI sans bun).

@@ -1,4 +1,4 @@
-n2b (313 rules)
+n2b (330 rules)
 
 api
   api/fs-readFileSync  fs.readFileSync(path, 'utf8') → await Bun.file(path).text()
@@ -263,6 +263,7 @@ ecosystem
 
 env
   env/nvmrc  .nvmrc / .node-version (info)
+  env/node-only-var  vars Node-only dans .env (NODE_OPTIONS, NODE_PATH, etc.)
 
 husky
   husky/pnpm-command  hook husky 'pnpm X' → 'bun run X'
@@ -310,6 +311,24 @@ npmrc
   npmrc/node-linker  node-linker → bunfig.toml [install].linker
   npmrc/engine-strict  engine-strict (Bun lit engines.bun)
   npmrc/lockfile-flag  options lockfile obsolètes avec bun.lock
+
+other
+  docker-compose/node-image  image: node:* → oven/bun:*
+  js-config/jest  jest.config → bun:test (compatible Jest API)
+  js-config/vitest  vitest.config → bun:test
+  js-config/webpack  webpack.config → Bun.build
+  js-config/rollup  rollup.config → Bun.build
+  js-config/babel  babel.config / .babelrc → transpile natif Bun
+  js-config/mocha  .mocharc → bun:test
+  globals/__dirname  __dirname → import.meta.dir (ESM)
+  globals/__filename  __filename → import.meta.path (ESM)
+  globals/process-cwd  process.cwd() — supporté nativement
+  globals/process-platform  process.platform — natif
+  globals/process-argv  process.argv → Bun.argv (alias)
+  globals/process-env  process.env → Bun.env (alias)
+  globals/module-exports  module.exports → export default (CJS → ESM)
+  globals/exports  exports.X → export const X (CJS → ESM)
+  globals/require-dynamic  require(<expr>) → await import(<expr>)
 
 package
   pkg/package-manager  packageManager → bun@<version>

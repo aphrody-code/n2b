@@ -97,7 +97,43 @@ Si tu changes une règle existante, il faut **soit** justifier le breaking et r�
 
 > `mui-to-md3` a été retiré en v0.4.0 (déplacé vers le workspace `mui-rs`). n2b est **Node→Bun only**.
 
-**Point clé** : un scanner ne connaît pas les règles, un rule ne connaît pas les scanners. Le contrat est `Finding` (défini dans `schema/v2.json` → généré dans `schema.rs`). Pour ajouter une règle, soit tu ajoutes un scanner (nouveau type de fichier), soit tu enrichis un scanner existant avec un nouveau regex dans `rules/`.
+**Point clé** : un scanner ne connaît pas les règles, un rule ne connaît pas les scanners. Le contrat est `Finding` (défini dans `schema/v2.json` → généré dans `schema.rs`).
+
+### Registre data-driven (Phase 1+)
+
+Les règles vivent désormais dans `crates/n2b-registry/registry/*.toml` :
+- `apis.toml` (73) — patterns d'appel API/méthode (`api/*`, `next/*`)
+- `packages.toml` (94) — packages npm → équivalent Bun (`imports/bun-native`)
+- `modules.toml` (56) — modules `node:*` avec `compat: full|partial|missing`
+- `cli.toml` (47) — commandes shell (`cli/npm-*`, `cli/yarn-*`)
+- `globals.toml` (9) — `__dirname`, `process.*`, `require-dynamic`, etc.
+
+**Pour ajouter une règle** : éditer le `.toml` correspondant. Le scanner et le crate
+`n2b-rules` consomment le registre via `Lazy<Vec<...>>` chargé au premier accès.
+Toujours mettre à jour le compteur dans `crates/n2b-registry/src/registry.rs::tests::*_count_matches_baseline`.
+
+### AST-first (Phase 2)
+
+Les patterns `api/*` peuvent porter un champ `import_from` — quand présent, le
+finding ne sort QUE si le binding root provient d'un import vers ce specifier
+(résolu par `crates/n2b-rules/src/imports_ast.rs::build_import_graph` via oxc).
+Préfixe namespace explicite (`fs.readFileSync`) accepté UNIQUEMENT pour les
+modules Node builtins. Cf. `crates/n2b-rules/src/bun_apis.rs::binding_resolves`.
+
+### Manifeste n2b.json (Phase 4)
+
+`n2b.json` à la racine du projet override les défauts : `mode`, `ignore`,
+`rules: { "api/foo": "off" | "warn" | { severity, autofix } }`. Résolu
+parent-first via `crates/n2b-core/src/manifest.rs::find_manifest`. Précédence :
+flags CLI > n2b.json > défauts.
+
+### Migration report card (Phase 5)
+
+`n2b --migrate --report=json` expose `report_card { auto_migratable_pct,
+manual_residue: [{ rule_id, file, line, reason, suggestion }] }`. Persisté entre
+runs dans `.n2b/state.json` (status: in_progress|complete). Pour les modules 🔴
+avec `compat.bunpp`, la suggestion pointe vers `bunx n2b bunpp scaffold <module>`.
+Flag `--scaffold-polyfills` automatise (opt-in, sous BackupGuard).
 
 ## Codegen schema-first
 
