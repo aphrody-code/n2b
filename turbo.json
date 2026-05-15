@@ -40,6 +40,31 @@
 		"start": {
 			"cache": false,
 			"persistent": true
+		},
+		"//#baseline": {
+			"cache": false,
+			"inputs": [
+				"crates/**/*.rs",
+				"tests/snapshots/baseline/**",
+				"tests/rpb-dashboard-baseline/**",
+				"tests/compare-baseline.sh",
+				"schema/v2.json",
+				"test/fixture/**"
+			]
+		},
+		"//#green-gate:rust": {
+			"cache": false,
+			"inputs": [
+				"crates/**/*.rs",
+				"Cargo.toml",
+				"Cargo.lock",
+				"rustfmt.toml",
+				"clippy.toml"
+			]
+		},
+		"//#codegen:schema:check": {
+			"cache": false,
+			"inputs": ["schema/v2.json", "scripts/generate-schema-types.ts"]
 		}
 	}
 }
