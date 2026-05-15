@@ -65,5 +65,6 @@ pub fn make_finding(
         replacement,
         autofix,
         aggressive: opts.aggressive,
+        compat: opts.compat,
     }
 }

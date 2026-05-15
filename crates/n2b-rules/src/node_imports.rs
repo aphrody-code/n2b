@@ -13,8 +13,8 @@
 // limitations under the License.
 
 use crate::imports_ast;
-use n2b_registry::{MODULES, PACKAGES};
-use n2b_types::types::{Finding, MakeFindingOpts};
+use n2b_registry::{Compat, ModuleEntry, MODULES, PACKAGES};
+use n2b_types::types::{CompatInfo, CompatStatus, Finding, MakeFindingOpts, Severity};
 use n2b_util::{Edit, apply_edits, line_offsets, make_finding};
 use once_cell::sync::Lazy;
 use std::collections::{HashMap, HashSet};
@@ -23,6 +23,54 @@ use std::collections::{HashMap, HashSet};
 /// La liste inclut les sous-chemins shimmés par Bun (`fs/promises`, etc.).
 static BUILTINS: Lazy<HashSet<String>> =
     Lazy::new(|| MODULES.iter().map(|m| m.module.clone()).collect());
+
+/// Index `module → ModuleEntry` pour récupérer le statut compat d'un import.
+static MODULE_INDEX: Lazy<HashMap<String, &'static ModuleEntry>> = Lazy::new(|| {
+    MODULES
+        .iter()
+        .map(|m| (m.module.clone(), m))
+        .collect()
+});
+
+/// Convertit un `Compat` du registre vers le `CompatStatus` runtime/JSON.
+fn compat_status(c: Compat) -> CompatStatus {
+    match c {
+        Compat::Full => CompatStatus::Full,
+        Compat::Partial => CompatStatus::Partial,
+        Compat::Missing => CompatStatus::Missing,
+    }
+}
+
+/// Construit une `CompatInfo` depuis une `ModuleEntry` du registre.
+/// Phase 3+ — attaché aux findings `imports/node-*` pour exposer le statut
+/// 🟢/🟡/🔴 et permettre aux consommateurs (rpb-dashboard, IDEs) de trier
+/// les modules par criticité.
+fn module_compat(entry: &ModuleEntry) -> CompatInfo {
+    CompatInfo {
+        status: compat_status(entry.compat),
+        module: entry.module.clone(),
+        missing_apis: entry.missing_apis.clone(),
+        equivalent: if entry.equivalent.is_empty() {
+            None
+        } else {
+            Some(entry.equivalent.clone())
+        },
+        bunpp: entry.bunpp.clone(),
+    }
+}
+
+/// Sévérité dérivée du statut compat — Phase 3 §3.2. Le finding `imports/*`
+/// emprunte la sévérité du module hôte : 🟢 → info, 🟡 → warn, 🔴 → error.
+/// Exposé pour Phase 4 (sous-règles `imports/node-<module>` granulaires) +
+/// re-export depuis `n2b_registry::derive_severity` pour les autres scanners.
+#[allow(dead_code)]
+pub(crate) fn severity_from_compat(c: Compat) -> Severity {
+    match c {
+        Compat::Full => Severity::Info,
+        Compat::Partial => Severity::Warn,
+        Compat::Missing => Severity::Error,
+    }
+}
 
 struct BunReplacement {
     replacement: String,
@@ -72,6 +120,12 @@ pub fn apply_node_import_rules(
                 replacement: format!("node:{spec}"),
             });
             if seen_builtin_finding.insert(spec.clone()) {
+                // Phase 3 : attache le compat info + dérive la sévérité depuis
+                // le statut du module hôte. La règle `imports/node-prefix`
+                // garde sa sévérité 'info' historique (préfixe = recommandation
+                // stylistique, pas un bug). Les sous-règles compat-driven
+                // sont en chantier Phase 4 (`imports/node-<module>`).
+                let compat = MODULE_INDEX.get(spec.as_str()).map(|m| module_compat(m));
                 findings.push(make_finding(
                     path,
                     &offsets,
@@ -82,6 +136,7 @@ pub fn apply_node_import_rules(
                     Some(format!("node:{spec}")),
                     MakeFindingOpts {
                         autofix: Some(true),
+                        compat,
                         ..Default::default()
                     },
                 ));

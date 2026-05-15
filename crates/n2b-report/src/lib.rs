@@ -16,7 +16,7 @@ use colored::Colorize;
 use n2b_ai::{
     Context, SCHEMA_URL, SCHEMA_VERSION, byte_offset, category, confidence, context_lines, docs_url,
 };
-use n2b_types::types::{FileFix, Finding, Mode, RunOptions, Severity};
+use n2b_types::types::{CompatInfo, CompatStatus, FileFix, Finding, Mode, RunOptions, Severity};
 use n2b_util::line_offsets;
 use serde::Serialize;
 use serde_json::{Value, json};
@@ -105,6 +105,13 @@ pub fn render_text(fixes: &[FileFix], opts: &RunOptions) -> String {
                 f.message,
                 fix_str,
             ));
+            if let Some(c) = &f.compat {
+                out.push_str(&format!(
+                    "        {} {}\n",
+                    "↳".dimmed(),
+                    render_compat_text(c).dimmed(),
+                ));
+            }
         }
     }
 
@@ -146,6 +153,10 @@ struct EnrichedFinding<'a> {
     aggressive: Option<bool>,
     docs_url: &'static str,
     context: Context,
+    /// Phase 3+ : compat du module hôte (pour `imports/node-*` et
+    /// `api/node-*`). Optionnel — rétro-compat schema_version=2.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    compat: Option<&'a CompatInfo>,
 }
 
 fn enrich<'a>(f: &'a Finding, source: &str, offsets: &[u32]) -> EnrichedFinding<'a> {
@@ -167,7 +178,35 @@ fn enrich<'a>(f: &'a Finding, source: &str, offsets: &[u32]) -> EnrichedFinding<
         aggressive: f.aggressive,
         docs_url: docs_url(&f.rule_id),
         context: context_lines(source, f.line),
+        compat: f.compat.as_ref(),
     }
+}
+
+fn compat_status_label(s: CompatStatus) -> &'static str {
+    match s {
+        CompatStatus::Full => "🟢 full",
+        CompatStatus::Partial => "🟡 partial",
+        CompatStatus::Missing => "🔴 missing",
+    }
+}
+
+fn render_compat_text(c: &CompatInfo) -> String {
+    let mut s = format!(
+        "compat: {} (node:{})",
+        compat_status_label(c.status),
+        c.module
+    );
+    if !c.missing_apis.is_empty() {
+        s.push_str(" — manque ");
+        s.push_str(&c.missing_apis.join(", "));
+    }
+    if let Some(eq) = &c.equivalent {
+        s.push_str(&format!(" → {eq}"));
+    }
+    if let Some(bunpp) = &c.bunpp {
+        s.push_str(&format!(" / polyfill: {bunpp}"));
+    }
+    s
 }
 
 fn meta(opts: &RunOptions, fixes: &[FileFix]) -> Value {
@@ -296,10 +335,11 @@ pub fn render_sarif(fixes: &[FileFix], opts: &RunOptions) -> String {
                                 }
                             }
                         }],
-                        "properties": {
+                    "properties": {
                             "category": category(&f.rule_id),
                             "confidence": confidence(&f.rule_id, f.replacement.is_some()),
                             "autofix": f.autofix,
+                            "compat": f.compat,
                         },
                     });
                     if let Some(repl) = &f.replacement {
@@ -366,16 +406,20 @@ pub fn render_markdown(fixes: &[FileFix], opts: &RunOptions) -> String {
             continue;
         }
         out.push_str(&format!("## `{}`\n\n", fix.file));
-        out.push_str("| ligne | règle | message | remplacement |\n");
-        out.push_str("| --- | --- | --- | --- |\n");
+        out.push_str("| ligne | règle | message | remplacement | compat |\n");
+        out.push_str("| --- | --- | --- | --- | --- |\n");
         for f in &fix.findings {
             let repl = match &f.replacement {
                 Some(r) => format!("`{}`", escape_md(r)),
                 None => String::new(),
             };
+            let compat = match &f.compat {
+                Some(c) => escape_md(&render_compat_text(c)),
+                None => String::new(),
+            };
             out.push_str(&format!(
-                "| {}:{} | `{}` | {} | {} |\n",
-                f.line, f.col, f.rule_id, f.message, repl
+                "| {}:{} | `{}` | {} | {} | {} |\n",
+                f.line, f.col, f.rule_id, f.message, repl, compat
             ));
         }
         out.push('\n');

@@ -871,7 +871,8 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                         autofix: Some(false),
                         aggressive: Some(true),
                         severity: Some(Severity::Warn),
-                    },
+                    ..Default::default()
+                },
                 ));
             }
 
@@ -891,7 +892,8 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                         autofix: Some(false),
                         aggressive: Some(true),
                         severity: Some(Severity::Info),
-                    },
+                    ..Default::default()
+                },
                 ));
             }
 
@@ -911,7 +913,8 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                         autofix: Some(false),
                         aggressive: Some(true),
                         severity: Some(Severity::Info),
-                    },
+                    ..Default::default()
+                },
                 ));
             }
 
@@ -935,7 +938,8 @@ pub fn scan_package_json(path: &str, content: &str) -> (Vec<Finding>, String) {
                         autofix: Some(false),
                         aggressive: Some(true),
                         severity: Some(Severity::Warn),
-                    },
+                    ..Default::default()
+                },
                 ));
             }
         }

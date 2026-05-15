@@ -812,6 +812,10 @@
               "import fetch from \"node-fetch\";",
               "import crypto from \"crypto\";"
             ]
+          },
+          "compat": {
+            "status": "full",
+            "module": "path"
           }
         },
         {
@@ -840,6 +844,10 @@
               "import crypto from \"crypto\";",
               "import Database from \"better-sqlite3\";"
             ]
+          },
+          "compat": {
+            "status": "full",
+            "module": "url"
           }
         },
         {
@@ -895,6 +903,10 @@
               "import path from \"path\";",
               "import { fileURLToPath } from \"url\";"
             ]
+          },
+          "compat": {
+            "status": "full",
+            "module": "fs"
           }
         },
         {
@@ -922,6 +934,15 @@
               "import Database from \"better-sqlite3\";",
               "import { v4 as uuidv4 } from \"uuid\";",
               "import express from \"express\";"
+            ]
+          },
+          "compat": {
+            "status": "partial",
+            "module": "crypto",
+            "missing_apis": [
+              "secureHeapUsed",
+              "setEngine",
+              "setFips"
             ]
           }
         },
