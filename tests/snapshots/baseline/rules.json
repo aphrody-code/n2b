@@ -2189,5 +2189,124 @@
     "description": "options lockfile obsolètes avec bun.lock",
     "docs_url": "https://bun.sh/docs/runtime/bunfig",
     "confidence": 0.75
+  },
+  {
+    "id": "env/node-only-var",
+    "category": "env",
+    "description": "vars Node-only dans .env (NODE_OPTIONS, NODE_PATH, etc.)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "docker-compose/node-image",
+    "category": "other",
+    "description": "image: node:* → oven/bun:*",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "js-config/jest",
+    "category": "other",
+    "description": "jest.config → bun:test (compatible Jest API)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "js-config/vitest",
+    "category": "other",
+    "description": "vitest.config → bun:test",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "js-config/webpack",
+    "category": "other",
+    "description": "webpack.config → Bun.build",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "js-config/rollup",
+    "category": "other",
+    "description": "rollup.config → Bun.build",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "js-config/babel",
+    "category": "other",
+    "description": "babel.config / .babelrc → transpile natif Bun",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "js-config/mocha",
+    "category": "other",
+    "description": ".mocharc → bun:test",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/__dirname",
+    "category": "other",
+    "description": "__dirname → import.meta.dir (ESM)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/__filename",
+    "category": "other",
+    "description": "__filename → import.meta.path (ESM)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/process-cwd",
+    "category": "other",
+    "description": "process.cwd() — supporté nativement",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/process-platform",
+    "category": "other",
+    "description": "process.platform — natif",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/process-argv",
+    "category": "other",
+    "description": "process.argv → Bun.argv (alias)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/process-env",
+    "category": "other",
+    "description": "process.env → Bun.env (alias)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/module-exports",
+    "category": "other",
+    "description": "module.exports → export default (CJS → ESM)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/exports",
+    "category": "other",
+    "description": "exports.X → export const X (CJS → ESM)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
+  },
+  {
+    "id": "globals/require-dynamic",
+    "category": "other",
+    "description": "require(<expr>) → await import(<expr>)",
+    "docs_url": "https://bun.sh/docs",
+    "confidence": 0.75
   }
 ]

@@ -44,13 +44,17 @@ que seules ~8 des ~90 entrées `BUN_REPLACEMENTS` sont effectivement réécrites
 | Phase | Titre | Dépend de | État | Commit |
 |---|---|---|---|---|
 | 0 | Socle propre (PS1→PS8) | — | ✅ fait | e8e1dcf |
-| 1 | Registre data-driven | 0 | ☐ à faire | — |
-| 2 | Scanner source AST-first | 1 | ☐ à faire | — |
-| 3 | Modèle compat → sévérité (schéma) | 1 | ☐ à faire | — |
-| 4 | Expansion couverture + `xtask` | 1 | ☐ à faire | — |
-| 5 | Cross-compilation complète | 4 | ☐ à faire | — |
-| 6 | Intégration `bunpp` (les 🔴) | 3 | ☐ à faire | — |
-| 7 | Garde-fous & doc | 2,3,5,6 | ☐ à faire | — |
+| 1 | Registre data-driven | 0 | ✅ fait | 11388b6 + c65bd2b |
+| 2 | Scanner source AST-first (PS1) | 1 | ✅ fait | 1eb9234 |
+| 3 | Modèle compat → sévérité + schéma | 1 | ✅ fait | b9eeec9 |
+| 4 | Expansion couverture (scanners + globals + manifeste) | 1 | ✅ fait | 6cdb25e |
+| 5 | Cross-compilation : report card + `.n2b/state.json` | 4 | ✅ fait | a248196 |
+| 6 | Intégration `bunpp` (les 🔴) | 3 | ✅ fait | 08a4090 |
+| 7 | Garde-fous & doc | 2,3,5,6 | ✅ fait | (en cours) |
+
+> **Refactor complet livré le 2026-05-15** dans une session unique. xtask sync-coverage
+> reporté à un sprint dédié (la couverture est synchronisée à la main pour l'instant via
+> `coverage/modules.md`).
 
 ```
 Phase 0 ──┬─→ Phase 1 ──┬─→ Phase 2 ───────────────┐
