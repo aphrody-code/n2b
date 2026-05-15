@@ -663,3 +663,31 @@ replacement = "@biomejs/biome"
 note        = "plus besoin de désactiver les règles ESLint qui conflictent avec Prettier — Biome unifie"
 aggressive  = false
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section : SDKs agent-to-agent (A2A) + Model Context Protocol (MCP).
+# Mapping informationnel npm → crate Rust pour les projets qui veulent un
+# binaire natif performant ou intégrer A2A/MCP côté serveur sans dep Node.
+# `aggressive = false` : juste de l'info, pas de réécriture automatique.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "@a2a-js/sdk"
+replacement = "a2a-rs"
+note        = "SDK Rust officiel pour Agent2Agent. https://github.com/a2aproject/a2a-rs — préférable si tu construis un service standalone natif (gain perf + cdylib via napi-rs / FFI Bun)."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "@drew-foxall/a2a-js-sdk"
+replacement = "a2a-rs"
+note        = "Fork Bun-native du SDK A2A — l'équivalent Rust est https://github.com/a2aproject/a2a-rs (workspace, async tokio)."
+aggressive  = false
+
+[[packages]]
+id          = "imports/rust-sdk-alt"
+package     = "@modelcontextprotocol/sdk"
+replacement = "rmcp"
+note        = "SDK Rust officiel pour le Model Context Protocol. https://github.com/modelcontextprotocol/rust-sdk — workspace Cargo, transports stdio + HTTP+SSE + WebSocket, idéal pour serveurs MCP performants."
+aggressive  = false
