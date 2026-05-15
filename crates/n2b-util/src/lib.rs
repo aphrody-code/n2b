@@ -15,6 +15,9 @@
 use memchr::memchr_iter;
 use n2b_types::types::{Finding, MakeFindingOpts, Severity};
 
+pub mod edits;
+pub use edits::{Edit, apply_edits};
+
 /// Liste les offsets (en octets UTF-8) de chaque '\n' dans `source`.
 pub fn line_offsets(source: &str) -> Vec<u32> {
     memchr_iter(b'\n', source.as_bytes())

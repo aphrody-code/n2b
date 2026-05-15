@@ -14,7 +14,7 @@
 
 use crate::imports_ast;
 use n2b_types::types::{Finding, MakeFindingOpts};
-use n2b_util::{line_offsets, make_finding};
+use n2b_util::{Edit, apply_edits, line_offsets, make_finding};
 use once_cell::sync::Lazy;
 use std::collections::{HashMap, HashSet};
 
@@ -681,11 +681,6 @@ pub fn apply_node_import_rules(
 ) -> (Vec<Finding>, String) {
     let offsets = line_offsets(source);
     let mut findings: Vec<Finding> = Vec::new();
-    struct Edit {
-        index: usize,
-        len: usize,
-        replacement: String,
-    }
     let mut edits: Vec<Edit> = Vec::new();
 
     let mut seen_builtin_finding: HashSet<String> = HashSet::new();
@@ -754,23 +749,6 @@ pub fn apply_node_import_rules(
 
     // Apply mode: mode != check handled by caller via aggressive; we always
     // apply node: prefix edits here because that's also a safe fix in --fix mode.
-    let mut out = source.to_string();
-    if !edits.is_empty() {
-        edits.sort_by(|a, b| a.index.cmp(&b.index).then(b.len.cmp(&a.len)));
-        let mut kept: Vec<Edit> = Vec::with_capacity(edits.len());
-        for e in edits {
-            let overlaps_prev = kept
-                .last()
-                .map(|p| p.index + p.len > e.index)
-                .unwrap_or(false);
-            if !overlaps_prev {
-                kept.push(e);
-            }
-        }
-        kept.sort_unstable_by_key(|e| std::cmp::Reverse(e.index));
-        for e in kept {
-            out.replace_range(e.index..e.index + e.len, &e.replacement);
-        }
-    }
+    let out = apply_edits(source, edits);
     (findings, out)
 }
