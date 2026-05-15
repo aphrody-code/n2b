@@ -51,6 +51,7 @@ aggressive  = true
 
 [[apis]]
 id          = "api/express-server"
+import_from = "express"
 pattern     = "\\b(?:const|let|var)\\s+(\\w+)\\s*=\\s*require\\(\\s*['\"]express['\"]\\s*\\)\\s*\\(\\s*\\)"
 message     = "envisager Bun.serve() plutôt qu'Express pour un serveur simple (voir runtime/http)"
 severity    = "warn"
@@ -91,6 +92,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/uuid-v4"
+import_from = "uuid"
 pattern     = '\b(?:uuidv4|v4)\s*\(\s*\)'
 message     = "crypto.randomUUID() (global) ou Bun.randomUUIDv7() évite la dépendance uuid"
 severity    = "warn"
@@ -150,6 +152,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/execSync"
+import_from = "child_process"
 pattern     = '\b(?:child_process\.)?execSync\s*\('
 message     = "utiliser le shell Bun ($`cmd`) ou Bun.spawnSync() à la place de execSync"
 severity    = "warn"
@@ -158,6 +161,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/exec"
+import_from = "child_process"
 pattern     = '\b(?:child_process\.)?exec\s*\('
 message     = "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec"
 severity    = "warn"
@@ -315,6 +319,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/bcrypt-hash"
+import_from = "bcrypt"
 pattern     = '\bbcrypt(?:js)?\.hash\s*\('
 message     = "Bun.password.hash() supporte bcrypt et argon2 nativement (plus rapide, pas de dep native)"
 severity    = "warn"
@@ -323,6 +328,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/bcrypt-compare"
+import_from = "bcrypt"
 pattern     = '\bbcrypt(?:js)?\.compare\s*\('
 message     = "Bun.password.verify() remplace bcrypt.compare()"
 severity    = "warn"
@@ -331,6 +337,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/argon2-hash"
+import_from = "argon2"
 pattern     = '\bargon2\.(?:hash|verify)\s*\('
 message     = "Bun.password.hash({ algorithm: 'argon2id' }) / verify() est natif"
 severity    = "warn"
@@ -339,6 +346,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/yaml-parse"
+import_from = "yaml"
 pattern     = '\b(?:yaml|YAML|jsyaml)\.(?:load|parse)\s*\('
 message     = "Bun.YAML.parse() est natif — plus besoin de js-yaml/yaml"
 severity    = "warn"
@@ -347,6 +355,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/yaml-stringify"
+import_from = "yaml"
 pattern     = '\b(?:yaml|YAML|jsyaml)\.(?:dump|stringify)\s*\('
 message     = "Bun.YAML.stringify() est natif"
 severity    = "warn"
@@ -355,6 +364,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/json5-parse"
+import_from = "json5"
 pattern     = '\bJSON5\.parse\s*\('
 message     = "Bun.JSON5.parse() est natif — plus besoin de la dep json5"
 severity    = "warn"
@@ -364,6 +374,7 @@ aggressive  = true
 
 [[apis]]
 id          = "api/json5-stringify"
+import_from = "json5"
 pattern     = '\bJSON5\.stringify\s*\('
 message     = "Bun.JSON5.stringify() est natif"
 severity    = "warn"
@@ -373,6 +384,7 @@ aggressive  = true
 
 [[apis]]
 id          = "api/marked-call"
+import_from = "marked"
 pattern     = '\bmarked\s*\('
 message     = "Bun.markdown.html() est natif — plus besoin de marked"
 severity    = "warn"
@@ -381,6 +393,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/marked-parse"
+import_from = "marked"
 pattern     = '\bmarked\.parse\s*\('
 message     = "Bun.markdown.html() est natif"
 severity    = "warn"
@@ -397,6 +410,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/strip-ansi"
+import_from = "strip-ansi"
 pattern     = '\bstripAnsi\s*\('
 message     = "Bun.stripANSI() est natif"
 severity    = "warn"
@@ -405,6 +419,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/string-width"
+import_from = "string-width"
 pattern     = '\bstringWidth\s*\('
 message     = "Bun.stringWidth() est natif (fullwidth + emoji aware)"
 severity    = "warn"
@@ -413,6 +428,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/slice-ansi"
+import_from = "slice-ansi"
 pattern     = '\bsliceAnsi\s*\('
 message     = "Bun.sliceAnsi() est natif"
 severity    = "warn"
@@ -421,6 +437,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/which-call"
+import_from = "which"
 pattern     = "\\b(?:which|sync\\.which)\\s*\\(\\s*['\"][^'\"]+['\"]\\s*\\)"
 message     = "Bun.which() remplace la dep 'which' (natif, zéro allocation)"
 severity    = "warn"
@@ -429,6 +446,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/cron-schedule"
+import_from = "node-cron"
 pattern     = '\b(?:cron|nodeCron)\.schedule\s*\('
 message     = "Bun.cron remplace node-cron / croner"
 severity    = "warn"
@@ -437,6 +455,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/cronjob-new"
+import_from = "cron"
 pattern     = '\bnew\s+CronJob\s*\('
 message     = "Bun.cron est l'API native — plus besoin de node-cron/croner"
 severity    = "warn"
@@ -445,6 +464,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/fast-deep-equal"
+import_from = "fast-deep-equal"
 pattern     = '\bfastDeepEqual\s*\('
 message     = "Bun.deepEquals() est natif (WebKit structural compare)"
 severity    = "warn"
@@ -453,6 +473,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/pako-gzip"
+import_from = "pako"
 pattern     = '\bpako\.(?:gzip|deflate)\s*\('
 message     = "Bun.gzipSync() / Bun.deflateSync() remplacent pako (natif, SIMD)"
 severity    = "warn"
@@ -461,6 +482,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/pako-gunzip"
+import_from = "pako"
 pattern     = '\bpako\.(?:ungzip|inflate)\s*\('
 message     = "Bun.gunzipSync() / Bun.inflateSync() remplacent pako"
 severity    = "warn"
@@ -469,6 +491,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/express-app"
+import_from = "express"
 pattern     = '\b(?:const|let|var)\s+\w+\s*=\s*express\s*\(\s*\)'
 message     = "Bun.serve() est un serveur HTTP natif zéro-config (fetch-based, routing intégré)"
 severity    = "info"
@@ -477,6 +500,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/fastify-app"
+import_from = "fastify"
 pattern     = '\b(?:const|let|var)\s+\w+\s*=\s*fastify\s*\('
 message     = "Bun.serve() + routing natif remplace fastify pour la plupart des cas simples"
 severity    = "info"
@@ -485,6 +509,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/koa-new"
+import_from = "koa"
 pattern     = '\bnew\s+Koa\s*\(\s*\)'
 message     = "Bun.serve() avec middleware chaîné couvre la plupart des usages Koa"
 severity    = "info"
@@ -525,6 +550,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/cookie-parse"
+import_from = "cookie"
 pattern     = '\bcookie\.parse\s*\('
 message     = "new Bun.CookieMap(header) remplace cookie.parse()"
 severity    = "warn"
@@ -533,6 +559,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/cookie-serialize"
+import_from = "cookie"
 pattern     = '\bcookie\.serialize\s*\('
 message     = "Bun.Cookie.toString() remplace cookie.serialize()"
 severity    = "warn"
@@ -541,6 +568,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/aws-sdk-s3-client"
+import_from = "@aws-sdk/client-s3"
 pattern     = '\bnew\s+S3Client\s*\('
 message     = "Bun.s3 / Bun.S3Client est natif (multipart upload, presign) — pas besoin de @aws-sdk"
 severity    = "info"
@@ -557,6 +585,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/chalk-call"
+import_from = "chalk"
 pattern     = '\bchalk\.(?:red|green|yellow|blue|magenta|cyan|white|gray|grey|bold|dim|italic|underline)\b'
 message     = "Bun supporte ANSI nativement ; Bun.color() permet la conversion programmatique"
 severity    = "info"
@@ -581,6 +610,7 @@ aggressive  = false
 
 [[apis]]
 id          = "api/execa-call"
+import_from = "execa"
 pattern     = '\bexeca(?:Sync|Command|CommandSync)?\s*\('
 message     = "le shell Bun ($`cmd`) ou Bun.spawn() remplacent execa"
 severity    = "warn"
