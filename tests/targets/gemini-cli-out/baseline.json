@@ -5,8 +5,8 @@
   "version": "0.5.0",
   "mode": "check",
   "root": "/home/ubuntu/n2b/tests/targets/gemini-cli",
-  "files_scanned": 1308,
-  "findings_total": 3239,
+  "files_scanned": 1303,
+  "findings_total": 3232,
   "files": [
     {
       "path": ".gcp/Dockerfile.development",
@@ -7746,33 +7746,6 @@
               "        true,",
               "      );",
               "    },"
-            ]
-          }
-        },
-        {
-          "rule_id": "api/express-app",
-          "category": "api",
-          "severity": "info",
-          "confidence": 0.5,
-          "message": "Bun.serve() est un serveur HTTP natif zéro-config (fetch-based, routing intégré)",
-          "line": 194,
-          "col": 1,
-          "start_byte": 6616,
-          "end_byte": 6637,
-          "original": "const app = express()",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/ecosystem/express",
-          "context": {
-            "before": [
-              "      ),",
-              "      'src/app.ts': `",
-              "import express from 'express';"
-            ],
-            "line": "const app = express();",
-            "after": [
-              "",
-              "app.get('/users', (req, res) => {",
-              "  res.json([{id: 1, name: 'Alice'}]);"
             ]
           }
         }
@@ -16725,39 +16698,6 @@
               "import { AcpSessionManager } from './acpSessionManager.js';",
               "import type * as acp from '@agentclientprotocol/sdk';",
               "import {"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "path": "packages/cli/src/acp/commands/about.ts",
-      "changed": false,
-      "findings": [
-        {
-          "rule_id": "api/exec",
-          "category": "api",
-          "severity": "warn",
-          "confidence": 0.5,
-          "message": "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec",
-          "line": 32,
-          "col": 29,
-          "start_byte": 845,
-          "end_byte": 851,
-          "original": "exec (",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/process/spawn",
-          "context": {
-            "before": [
-              "    if (process.env['SANDBOX'] && process.env['SANDBOX'] !== 'sandbox-exec') {",
-              "      sandboxEnv = process.env['SANDBOX'];",
-              "    } else if (process.env['SANDBOX'] === 'sandbox-exec') {"
-            ],
-            "line": "      sandboxEnv = `sandbox-exec (${",
-            "after": [
-              "        process.env['SEATBELT_PROFILE'] || 'unknown'",
-              "      })`;",
-              "    }"
             ]
           }
         }
@@ -32653,66 +32593,6 @@
               "import { createMockCommandContext } from '../../test-utils/mockCommandContext.js';"
             ]
           }
-        },
-        {
-          "rule_id": "api/exec",
-          "category": "api",
-          "severity": "warn",
-          "confidence": 0.5,
-          "message": "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec",
-          "line": 134,
-          "col": 30,
-          "start_byte": 3926,
-          "end_byte": 3932,
-          "original": "exec (",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/process/spawn",
-          "context": {
-            "before": [
-              "",
-              "    expect(mockContext.ui.addItem).toHaveBeenCalledWith(",
-              "      expect.objectContaining({"
-            ],
-            "line": "        sandboxEnv: 'sandbox-exec (test-profile)',",
-            "after": [
-              "      }),",
-              "    );",
-              "  });"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "path": "packages/cli/src/ui/commands/aboutCommand.ts",
-      "changed": false,
-      "findings": [
-        {
-          "rule_id": "api/exec",
-          "category": "api",
-          "severity": "warn",
-          "confidence": 0.5,
-          "message": "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec",
-          "line": 33,
-          "col": 29,
-          "start_byte": 878,
-          "end_byte": 884,
-          "original": "exec (",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/process/spawn",
-          "context": {
-            "before": [
-              "    if (process.env['SANDBOX'] && process.env['SANDBOX'] !== 'sandbox-exec') {",
-              "      sandboxEnv = process.env['SANDBOX'];",
-              "    } else if (process.env['SANDBOX'] === 'sandbox-exec') {"
-            ],
-            "line": "      sandboxEnv = `sandbox-exec (${",
-            "after": [
-              "        process.env['SEATBELT_PROFILE'] || 'unknown'",
-              "      })`;",
-              "    }"
-            ]
-          }
         }
       ]
     },
@@ -32816,39 +32696,6 @@
               "import open from 'open';",
               "import path from 'node:path';",
               "import { bugCommand } from './bugCommand.js';"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "path": "packages/cli/src/ui/commands/bugCommand.ts",
-      "changed": false,
-      "findings": [
-        {
-          "rule_id": "api/exec",
-          "category": "api",
-          "severity": "warn",
-          "confidence": 0.5,
-          "message": "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec",
-          "line": 46,
-          "col": 29,
-          "start_byte": 1558,
-          "end_byte": 1564,
-          "original": "exec (",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/process/spawn",
-          "context": {
-            "before": [
-              "    if (process.env['SANDBOX'] && process.env['SANDBOX'] !== 'sandbox-exec') {",
-              "      sandboxEnv = process.env['SANDBOX'].replace(/^gemini-(?:code-)?/, '');",
-              "    } else if (process.env['SANDBOX'] === 'sandbox-exec') {"
-            ],
-            "line": "      sandboxEnv = `sandbox-exec (${",
-            "after": [
-              "        process.env['SEATBELT_PROFILE'] || 'unknown'",
-              "      })`;",
-              "    }"
             ]
           }
         }
@@ -85704,39 +85551,6 @@
       ]
     },
     {
-      "path": "packages/sdk/src/shell.ts",
-      "changed": false,
-      "findings": [
-        {
-          "rule_id": "api/exec",
-          "category": "api",
-          "severity": "warn",
-          "confidence": 0.5,
-          "message": "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec",
-          "line": 34,
-          "col": 9,
-          "start_byte": 989,
-          "end_byte": 994,
-          "original": "exec(",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/process/spawn",
-          "context": {
-            "before": [
-              "export class SdkAgentShell implements AgentShell {",
-              "  constructor(private readonly config: CoreConfig) {}",
-              ""
-            ],
-            "line": "  async exec(",
-            "after": [
-              "    command: string,",
-              "    options?: AgentShellOptions,",
-              "  ): Promise<AgentShellResult> {"
-            ]
-          }
-        }
-      ]
-    },
-    {
       "path": "packages/sdk/src/skills.integration.test.ts",
       "changed": false,
       "findings": [
@@ -85948,39 +85762,6 @@
               "import { z } from 'zod';",
               "import { SdkTool, tool, ModelVisibleError } from './tool.js';",
               "import type { MessageBus } from '@google/gemini-cli-core';"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "path": "packages/sdk/src/types.ts",
-      "changed": false,
-      "findings": [
-        {
-          "rule_id": "api/exec",
-          "category": "api",
-          "severity": "warn",
-          "confidence": 0.5,
-          "message": "utiliser le shell Bun ($`cmd`) ou Bun.spawn() à la place de exec",
-          "line": 183,
-          "col": 3,
-          "start_byte": 5290,
-          "end_byte": 5295,
-          "original": "exec(",
-          "autofix": false,
-          "docs_url": "https://bun.sh/guides/process/spawn",
-          "context": {
-            "before": [
-              "   * @param options - Optional execution configuration.",
-              "   * @returns A promise resolving to the command result.",
-              "   */"
-            ],
-            "line": "  exec(cmd: string, options?: AgentShellOptions): Promise<AgentShellResult>;",
-            "after": [
-              "}",
-              "",
-              "/**"
             ]
           }
         }

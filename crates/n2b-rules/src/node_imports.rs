@@ -119,8 +119,6 @@ pub fn apply_node_import_rules(
         }
     }
 
-    // Apply mode: mode != check handled by caller via aggressive; we always
-    // apply node: prefix edits here because that's also a safe fix in --fix mode.
     let out = apply_edits(source, edits);
     (findings, out)
 }
