@@ -1,12 +1,19 @@
-# Cargo workspace n2b — unifie le CLI Rust (rust/) et le plugin natif (native/)
-# sous un seul target/ partagé.
+# Cargo workspace n2b — layout Turborepo-style sous `crates/*`.
 #
 # Layout :
-#   rust/     → crate `n2b` (binaire CLI principal, /usr/local/bin/n2b)
-#   native/   → crate `node2bun-native` (cdylib plugin Bun via NAPI/FFI)
+#   crates/n2b-types     → schéma JSON v2 généré (cargo-typify) + types runtime
+#   crates/n2b-util      → primitives partagées (line_offsets, apply_edits, make_finding)
+#   crates/n2b-rules     → règles (regex / AST) — bun_apis, node_imports, cli_commands
+#   crates/n2b-scanners  → scanners par type de fichier (package_json, source, ...)
+#   crates/n2b-report    → renderers text / json / jsonl / markdown / sarif
+#   crates/n2b-ai        → embeddings ML pour l'analyse crosslink (sous-commande `analyze`)
+#   crates/n2b-github    → wrappers octocrab pour `audit`
+#   crates/n2b-core      → orchestration (run, engine walk, dispatch)
+#   crates/n2b-cli       → binaire `n2b` (entrée + dispatch + commands/*)
+#   crates/n2b-native    → cdylib `node2bun-native` (plugin Bun, ABI v1 gelée)
 #
 # Le workspace virtuel permet :
-#   - `cargo build --workspace` : construit les 2 crates en une commande
+#   - `cargo build --workspace` : construit tous les crates en une commande
 #   - Cache `target/` unique, plus rapide entre builds
 #   - Dépendances partagées via [workspace.dependencies]
 #   - Profile release unique propagé à tous les members
