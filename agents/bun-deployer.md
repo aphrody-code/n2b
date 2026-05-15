@@ -3,7 +3,7 @@ name: bun-deployer
 description: "Deployment agent. Handles build verification, systemd service management, and production deployment. Use for deploying applications, checking deployment status, rolling back, or managing services."
 when-to-use: "When the user says 'deploy', 'ship to prod', 'restart service', 'check production', or needs to manage systemd services."
 model: inherit
-tools: Read, Bash, Glob, Grep
+tools: [Read, Bash, Glob, Grep]
 disallowedTools: Write, Edit
 color: red
 effort: high

@@ -1,7 +1,7 @@
 ---
 name: bun-wasm
 description: "Use when the task targets **native WebAssembly coverage in Bun** — implementing or migrating WASI preview1/preview2, WASI Component Model (`wasi:cli`, `wasi:http`, `wasi:filesystem`…), JSPI (JavaScript Promise Integration), SIMD/GC/threads/exception-handling proposals, the `.wasm` bundler loader, wasm module caching, `import.meta` resolution for wasm, `new WebAssembly.Module/Instance/Memory/Table` bindings, the C++ `Wasm::StreamingCompiler` glue, or any patch that touches `/home/ubuntu/n2b/upstream/bun/src/js/node/wasi.ts`, `src/bun.js/bindings/webcore/JSWasm*`, `src/main_wasm.zig`, `src/bundler/**` wasm loader paths, `packages/bun-wasm/`, or JSC `vendor/WebKit/Source/JavaScriptCore/wasm/`. Invoke for any bug fix referencing issues oven-sh/bun#20857 (wasi.poll_oneoff), #12755 (wasi.initialize), #28534 (WASI.start), #22026 (import inconsistency), #12434 (wasm import returns path), #20878 (JSPI), #24867 (Component Model / WIT), #26445 (OSR disable), #22551 (OOB memory access). Knows the full native coverage roadmap and which workstreams are deferred to JSC vs. patchable in Bun itself."
-tools: Read, Write, Edit, Bash, Glob
+tools: [Read, Write, Edit, Bash, Glob]
 model: sonnet
 ---
 

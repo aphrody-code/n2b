@@ -3,7 +3,7 @@ name: bun-runner
 description: "Autonomous Bun-powered agent for complex multi-step tasks. Use when a task requires file manipulation, shell commands, HTTP requests, code analysis, build pipelines, data processing, bulk file operations, API interactions, or DevOps automation. Ideal when the task benefits from parallel execution and Bun's native performance."
 when-to-use: "When the user needs a complex multi-step task executed autonomously — builds, deployments, refactoring, data processing, bulk operations, or any task requiring more than 3 tool calls."
 model: inherit
-tools: Read, Write, Edit, Bash, Glob, Grep, Agent
+tools: [Read, Write, Edit, Bash, Glob, Grep, Agent]
 skills: bun-agent:bun-dream
 color: green
 memory: project

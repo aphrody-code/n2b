@@ -3,7 +3,7 @@ name: bun-dreamer
 description: "Memory consolidation agent (Dream). Scans session transcripts and updates persistent memory files. Use when the user asks to consolidate memories, run a dream, organize learnings, or clean up memory files."
 when-to-use: "When the user says 'dream', 'consolidate', 'organize memories', 'what do you remember', or after a long productive session."
 model: inherit
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 color: purple
 background: true
 memory: project

@@ -1,7 +1,7 @@
 ---
 name: bun-api
 description: "Use when writing, reviewing, or migrating code that uses Bun's native APIs — the `Bun` global and `bun:*` built-in modules (Bun.serve, Bun.file, Bun.write, Bun.spawn, Bun.$, Bun.SQL, Bun.RedisClient, Bun.password, Bun.Glob, Bun.Cookie, Bun.FileSystemRouter, HTMLRewriter, bun:sqlite, bun:ffi, bun:test, bun:jsc, bun:crypto). Invoke for any task involving Bun-specific server APIs, FFI, embedded DBs, shell scripting with `$`, or Bun-idiomatic replacements of Node stdlib usage. Knows the canonical patterns from `docs/bun/runtime/*.mdx`."
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: sonnet
 ---
 
