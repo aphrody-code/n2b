@@ -148,17 +148,18 @@ bun run codegen:schema
 
 Les règles sont dérivées de la doc Bun officielle (`runtime/nodejs-compat.md`, `runtime/bun-apis.md`, `pm/`, `guides/util/import-meta-dir.md`).
 
-## Intégration Claude Code via `bun-agent` plugin
+## AI Integration (Claude Code & Gemini CLI)
 
-L'intégration officielle pour Claude Code est packagée dans le plugin **`bun-agent`** :
+L'intégration officielle AI est packagée dans ce dépôt (plugin Claude Code et extension Gemini CLI) :
 
-- **Source** (dev) : `~/vps/agents/bun-agent/`
-- **Agent dédié** : `agents/n2b.md` — détecte le binaire via `command -v n2b`, la racine projet via `git rev-parse --show-toplevel`, lit un `bun/MIGRATION_PLAN.md` optionnel
-- **Command** : `commands/n2b.md` — `/n2b audit|N|fix|aggressive|migrate|rollback|diff|analyze|rules`
-- **Skill** : `skills/n2b/SKILL.md` — model-invoked, triggers sur "migrate to bun", "n2b audit", etc.
-- **Docs bundled** : `docs/n2b/` (ce README, CHANGELOG, STRUCTURE, research, roadmap) + `docs/bun-official/` (329 `.mdx` officiels)
+- **Claude Code Plugin** : Déclaré dans `.claude-plugin/plugin.json`.
+- **Gemini CLI Extension** : Déclarée dans `gemini-extension.json`.
+- **Skills (Communs)** : `skills/` — partagés entre les deux assistants.
+- **Commands (Asymétrie)** : Les commandes dans `commands/` existent en double format. Les fichiers `.md` sont exclusifs à Claude Code, tandis que les fichiers `.toml` sont exclusifs à Gemini CLI.
+- **Agents & Output Styles** : Les dossiers `agents/` et `output-styles/` sont spécifiques à Claude Code. Gemini CLI les ignore (ce qui peut générer des avertissements inoffensifs de type "Invalid tool name" au démarrage de Gemini).
+- **Docs bundled** : `docs/n2b/` (ce README, CHANGELOG, STRUCTURE, roadmap) + `docs/bun-official/` (329 `.mdx` officiels).
 
-Le plugin est **agnostique au projet** — aucun chemin `/home/ubuntu/...` hardcodé, aucune référence à un repo spécifique. Réutilisable dans n'importe quel codebase Node → Bun.
+Le plugin est **agnostique au projet** — réutilisable dans n'importe quel codebase Node → Bun.
 
 Cycle de re-sync (upstream → plugin) :
 ```bash
