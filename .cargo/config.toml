@@ -1,0 +1,30 @@
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+[target.aarch64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+# Modern Windows MSVC cross-compilation (Standard 2026)
+[target.x86_64-pc-windows-msvc]
+linker = "lld-link"
+# Static CRT ensures zero dependencies on VCRUNTIME140.dll
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.aarch64-pc-windows-msvc]
+linker = "lld-link"
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[profile.dev]
+opt-level = 0
+debug = true
+split-debuginfo = "unpacked"
+incremental = true
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
