@@ -1,4 +1,4 @@
-// Copyright 2026 Yohan Pierre
+// Copyright 2026 aphrody-code
 // SPDX-License-Identifier: Apache-2.0
 
 use n2b_rules::cli_commands::apply_cli_rules;

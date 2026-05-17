@@ -39,11 +39,12 @@ n2b = [
 ]
 
 [workspace.package]
+# aphrody-branch: forked from main for aphrody monorepo integration (2026-05-17)
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.97"
 license = "Apache-2.0"
 repository = "https://github.com/aphrody-code/n2b"
-authors = ["Yohan Pierre <contact@aphrody-code.dev>"]
+authors = ["aphrody-code <contact@aphrody-code.dev>"]
 
 [workspace.lints.rust]
 unsafe_code = "warn"

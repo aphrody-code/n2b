@@ -175,4 +175,4 @@ Le modèle de branches, le flux PR et les commandes de test sont décrits dans
 
 ## License
 
-[Apache 2.0](LICENSE) © 2026 Yohan Pierre.
+[Apache 2.0](LICENSE) © 2026 aphrody-code.
