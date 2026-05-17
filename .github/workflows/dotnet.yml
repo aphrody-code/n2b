@@ -1,0 +1,146 @@
+name: dotnet branch CI
+
+# Triggered only when this branch's files change. Independent from the
+# main `ci.yml` so the frozen baselines on `main` are never re-run by
+# this workflow.
+on:
+  push:
+    branches:
+      - dotnet
+    paths:
+      - "crates/n2b-rules/src/dotnet.rs"
+      - "crates/n2b-rules/src/windows.rs"
+      - "crates/n2b-rules/src/node_api_dotnet.rs"
+      - "crates/n2b-rules/src/winclean.rs"
+      - "crates/n2b-rules/src/lib.rs"
+      - "README-dotnet.md"
+      - ".github/workflows/dotnet.yml"
+  pull_request:
+    branches:
+      - dotnet
+    paths:
+      - "crates/n2b-rules/src/dotnet.rs"
+      - "crates/n2b-rules/src/windows.rs"
+      - "crates/n2b-rules/src/node_api_dotnet.rs"
+      - "crates/n2b-rules/src/winclean.rs"
+      - "crates/n2b-rules/src/lib.rs"
+  workflow_dispatch:
+
+# Cancel superseded runs.
+concurrency:
+  group: dotnet-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  build-and-test:
+    name: build + test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Pinned win-2025 (stable for VS Build Tools 2026); canary win-latest tracks
+        # the GitHub-hosted runner image, surfaces regressions early.
+        os: [windows-2025, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Install Rust 1.95
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.95.0"
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: dotnet-branch
+          workspaces: "."
+
+      - name: Cargo fmt (check)
+        run: cargo fmt --all -- --check
+
+      - name: Cargo clippy on n2b-rules
+        run: cargo clippy -p n2b-rules --all-targets -- -D warnings
+
+      - name: Cargo test on n2b-rules (dotnet modules)
+        run: cargo test -p n2b-rules --tests
+
+      - name: Verify dotnet-branch modules are reachable
+        shell: pwsh
+        run: |
+          cargo doc --no-deps -p n2b-rules
+          if (-not (Test-Path target/doc/n2b_rules/dotnet/index.html)) {
+            throw "dotnet module not in cargo doc output"
+          }
+          if (-not (Test-Path target/doc/n2b_rules/windows/index.html)) {
+            throw "windows module not in cargo doc output"
+          }
+          if (-not (Test-Path target/doc/n2b_rules/node_api_dotnet/index.html)) {
+            throw "node_api_dotnet module not in cargo doc output"
+          }
+          if (-not (Test-Path target/doc/n2b_rules/winclean/index.html)) {
+            throw "winclean module not in cargo doc output"
+          }
+          Write-Host "All four dotnet-branch modules are exported."
+
+  smoke-test-on-winclean:
+    name: smoke (run rules on WinClean snippets)
+    needs: build-and-test
+    runs-on: windows-2025
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/dotnet'
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Install Rust 1.95
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.95.0"
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: dotnet-branch
+
+      - name: Build n2b binary (release)
+        run: cargo build --release -p n2b
+
+      - name: Run dotnet-branch modules over inline fixtures
+        shell: pwsh
+        run: |
+          # Inline smoke: feed canned WinClean-shaped snippets into the rule
+          # modules via a tiny test binary, assert non-zero finding count.
+          New-Item -ItemType Directory -Force -Path test/smoke-dotnet | Out-Null
+          @'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <TargetFramework>net6.0</TargetFramework>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+            </ItemGroup>
+          </Project>
+          '@ | Set-Content -Encoding UTF8 test/smoke-dotnet/Sample.csproj
+
+          @'
+          Get-WmiObject -Class Win32_Process | ForEach-Object {
+            Stop-Process -Name "explorer"
+          }
+          $arr = @()
+          $arr += @(1, 2, 3)
+          '@ | Set-Content -Encoding UTF8 test/smoke-dotnet/Sample.ps1
+
+          # When --dotnet flag lands, replace this with:
+          #   target/release/n2b.exe test/smoke-dotnet --dotnet
+          # For now this job just asserts the binary built and the snippets
+          # were prepared. The actual rule execution is exercised by
+          # `cargo test -p n2b-rules` above.
+          Write-Host "Smoke fixtures prepared at test/smoke-dotnet/"
+          Get-ChildItem test/smoke-dotnet/

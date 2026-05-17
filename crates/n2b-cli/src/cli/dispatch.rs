@@ -45,6 +45,12 @@ pub fn run(cli: Cli) -> Result<ExitCode> {
             limit,
             report,
         }) => commands::audit::run_audit(root, terms, state.into(), limit, report.into()),
+        Some(Cmd::Dotnet {
+            root,
+            fix,
+            aggressive,
+            report,
+        }) => commands::dotnet::run(root, fix, aggressive, report),
         Some(Cmd::App { sub }) => {
             let cmd = match sub {
                 AppSub::Init {

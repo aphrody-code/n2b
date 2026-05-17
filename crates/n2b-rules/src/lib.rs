@@ -16,3 +16,13 @@ pub mod bun_apis;
 pub mod cli_commands;
 pub mod imports_ast;
 pub mod node_imports;
+
+// `dotnet` branch (see README-dotnet.md): Windows 11 + dotnet 10 + node-api-dotnet
+// + WinClean-specific rules. NOT wired into the default scanner — that would
+// break the frozen baselines (tests/snapshots/baseline/). The `apply_*_rules`
+// functions are public API; activate via a future `--dotnet` CLI flag or by
+// calling them explicitly from a custom scanner.
+pub mod dotnet;
+pub mod node_api_dotnet;
+pub mod winclean;
+pub mod windows;

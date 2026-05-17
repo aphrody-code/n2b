@@ -113,6 +113,17 @@ pub struct Cli {
     /// stdout réservé au payload structuré. Implique --report=json si text.
     #[arg(long, global = true)]
     pub agent: bool,
+
+    /// **dotnet branch** — active les règles DN0xx (dotnet 10 / NuGet / MSBuild),
+    /// WN0xx (Windows 11 idioms — CIM cmdlets, registry, pwsh.exe), NA0xx
+    /// (node-api-dotnet), WC0xx (WinClean-specific). Voir README-dotnet.md.
+    ///
+    /// Wiring complet du scan principal pas encore branché (préserve le
+    /// contract externe gelé) — l'activation effective utilise le sous-
+    /// command `n2b dotnet <root>` (à venir) ou un appel direct aux modules
+    /// `n2b_rules::{dotnet, windows, node_api_dotnet, winclean}`.
+    #[arg(long)]
+    pub dotnet: bool,
 }
 
 #[derive(Subcommand, Debug)]
@@ -404,6 +415,32 @@ pub enum Cmd {
         /// Applique aussi les fixes (fix ou aggressive).
         #[arg(long, value_name = "MODE")]
         apply: Option<ApplyArg>,
+    },
+
+    /// **dotnet branch** — applique les règles DN0xx + WN0xx + NA0xx + WC0xx
+    /// (cf README-dotnet.md). Additif : ne touche pas au scan principal ni
+    /// aux baselines gelées.
+    ///
+    ///   n2b dotnet .                       # scan + report text
+    ///   n2b dotnet . --fix                 # applique les autofix sûrs
+    ///   n2b dotnet . --fix --aggressive    # + règles invasives
+    ///   n2b dotnet . --report=sarif        # SARIF pour GitHub Code Scanning
+    Dotnet {
+        /// Racine du projet à analyser (défaut: répertoire courant).
+        #[arg(default_value = ".")]
+        root: PathBuf,
+
+        /// Applique les fixes automatiques (réécrit les fichiers in-place).
+        #[arg(long)]
+        fix: bool,
+
+        /// Active aussi les règles `aggressive` (rewrites invasifs).
+        #[arg(long)]
+        aggressive: bool,
+
+        /// Format de sortie.
+        #[arg(long, value_enum, default_value = "text")]
+        report: ReportArg,
     },
 }
 

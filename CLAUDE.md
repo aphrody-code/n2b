@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> [!NOTE]
+> **`dotnet` branch context** — n2b est embarqué dans WinClean comme submodule.
+> WinClean cible **un poste unique** : Surface Laptop Studio (i7-11370H,
+> RTX 3050 Ti, 16 GB, Win11 Insider Canary 28020). Les règles de la branche
+> `dotnet` (DN0xx + WN0xx + NA0xx + WC0xx, cf [`README-dotnet.md`](./README-dotnet.md))
+> sont taillées pour ce hardware unique. Spec complète :
+> [`../../docs/TARGET-HARDWARE.md`](../../docs/TARGET-HARDWARE.md) (relative
+> au repo parent WinClean).
+
 ## Principe directeur
 
 **Rust = moteur unique. TypeScript = façade thin.** Toute la logique métier (scan, règles, rendu) vit dans `crates/n2b-core`. Le package TS `@n2b/core` ne fait que spawn le binaire `n2b` et parser son JSON. Ne jamais réintroduire de scanners/règles côté TS.

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 pub mod audit;
+pub mod dotnet;
 pub mod migrate;
 pub mod prompt;
 pub mod rules;
