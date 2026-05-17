@@ -57,7 +57,7 @@
 	"devDependencies": {
 		"@types/bun": "latest",
 		"oxlint": "^1.63.0",
-		"turbo": "^2.0.0",
+		"turbo": "^2.9.14",
 		"typescript": "^5.6.0"
 	},
 	"engines": {
