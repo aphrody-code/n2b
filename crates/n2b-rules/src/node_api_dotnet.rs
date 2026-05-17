@@ -75,9 +75,8 @@ static MAPPINGS: Lazy<Vec<Mapping>> = Lazy::new(|| {
     ]
 });
 
-static COMMENT_PREFIX: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"^\s*(<!--|//|#)").expect("COMMENT_PREFIX must be a valid regex")
-});
+static COMMENT_PREFIX: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"^\s*(<!--|//|#)").expect("COMMENT_PREFIX must be a valid regex"));
 
 /// Apply every `NA0xx` rule on the given source.
 pub fn apply_node_api_dotnet_rules(

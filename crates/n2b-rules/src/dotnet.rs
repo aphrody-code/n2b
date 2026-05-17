@@ -89,9 +89,8 @@ static MAPPINGS: Lazy<Vec<Mapping>> = Lazy::new(|| {
     ]
 });
 
-static COMMENT_PREFIX: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"^\s*(<!--|#|//)").expect("COMMENT_PREFIX must be a valid regex")
-});
+static COMMENT_PREFIX: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"^\s*(<!--|#|//)").expect("COMMENT_PREFIX must be a valid regex"));
 
 /// Apply every `DN0xx` rule on the given source.
 /// `aggressive` enables the `aggressive: true` rules (JSON migration, AOT runtime).

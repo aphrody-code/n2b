@@ -21,9 +21,7 @@ use anyhow::Result;
 use ignore::WalkBuilder;
 
 use crate::cli::args::ReportArg;
-use n2b_core::rules::{
-    dotnet as dn, node_api_dotnet as na, winclean as wc, windows as wn,
-};
+use n2b_core::rules::{dotnet as dn, node_api_dotnet as na, winclean as wc, windows as wn};
 use n2b_core::types::{Finding, Severity};
 
 /// File extensions / names the dotnet rule set inspects.
@@ -63,10 +61,7 @@ pub fn run(root: PathBuf, fix: bool, aggressive: bool, report: ReportArg) -> Res
             continue;
         }
         let path = entry.path();
-        let name = path
-            .file_name()
-            .and_then(|s| s.to_str())
-            .unwrap_or("");
+        let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
         let ext = path
             .extension()
             .and_then(|s| s.to_str())
@@ -103,7 +98,8 @@ pub fn run(root: PathBuf, fix: bool, aggressive: bool, report: ReportArg) -> Res
         let display_path = path_s.to_string();
 
         // Run all 4 rule modules in sequence so later rules see prior fixes.
-        let (mut findings, mut working) = dn::apply_dotnet_rules(&display_path, &source, aggressive);
+        let (mut findings, mut working) =
+            dn::apply_dotnet_rules(&display_path, &source, aggressive);
         let (f2, working2) = wn::apply_windows_rules(&display_path, &working, aggressive);
         findings.extend(f2);
         working = working2;
@@ -192,7 +188,11 @@ pub fn run(root: PathBuf, fix: bool, aggressive: bool, report: ReportArg) -> Res
             println!("{}", serde_json::to_string(&sarif)?);
         }
         ReportArg::Text => {
-            println!("n2b dotnet branch rules — {} findings across {} files", all_findings.len(), files_scanned);
+            println!(
+                "n2b dotnet branch rules — {} findings across {} files",
+                all_findings.len(),
+                files_scanned
+            );
             if fix {
                 println!("Rewrote {} files in place.", files_rewritten);
             }
