@@ -96,3 +96,10 @@ The `agents/*.md` files are Claude-specific (use Claude tool names: `Read`, `Wri
 ### Hooks parity
 
 Claude Code hooks live in `hooks/hooks.json` (events: `PostToolUse`, `Stop`, etc.). Gemini hooks use slightly different event names (`AfterTool`, `BeforeTool`) and live in `gemini-extension.json` or `~/.gemini/settings.json`. The cargo-fmt + schema-codegen drift hooks are currently Claude-only — see `hooks/hooks.json`. To port to Gemini, translate event names to Gemini equivalents and add a `hooks` block to `gemini-extension.json`.
+
+## 🪟 Windows Cross-Compilation Mandate
+
+1. **MSVC ABI over GNU**: All Windows binaries MUST target `x86_64-pc-windows-msvc`. Use `cargo-xwin` for native MSVC cross-compilation from Linux.
+2. **Static CRT**: Force static linking of the C runtime (`-C target-feature=+crt-static`) to ensure zero-dependency executables.
+3. **Bun Bytecode**: Use `--bytecode` during `bun build --compile` to optimize startup speed on Windows (if applicable).
+4. **Baseline Compatibility**: Always use the `baseline` CPU target to ensure functionality on older VPS and CPU hardware.
