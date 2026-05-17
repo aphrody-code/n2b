@@ -1,0 +1,20 @@
+# Force LF line endings for Rust sources — rustfmt.toml requires
+# newline_style = "Unix" and the CI cargo fmt --check on Windows runners
+# fails otherwise (git's autocrlf converts to CRLF on checkout, rustfmt
+# complains).
+*.rs text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.js text eol=lf
+
+# Windows-specific files stay CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary
+*.exe binary
+*.bin binary
