@@ -2152,7 +2152,7 @@ dependencies = [
 
 [[package]]
 name = "n2b"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -2175,14 +2175,14 @@ dependencies = [
 
 [[package]]
 name = "n2b-ai"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "n2b-core"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "colored",
@@ -2218,7 +2218,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-github"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "octocrab",
@@ -2226,7 +2226,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-registry"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "n2b-types",
  "n2b-util",
@@ -2238,7 +2238,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-report"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "colored",
  "n2b-ai",
@@ -2250,7 +2250,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-rules"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "memchr",
  "n2b-registry",
@@ -2269,7 +2269,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-scanners"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "memchr",
  "n2b-rules",
@@ -2289,7 +2289,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-types"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "schemars",
  "serde",
@@ -2299,7 +2299,7 @@ dependencies = [
 
 [[package]]
 name = "n2b-util"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "memchr",
  "n2b-types",

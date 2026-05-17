@@ -1,6 +1,6 @@
 {
   "name": "@n2b/core",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "TypeScript façade thin pour le binaire Rust n2b — wrapper CLI (scan, rules, promptMarkdown).",
   "type": "module",
   "main": "./src/index.ts",
@@ -9,7 +9,9 @@
     ".": "./src/index.ts",
     "./cli": "./src/cli.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "build": "bunx --bun tsc -b",
     "dev": "bun --watch src/index.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@n2b/shims",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Polyfills Bun-natifs pour les APIs Node détectées par n2b (env, fs, path, shell).",
   "type": "module",
   "main": "./src/index.ts",
@@ -12,7 +12,9 @@
     "./path": "./src/path.ts",
     "./shell": "./src/shell.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "typecheck": "bunx --bun tsc --noEmit"
   },
