@@ -1,6 +1,32 @@
 # Changelog
 
-Toutes les évolutions notables de n2b — format [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnage [SemVer](https://semver.org/lang/fr/).
+All notable changes to n2b — format [Keep a Changelog](https://keepachangelog.com/1.1.0/),
+versioning [SemVer](https://semver.org/). (Entries from 0.5.0 and earlier are in French.)
+
+## [0.6.1] — 2026-06-04
+
+### Changed
+
+- **Repo governance & anonymisation**: scrubbed the owner's real name from all
+  100 tracked files (source headers, `Cargo.toml` authors, README, skill) in
+  favour of the neutral `aphrody-code`. Added `SECURITY.md`,
+  `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1), `.gitleaks.toml`
+  (owner-PII backstop rule + allowlist), and `.github/workflows/security.yml`
+  (gitleaks + cargo-audit).
+- **English docs**: translated `README.md`, `CONTRIBUTING.md`, and the PR
+  template from French to English (AI-ready docs).
+- **Version alignment**: all crates and TS packages aligned to `0.6.1`
+  (`n2b-native` stays `0.1.0`, ABI v1 frozen); root `package.json` corrected
+  from a stale `0.2.0`; Claude plugin + Gemini extension aligned to `2.3.2`.
+
+### Fixed
+
+- `n2b-github`: `resolve_token()` no longer reads a hardcoded
+  `/home/ubuntu/rsbun/.env`; it walks up from the current directory looking for
+  a `.env` and matches the `GH_TOKEN`/`GITHUB_TOKEN` keys specifically (the old
+  parser grabbed the first `KEY=value` line regardless of key).
+
+---
 
 ## [0.5.0] — 2026-05-13
 

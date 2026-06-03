@@ -1,6 +1,6 @@
 {
 	"name": "n2b-monorepo",
-	"version": "0.2.0",
+	"version": "0.6.1",
 	"private": true,
 	"description": "n2b monorepo — Bun workspaces + Cargo workspace + Turborepo orchestrateur",
 	"type": "module",

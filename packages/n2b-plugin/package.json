@@ -1,6 +1,6 @@
 {
   "name": "@n2b/plugin",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Plugin Bun (Bun.plugin) + bindings FFI vers libnode2bun_native.",
   "type": "module",
   "main": "./src/index.ts",
