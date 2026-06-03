@@ -5,7 +5,7 @@
 #
 # Env:
 #   N2B        : binaire à tester (défaut: n2b sur PATH)
-#   RPB_ROOT   : racine rpb-dashboard (défaut: /home/ubuntu/rpb-dashboard)
+#   RPB_ROOT   : racine du repo consommateur rpbey (défaut: /home/ubuntu/rpbey)
 #   FIXTURE    : fixture locale (défaut: test/fixture)
 #
 # Les comparaisons JSON/JSONL passent par `jq -S` pour normaliser l'ordre
@@ -15,7 +15,7 @@
 set -euo pipefail
 
 N2B="${N2B:-n2b}"
-RPB_ROOT="${RPB_ROOT:-/home/ubuntu/rpb-dashboard}"
+RPB_ROOT="${RPB_ROOT:-/home/ubuntu/rpbey}"
 FIXTURE="${FIXTURE:-test/fixture}"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
