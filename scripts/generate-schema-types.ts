@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Copyright 2026 Yohan Pierre
+// Copyright 2026 aphrody-code
 // SPDX-License-Identifier: Apache-2.0
 //
 // Codegen schéma — source de vérité unique : schema/v2.json.

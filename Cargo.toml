@@ -43,7 +43,7 @@ edition = "2024"
 rust-version = "1.85"
 license = "Apache-2.0"
 repository = "https://github.com/aphrody-code/n2b"
-authors = ["Yohan Pierre <37252373+aphrody-code@users.noreply.github.com>"]
+authors = ["aphrody-code <37252373+aphrody-code@users.noreply.github.com>"]
 
 [workspace.lints.rust]
 unsafe_code = "warn"

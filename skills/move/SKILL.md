@@ -117,7 +117,7 @@ Tu **dois** déléguer dans ces cas précis :
   > "Liste tous les paths /home/ubuntu/(rg|rpb-dashboard) dans le worktree vps/ (Phase 5 verification)."
 
 - **Phase 6.5 sanity check Vercel** (optionnel, entre 6 et 7) → `@vercel:deployment-expert` :
-  > "Preview Vercel de apps/website (compte Hobby yohanpierre-2921, token dans ~/vps/.env). Build doit réussir avant la bascule Phase 7. Suppression du preview après validation."
+  > "Preview Vercel de apps/website (compte Vercel Hobby (token via env)). Build doit réussir avant la bascule Phase 7. Suppression du preview après validation."
 
 ## Protocole d'exécution A→Z
 
