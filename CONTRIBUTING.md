@@ -1,74 +1,75 @@
-# Contribuer à n2b
+# Contributing to n2b
 
-## Modèle de branches — GitHub Flow
+## Branching model — GitHub Flow
 
-`main` est la seule branche longue durée : toujours stable et releasable.
-**Aucun commit direct** — tout passe par une Pull Request dont la CI
-(`CI Success`) doit être verte avant le merge.
+`main` is the only long-lived branch: always stable and releasable.
+**No direct commits** — everything goes through a Pull Request whose CI
+(`CI Success`) must be green before merge.
 
-> Le blocage serveur du push direct (branch protection / rulesets) requiert
-> GitHub Pro ou un repo public. Sur repo privé en plan gratuit, c'est une
-> **convention** appliquée par discipline — activable en une commande le jour
-> où le repo passe public ou Pro. Les réglages de merge (squash/rebase only,
-> pas de merge commit, suppression auto de la branche) sont, eux, actifs
-> côté serveur.
+> Server-side enforcement of the direct-push block (branch protection /
+> rulesets) requires GitHub Pro or a public repo. On a private repo on the
+> free plan it is a **convention** applied by discipline — switchable on with
+> one command the day the repo goes public or Pro. The merge settings
+> (squash/rebase only, no merge commits, auto-delete the branch) are already
+> active server-side.
 
-### Branches de travail
+### Working branches
 
-Préfixe conventionnel + slug court en kebab-case :
+Conventional prefix + short kebab-case slug:
 
-| Préfixe | Usage | Exemple |
+| Prefix | Use | Example |
 |---|---|---|
-| `feat/` | nouvelle fonctionnalité | `feat/scanner-docker-compose` |
-| `fix/` | correction de bug | `fix/cli-commentaires` |
-| `refactor/` | refactorisation | `refactor/phase-0-socle` |
-| `docs/` | documentation seule | `docs/registre-spec` |
-| `chore/` | outillage, CI, dépendances | `chore/repo-governance` |
-| `release/` | préparation de release | `release/v0.6.0` |
+| `feat/` | new feature | `feat/scanner-docker-compose` |
+| `fix/` | bug fix | `fix/cli-comments` |
+| `refactor/` | refactoring | `refactor/phase-0-foundation` |
+| `docs/` | documentation only | `docs/registry-spec` |
+| `chore/` | tooling, CI, dependencies | `chore/repo-governance` |
+| `release/` | release preparation | `release/v0.6.0` |
 
-### Une PR par grosse refactorisation
+### One PR per large refactor
 
-Le plan de refacto (`plan/`) est découpé en 8 phases. **Chaque phase = une
-branche `refactor/phase-N-slug` = une PR.** Pas de méga-PR multi-phases : une
-phase se review, se teste et se merge isolément — c'est la condition pour que
-le filet baseline reste lisible (cf. `plan/contrat-et-risques.md`).
+The refactor plan (`plan/`) is split into 8 phases. **Each phase = one
+`refactor/phase-N-slug` branch = one PR.** No multi-phase mega-PRs: a phase is
+reviewed, tested, and merged in isolation — that is the condition for keeping
+the baseline safety net readable (see `plan/contrat-et-risques.md`).
 
-## Flux de travail
+## Workflow
 
-1. Créer la branche depuis `main` à jour.
-2. Commits conventionnels (voir ci-dessous).
-3. Pousser, ouvrir une PR — le template se remplit tout seul.
-4. La CI doit être verte (`CI Success` agrège lint + test + build).
-5. **Squash-merge** dans `main`. La branche est supprimée automatiquement.
+1. Create the branch from an up-to-date `main`.
+2. Conventional Commits (see below).
+3. Push, open a PR — the template fills itself in.
+4. CI must be green (`CI Success` aggregates lint + test + build).
+5. **Squash-merge** into `main`. The branch is deleted automatically.
 
-L'historique de `main` est **linéaire** (pas de merge commits).
+The `main` history is **linear** (no merge commits).
 
 ## Commits
 
-Format conventionnel, **une ligne**, pas d'emoji :
+Conventional format, **single line**, no emoji:
 
 ```
-feat(n2b-scanners): scanner docker-compose
-fix(n2b-cli): --fix ignore les lignes commentées
-chore(ci): ajoute la matrice Windows
+feat(n2b-scanners): docker-compose scanner
+fix(n2b-cli): --fix ignores commented lines
+chore(ci): add the Windows matrix
 ```
 
-Scopes = nom du crate/package ou domaine (`n2b-core`, `n2b-cli`, `ci`,
-`baselines`…). Jamais de `Co-Authored-By`, jamais de `Generated with`.
+Scopes = crate/package name or domain (`n2b-core`, `n2b-cli`, `ci`,
+`baselines`, ...). Never `Co-Authored-By`, never `Generated with`.
 
-## Contrat externe gelé — à ne jamais casser silencieusement
+## Frozen external contract — never break silently
 
-Certaines surfaces sont consommées par des outils tiers via subprocess
-(cf. `CLAUDE.md` § « Contrat externe gelé »). Toute PR qui les touche doit :
+Some surfaces are consumed by third-party tools via subprocess (see
+`CLAUDE.md`, "Frozen external contract" section). Any PR that touches them must
+either:
 
-- **soit** ajouter une nouvelle règle / un nouveau champ (additif, non-breaking) ;
-- **soit** justifier le breaking dans la description **et** régénérer les
-  baselines dans la même PR.
+- add a new rule / a new field (additive, non-breaking); or
+- justify the breaking change in the description **and** regenerate the
+  baselines in the same PR.
 
-Surfaces gelées : Rule IDs, schéma JSON `schema/v2.json`, codes de sortie
-`0`/`1`/`2`, flags CLI, ABI cdylib v1.
+Frozen surfaces: Rule IDs, the `schema/v2.json` JSON schema, the `0`/`1`/`2`
+exit codes, CLI flags, the cdylib v1 ABI.
 
-## Tests locaux avant de pousser
+## Local tests before pushing
 
 ```bash
 cargo fmt --all -- --check
@@ -79,9 +80,9 @@ bun run codegen:schema:check
 bash tests/compare-baseline.sh
 ```
 
-La CI rejoue tout ça sur Linux, macOS et Windows.
+CI replays all of this on Linux, macOS, and Windows.
 
 ## License
 
-En contribuant, vous acceptez que votre code soit distribué sous license
-Apache 2.0 (cf. [`LICENSE`](LICENSE)).
+By contributing, you agree that your code is distributed under the Apache 2.0
+license (see [`LICENSE`](LICENSE)).

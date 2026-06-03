@@ -1,71 +1,76 @@
-# n2b — Node.js → Bun codemod
+# n2b — Node.js -> Bun codemod
 
-`n2b` analyse un projet Node.js et signale (ou corrige automatiquement) les incompatibilités avec le runtime Bun. Il couvre :
+`n2b` analyses a Node.js project and reports (or automatically fixes)
+incompatibilities with the Bun runtime. It covers:
 
-- Réécriture `npm` / `npx` / `pnpm` / `yarn` → `bun` / `bunx` dans les scripts `package.json`, les workflows GitHub Actions, les shells et Dockerfiles.
-- Préfixe `node:` sur les imports builtins (`fs`, `path`, `crypto`, …).
-- Dépendances redondantes avec les APIs natives Bun (`dotenv`, `node-fetch`, `uuid`, `better-sqlite3`, `rimraf`, …).
-- Migration d'idiomes Node → Bun (`fs.readFileSync` → `Bun.file().text()`, `fileURLToPath(import.meta.url)` → `import.meta.dir`, shebang `node` → `bun`, `actions/setup-node` → `oven-sh/setup-bun@v2`).
-- Détection de lockfiles concurrents et d'API Node non supportées par Bun.
+- Rewriting `npm` / `npx` / `pnpm` / `yarn` -> `bun` / `bunx` in `package.json`
+  scripts, GitHub Actions workflows, shell scripts, and Dockerfiles.
+- The `node:` prefix on builtin imports (`fs`, `path`, `crypto`, ...).
+- Dependencies made redundant by native Bun APIs (`dotenv`, `node-fetch`,
+  `uuid`, `better-sqlite3`, `rimraf`, ...).
+- Migrating Node idioms to Bun (`fs.readFileSync` -> `Bun.file().text()`,
+  `fileURLToPath(import.meta.url)` -> `import.meta.dir`, `node` shebang ->
+  `bun`, `actions/setup-node` -> `oven-sh/setup-bun@v2`).
+- Detecting rival lockfiles and Node APIs unsupported by Bun.
 
-## Architecture (v0.4.0 - Turborepo Style)
+## Architecture (v0.4.0 — Turborepo style)
 
 ```
 n2b/
-├── schema/v2.json                      ← source unique du contrat JSON
+├── schema/v2.json                      <- single source of truth for the JSON contract
 ├── crates/
-│   ├── n2b-core/                       ← Orchestrateur
-│   ├── n2b-types/                      ← Modèles de données (Rust)
-│   ├── n2b-rules/                      ← Règles
-│   ├── n2b-scanners/                   ← Scanners AST / Fichiers
-│   ├── n2b-report/                     ← Moteurs de rendus SARIF/JSON
-│   ├── n2b-ai/                         ← Intégration AI / LLM
-│   ├── n2b-github/                     ← Intégration GitHub
-│   ├── n2b-cli/                        ← Binaire `n2b`
-│   └── n2b-native/                     ← cdylib FFI
+│   ├── n2b-core/                       <- orchestrator
+│   ├── n2b-types/                      <- data models (Rust)
+│   ├── n2b-rules/                      <- rules
+│   ├── n2b-scanners/                   <- AST / file scanners
+│   ├── n2b-report/                     <- SARIF/JSON render engines
+│   ├── n2b-ai/                         <- AI / LLM integration
+│   ├── n2b-github/                     <- GitHub integration
+│   ├── n2b-cli/                        <- `n2b` binary
+│   └── n2b-native/                     <- cdylib FFI
 ├── packages/
-│   ├── n2b/                            ← Wrapper TS principal (cli)
-│   ├── n2b-types/                      ← Types TypeScript générés
-│   ├── n2b-plugin/                     ← Plugin Bun natif
-│   └── n2b-shims/                      ← Shims Bun natifs
-├── turbo.json                          ← Configuration Turborepo globale
-├── scripts/generate-schema-types.ts    ← codegen Rust + TS
+│   ├── n2b/                            <- main TS wrapper (cli)
+│   ├── n2b-types/                      <- generated TypeScript types
+│   ├── n2b-plugin/                     <- native Bun plugin
+│   └── n2b-shims/                      <- native Bun shims
+├── turbo.json                          <- global Turborepo configuration
+├── scripts/generate-schema-types.ts    <- Rust + TS codegen
 └── tests/
-    ├── fixture/                        ← projet de test
-    ├── rpb-dashboard-baseline/         ← snapshots
-    ├── snapshots/baseline/             
-    └── compare-baseline.sh             
+    ├── fixture/                        <- test project
+    ├── rpb-dashboard-baseline/         <- snapshots
+    ├── snapshots/baseline/
+    └── compare-baseline.sh
 ```
 
 ## Installation
 
 ```bash
-# Binaire CLI Rust
+# Rust CLI binary
 cargo build --release -p n2b
 sudo install -m755 target/release/n2b /usr/local/bin/n2b
 
-# Façade TypeScript
+# TypeScript facade
 bun install
 ```
 
-## Usage CLI
+## CLI usage
 
 ```bash
-# Audit dry-run (exit 1 si findings)
+# Dry-run audit (exit 1 if there are findings)
 n2b .
 
-# Appliquer les corrections sûres
+# Apply the safe fixes
 n2b . --fix
 
-# Migration agressive (réécrit les APIs Node → Bun)
+# Aggressive migration (rewrites Node APIs -> Bun)
 n2b . --aggressive
 
-# Migration complète (--fix --aggressive + side-effects : bun install, retrait pnpm-lock.yaml, etc.)
+# Full migration (--fix --aggressive + side effects: bun install, removes pnpm-lock.yaml, etc.)
 n2b . --migrate
 
-# Rapports
-n2b . --report=text                     # défaut, colorisé
-n2b . --report=json                     # schéma v2 (voir schema/v2.json)
+# Reports
+n2b . --report=text                     # default, colourised
+n2b . --report=json                     # schema v2 (see schema/v2.json)
 n2b . --report=jsonl                    # streamable
 n2b . --report=markdown
 n2b . --report=sarif                    # GitHub Code Scanning
@@ -74,9 +79,9 @@ n2b . --report=sarif                    # GitHub Code Scanning
 n2b . --ignore="**/legacy/**" --ignore="**/fixtures/**"
 ```
 
-## Usage TypeScript — `@n2b/core`
+## TypeScript usage — `@n2b/core`
 
-### Wrapper subprocess
+### Subprocess wrapper
 
 ```ts
 import { scan, rules } from "@n2b/core";
@@ -85,16 +90,16 @@ const report = await scan(".", { mode: "check", quiet: true });
 console.log(`${report.findings_total} finding(s) in ${report.files_scanned} file(s)`);
 ```
 
-### Bun plugin (lint au build)
+### Bun plugin (lint at build time)
 
 ```ts
 import { n2bPlugin } from "@n2b/core";
 
 Bun.plugin(n2bPlugin({ onFindings: "warn" }));
-// ou "error" pour faire échouer les builds qui ont des findings
+// or "error" to fail builds that have findings
 ```
 
-### Shims Bun-natifs
+### Bun-native shims
 
 ```ts
 import { env, fs, path, shell } from "@n2b/core/shims";
@@ -105,74 +110,77 @@ const config = await fs.readJson<Config>(path.relativeTo(import.meta, "config.js
 const result = await shell.run("git rev-parse HEAD");
 ```
 
-## Règles
+## Rules
 
-| Catégorie | IDs | `--fix` | `--aggressive` |
+| Category | IDs | `--fix` | `--aggressive` |
 |---|---|:-:|:-:|
-| CLI (`npm`/`pnpm`/`yarn`/`npx`) | `cli/*` | ✓ | ✓ |
-| Préfixe `node:` | `imports/node-prefix` | ✓ | ✓ |
-| Shebang | `shebang/node` | ✓ | ✓ |
-| GitHub Actions | `ci/*` | ✓ | ✓ |
-| `package.json` (scripts, engines, deps) | `pkg/*` | partiel | partiel |
-| Lockfiles concurrents | `lock/rival` | report | report |
-| Remplacements de packages | `imports/bun-native` | report | ✓ (spécifiers `bun:` / `node:`) |
-| APIs Node → Bun | `api/*` | report | ✓ |
+| CLI (`npm`/`pnpm`/`yarn`/`npx`) | `cli/*` | yes | yes |
+| `node:` prefix | `imports/node-prefix` | yes | yes |
+| Shebang | `shebang/node` | yes | yes |
+| GitHub Actions | `ci/*` | yes | yes |
+| `package.json` (scripts, engines, deps) | `pkg/*` | partial | partial |
+| Rival lockfiles | `lock/rival` | report | report |
+| Package replacements | `imports/bun-native` | report | yes (`bun:` / `node:` specifiers) |
+| Node APIs -> Bun | `api/*` | report | yes |
 
-Lister les règles : `n2b rules` ou `n2b rules --report=json`.
+List the rules: `n2b rules` or `n2b rules --report=json`.
 
-## Développement
+## Development
 
 ```bash
-# Tests complets
-turbo run test                            # Test complet TS et Rust via Turbo
+# Full test suite
+turbo run test                            # full TS + Rust test via Turbo
 cargo test --workspace                    # Rust tests (schema + contract + proptest)
-bash tests/compare-baseline.sh            # baseline CLI-as-API (13 assertions)
+bash tests/compare-baseline.sh            # CLI-as-API baseline (13 assertions)
 
-# Qualité (Lints & Format)
-turbo run //#quality                      # Lancement global oxlint, oxfmt, taplo
+# Quality (lint & format)
+turbo run //#quality                      # global oxlint, oxfmt, taplo
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
-turbo run typecheck                       # Typage TypeScript
+turbo run typecheck                       # TypeScript type-checking
 
-# Régénérer les types depuis le schéma
+# Regenerate types from the schema
 bun run codegen:schema
 ```
 
-## Codes de sortie
+## Exit codes
 
-- `0` — aucun finding, ou mode fix/aggressive appliqué avec succès
-- `1` — findings en mode check (dry-run)
-- `2` — erreur (flag invalide, crash interne)
+- `0` — no findings, or fix/aggressive mode applied successfully
+- `1` — findings in check mode (dry-run)
+- `2` — error (invalid flag, internal crash)
 
-## Documentation de référence
+## Reference documentation
 
-Les règles sont dérivées de la doc Bun officielle (`runtime/nodejs-compat.md`, `runtime/bun-apis.md`, `pm/`, `guides/util/import-meta-dir.md`).
+The rules are derived from the official Bun docs (`runtime/nodejs-compat.md`,
+`runtime/bun-apis.md`, `pm/`, `guides/util/import-meta-dir.md`).
 
-## AI Integration (Claude Code & Gemini CLI)
+## AI integration (Claude Code & Gemini CLI)
 
-L'intégration officielle AI est packagée dans ce dépôt (plugin Claude Code et extension Gemini CLI) :
+The official AI integration is packaged in this repository (a Claude Code
+plugin and a Gemini CLI extension):
 
-- **Claude Code Plugin** : Déclaré dans `.claude-plugin/plugin.json`.
-- **Gemini CLI Extension** : Déclarée dans `gemini-extension.json`.
-- **Skills (Communs)** : `skills/` — partagés entre les deux assistants.
-- **Commands (Asymétrie)** : Les commandes dans `commands/` existent en double format. Les fichiers `.md` sont exclusifs à Claude Code, tandis que les fichiers `.toml` sont exclusifs à Gemini CLI.
-- **Agents & Output Styles** : Les dossiers `agents/` et `output-styles/` sont spécifiques à Claude Code. Gemini CLI les ignore (ce qui peut générer des avertissements inoffensifs de type "Invalid tool name" au démarrage de Gemini).
-- **Docs bundled** : `docs/n2b/` (ce README, CHANGELOG, STRUCTURE, roadmap) + `docs/bun-official/` (329 `.mdx` officiels).
+- **Claude Code plugin**: declared in `.claude-plugin/plugin.json`.
+- **Gemini CLI extension**: declared in `gemini-extension.json`.
+- **Skills (shared)**: `skills/` — shared between both assistants.
+- **Commands (asymmetric)**: the commands in `commands/` exist in two formats.
+  `.md` files are Claude Code-only, while `.toml` files are Gemini CLI-only.
+- **Agents & output styles**: the `agents/` and `output-styles/` folders are
+  Claude Code-specific. Gemini CLI ignores them (which can produce harmless
+  "Invalid tool name" warnings at Gemini startup).
+- **Bundled docs**: `docs/n2b/` (this README, CHANGELOG, STRUCTURE, roadmap) +
+  `docs/bun-official/` (329 official `.mdx` files).
 
-Le plugin est **agnostique au projet** — réutilisable dans n'importe quel codebase Node → Bun.
+The plugin is **project-agnostic** — reusable in any Node -> Bun codebase.
 
-Cycle de re-sync (upstream → plugin) :
-```bash
-rsync -a --delete docs/ ~/vps/agents/bun-agent/docs/n2b/
-cp {README,CLAUDE,STRUCTURE,CHANGELOG,CONTRIBUTING,build-your-own-x}.md ~/vps/agents/bun-agent/docs/n2b/
-```
+## Contributing
 
-## Contribuer
+The branching model, PR flow, and test commands are described in
+[`CONTRIBUTING.md`](CONTRIBUTING.md). In short: GitHub Flow, PRs against `main`,
+one PR per refactor phase, Conventional Commits.
 
-Le modèle de branches, le flux PR et les commandes de test sont décrits dans
-[`CONTRIBUTING.md`](CONTRIBUTING.md). En résumé : GitHub Flow, flux PR sur
-`main`, une PR par phase de refacto, commits conventionnels.
+Security policy: [`SECURITY.md`](SECURITY.md). Community standards:
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 ## License
 
-[Apache 2.0](LICENSE) © 2026 Yohan Pierre.
+[Apache 2.0](LICENSE) (c) 2026 aphrody-code contributors.

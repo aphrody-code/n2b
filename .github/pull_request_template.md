@@ -1,20 +1,20 @@
-## Type de changement
+## Type of change
 
-- [ ] `feat` — nouvelle fonctionnalité
-- [ ] `fix` — correction de bug
-- [ ] `refactor` — refactorisation (préciser la phase `plan/` si applicable)
+- [ ] `feat` — new feature
+- [ ] `fix` — bug fix
+- [ ] `refactor` — refactoring (state the `plan/` phase if applicable)
 - [ ] `docs` — documentation
-- [ ] `chore` — outillage / CI / dépendances
+- [ ] `chore` — tooling / CI / dependencies
 
 ## Description
 
-<!-- Quoi et pourquoi. Le « comment » est dans le diff. -->
+<!-- What and why. The "how" is in the diff. -->
 
-## Contrat externe gelé
+## Frozen external contract
 
-- [ ] Ne touche **aucune** surface gelée (Rule IDs, `schema/v2.json`, codes de sortie, flags CLI, ABI cdylib).
-- [ ] Touche une surface gelée — le changement est **additif** (nouvelle règle / champ optionnel).
-- [ ] Introduit un **breaking** assumé — justifié ci-dessus + baselines régénérées dans cette PR.
+- [ ] Touches **no** frozen surface (Rule IDs, `schema/v2.json`, exit codes, CLI flags, cdylib ABI).
+- [ ] Touches a frozen surface — the change is **additive** (new rule / optional field).
+- [ ] Introduces an intentional **breaking** change — justified above + baselines regenerated in this PR.
 
 ## Checklist
 
@@ -23,4 +23,4 @@
 - [ ] `cargo test --workspace`
 - [ ] `bun run typecheck` + `bun run codegen:schema:check`
 - [ ] `bash tests/compare-baseline.sh`
-- [ ] `CHANGELOG.md` mis à jour si la sortie change
+- [ ] `CHANGELOG.md` updated if the output changes
