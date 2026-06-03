@@ -18,8 +18,8 @@
 // during the build. No TS scanner duplication.
 
 import type { BunPlugin } from "bun";
-import { scan, binaryVersion, type ScanOptions } from "@n2b/core";
-import type { Finding, N2BReport } from "@n2b/types";
+import { scan, binaryVersion, type ScanOptions } from "@aphrody/n2b-core";
+import type { Finding, N2BReport } from "@aphrody/n2b-types";
 
 const DIM = "\x1b[2m";
 const RESET = "\x1b[0m";
@@ -43,7 +43,7 @@ export interface N2BPluginOptions extends Pick<ScanOptions, "ignore" | "bin" | "
 /**
  * Create the n2b Bun plugin. Usage:
  *
- *     import { n2bPlugin } from "@n2b/core";
+ *     import { n2bPlugin } from "@aphrody/n2b-core";
  *     Bun.plugin(n2bPlugin({ onFindings: "warn" }));
  *
  * The plugin runs `n2b` on the project root exactly once per build. All

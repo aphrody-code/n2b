@@ -138,3 +138,59 @@ jobs:
           files: dist/*
           generate_release_notes: true
           fail_on_unmatched_files: false
+
+  # Publication des packages npm publics @aphrody/n2b-* sur registry.npmjs.org.
+  # Déclenchée sur les tags v* (même release que le binaire Rust).
+  npm-publish:
+    name: Publish @aphrody/n2b-* to npm
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node (npm registry auth)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@aphrody'
+
+      - name: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          (cd packages/n2b-types && bunx --bun tsc -b)
+          (cd packages/n2b-shims && bunx --bun tsc -b)
+          (cd packages/n2b && bunx --bun tsc -b)
+          (cd packages/n2b-plugin && bunx --bun tsc -b)
+
+      # Ordre de dépendance : types → shims → plugin → core (core last).
+      # plugin↔core est circulaire ; npm le tolère (pas de résolution au publish).
+      - name: Publish @aphrody/n2b-types
+        run: cd packages/n2b-types && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @aphrody/n2b-shims
+        run: cd packages/n2b-shims && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @aphrody/n2b-plugin
+        run: cd packages/n2b-plugin && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @aphrody/n2b-core
+        run: cd packages/n2b && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

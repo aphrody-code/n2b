@@ -13,8 +13,8 @@
 // limitations under the License.
 
 // shims — Bun-native implementations for the Node.js patterns n2b flags.
-// Import by namespace (`import { env, fs, path, shell } from "@n2b/core/shims"`)
-// or by scoped subpath (`import { readText } from "@n2b/core/shims/fs"`).
+// Import by namespace (`import { env, fs, path, shell } from "@aphrody/n2b-shims"`)
+// or by scoped subpath (`import { readText } from "@aphrody/n2b-shims/fs"`).
 
 export * as env from "./env";
 export * as fs from "./fs";
