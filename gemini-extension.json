@@ -1,6 +1,6 @@
 {
     "name": "n2b",
-    "version": "2.3.1",
+    "version": "2.3.2",
     "description": "Bun-native Gemini CLI extension for the n2b migration tool (Rust+TS). 10 skills, 7 commands, hooks for cargo-fmt + schema codegen drift detection. Mirror of the Claude Code plugin (.claude-plugin/plugin.json) for cross-tool parity.",
     "contextFileName": "GEMINI.md",
     "excludeTools": [
