@@ -44,10 +44,19 @@ pub static APIS: Lazy<Vec<ApiEntry>> = Lazy::new(|| {
 pub static PACKAGES: Lazy<Vec<PackageEntry>> = Lazy::new(|| {
     let parsed: PackagesFile =
         toml::from_str(PACKAGES_TOML).expect("registry/packages.toml: TOML invalide");
+    // Uniqueness is on (id, package): the same npm package may legitimately
+    // appear under different rule categories (e.g. `ws` is both an
+    // `imports/bun-native` replacement -> WebSocket and an
+    // `imports/rust-sdk-alt` mapping -> tokio-tungstenite). A true duplicate is
+    // the SAME package under the SAME id. (Keying on `package` alone used to
+    // panic here, which in a debug build deadlocked the worker thread.)
     let mut seen = HashSet::new();
     for e in &parsed.packages {
-        if !seen.insert(e.package.clone()) {
-            panic!("registry/packages.toml: package en doublon: {}", e.package);
+        if !seen.insert((e.id.clone(), e.package.clone())) {
+            panic!(
+                "registry/packages.toml: doublon (id, package): ({}, {})",
+                e.id, e.package
+            );
         }
     }
     parsed.packages
@@ -129,12 +138,35 @@ mod tests {
 
     #[test]
     fn packages_count_matches_baseline() {
-        // Source : node_imports.rs BUN_REPLACEMENTS — 94 entrées.
+        // 94 `imports/bun-native` (source node_imports.rs BUN_REPLACEMENTS)
+        // + 21 `imports/rust-sdk-alt` = 115 entrées au total.
         assert_eq!(
             PACKAGES.len(),
-            94,
-            "packages.toml a divergé de node_imports.rs BUN_REPLACEMENTS"
+            115,
+            "packages.toml a divergé du baseline (94 bun-native + 21 rust-sdk-alt)"
         );
+        let bun_native = PACKAGES
+            .iter()
+            .filter(|p| p.id == "imports/bun-native")
+            .count();
+        assert_eq!(bun_native, 94, "le compte imports/bun-native a divergé");
+    }
+
+    #[test]
+    fn package_id_pairs_are_unique() {
+        // Régression : un même `package` peut exister sous deux `id` distincts
+        // (ex. `ws`/`axios` en bun-native ET rust-sdk-alt) sans paniquer ; seul
+        // un vrai doublon (même id, même package) est interdit. Forcer PACKAGES
+        // ne doit pas paniquer (c'était la cause du deadlock du test en debug).
+        let mut seen = HashSet::new();
+        for e in PACKAGES.iter() {
+            assert!(
+                seen.insert((e.id.as_str(), e.package.as_str())),
+                "doublon (id, package) inattendu : ({}, {})",
+                e.id,
+                e.package
+            );
+        }
     }
 
     #[test]

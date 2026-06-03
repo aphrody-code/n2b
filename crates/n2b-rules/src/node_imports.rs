@@ -77,6 +77,11 @@ struct BunReplacement {
 static BUN_REPLACEMENTS: Lazy<HashMap<String, BunReplacement>> = Lazy::new(|| {
     PACKAGES
         .iter()
+        // Only Bun-native replacements belong in the TS-import scanner. Other
+        // categories (e.g. `imports/rust-sdk-alt`) map the same npm name to a
+        // Rust crate and must NOT be suggested for a JS/TS import — otherwise
+        // `import ws` would be told to use `tokio-tungstenite`.
+        .filter(|p| p.id == "imports/bun-native")
         .map(|p| {
             (
                 p.package.clone(),
@@ -172,4 +177,48 @@ pub fn apply_node_import_rules(
 
     let out = apply_edits(source, edits);
     (findings, out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Regression: packages that exist in BOTH `imports/bun-native` and
+    /// `imports/rust-sdk-alt` (`ws`, `axios`) must resolve to the Bun-native
+    /// replacement here, never the Rust crate. Before the fix, the map was
+    /// built from every PACKAGES entry keyed by name, so the later
+    /// rust-sdk-alt row won and `import ws` was told to use `tokio-tungstenite`.
+    #[test]
+    fn bun_replacements_never_leak_rust_sdk_alt() {
+        let ws = BUN_REPLACEMENTS.get("ws").expect("ws must be present");
+        assert_eq!(ws.replacement, "WebSocket", "ws must map to the Bun-native WebSocket");
+        let axios = BUN_REPLACEMENTS.get("axios").expect("axios must be present");
+        assert_eq!(
+            axios.replacement, "<global fetch>",
+            "axios must map to Bun's global fetch"
+        );
+        // No Bun replacement should ever be a Rust crate.
+        for (pkg, repl) in BUN_REPLACEMENTS.iter() {
+            assert_ne!(
+                repl.replacement, "tokio-tungstenite",
+                "rust-sdk-alt leaked into BUN_REPLACEMENTS for {pkg}"
+            );
+        }
+    }
+
+    /// End-to-end: scanning a TS import of `ws` suggests WebSocket, not a crate.
+    #[test]
+    fn import_ws_suggests_websocket() {
+        let (findings, _) =
+            apply_node_import_rules("x.ts", "import WebSocket from \"ws\";\n", false);
+        let f = findings
+            .iter()
+            .find(|f| f.rule_id == "imports/bun-native")
+            .expect("a bun-native finding for ws");
+        assert!(
+            f.message.contains("WebSocket") && !f.message.contains("tokio-tungstenite"),
+            "ws finding must point at WebSocket, got: {}",
+            f.message
+        );
+    }
 }
