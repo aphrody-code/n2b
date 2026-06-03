@@ -30,7 +30,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.0-canary.1
 
       - name: cargo fmt
         run: cargo fmt --all -- --check
@@ -75,7 +75,7 @@ jobs:
         if: runner.os != 'Windows'
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.0-canary.1
 
       - name: bun install
         if: runner.os != 'Windows'
