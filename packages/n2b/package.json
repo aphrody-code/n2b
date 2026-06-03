@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "build": "bunx --bun tsc -b",
+    "start": "bun src/start.ts",
     "dev": "bun --watch src/index.ts",
     "typecheck": "bunx --bun tsc --noEmit",
     "test": "bun test"

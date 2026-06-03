@@ -2,7 +2,9 @@
   "extends": "./tsconfig.base.json",
   "files": [],
   "references": [
+    { "path": "./packages/n2b-types" },
+    { "path": "./packages/n2b-shims" },
     { "path": "./packages/n2b" },
-    { "path": "./packages/n2b-cli" }
+    { "path": "./packages/n2b-plugin" }
   ]
 }

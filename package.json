@@ -20,7 +20,7 @@
 		"lint:fix": "oxlint --fix .",
 		"format": "cargo fmt --all",
 		"typecheck": "turbo run typecheck",
-		"check-self": "bun run --filter @n2b/cli start .",
+		"check-self": "bun run --filter @aphrody/n2b-core start .",
 		"cargo:build": "cargo build --workspace --release",
 		"cargo:check": "cargo check --workspace",
 		"cargo:test": "cargo test --workspace",
