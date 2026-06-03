@@ -43,7 +43,7 @@ export interface N2BPluginOptions extends Pick<ScanOptions, "ignore" | "bin" | "
 /**
  * Create the n2b Bun plugin. Usage:
  *
- *     import { n2bPlugin } from "@aphrody/n2b-core";
+ *     import { n2bPlugin } from "@aphrody/n2b-plugin";
  *     Bun.plugin(n2bPlugin({ onFindings: "warn" }));
  *
  * The plugin runs `n2b` on the project root exactly once per build. All

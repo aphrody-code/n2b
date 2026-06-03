@@ -79,12 +79,12 @@ n2b . --report=sarif                    # GitHub Code Scanning
 n2b . --ignore="**/legacy/**" --ignore="**/fixtures/**"
 ```
 
-## TypeScript usage — `@n2b/core`
+## TypeScript usage — `@aphrody/n2b-core`
 
 ### Subprocess wrapper
 
 ```ts
-import { scan, rules } from "@n2b/core";
+import { scan, rules } from "@aphrody/n2b-core";
 
 const report = await scan(".", { mode: "check", quiet: true });
 console.log(`${report.findings_total} finding(s) in ${report.files_scanned} file(s)`);
@@ -93,7 +93,7 @@ console.log(`${report.findings_total} finding(s) in ${report.files_scanned} file
 ### Bun plugin (lint at build time)
 
 ```ts
-import { n2bPlugin } from "@n2b/core";
+import { n2bPlugin } from "@aphrody/n2b-plugin";
 
 Bun.plugin(n2bPlugin({ onFindings: "warn" }));
 // or "error" to fail builds that have findings
@@ -102,7 +102,7 @@ Bun.plugin(n2bPlugin({ onFindings: "warn" }));
 ### Bun-native shims
 
 ```ts
-import { env, fs, path, shell } from "@n2b/core/shims";
+import { env, fs, path, shell } from "@aphrody/n2b-shims";
 
 const DB = env.str("DATABASE_URL", { required: true });
 const port = env.int("PORT", { default: 3000 });
@@ -167,8 +167,9 @@ plugin and a Gemini CLI extension):
 - **Agents & output styles**: the `agents/` and `output-styles/` folders are
   Claude Code-specific. Gemini CLI ignores them (which can produce harmless
   "Invalid tool name" warnings at Gemini startup).
-- **Bundled docs**: `docs/n2b/` (this README, CHANGELOG, STRUCTURE, roadmap) +
-  `docs/bun-official/` (329 official `.mdx` files).
+- **Bundled docs**: `docs/plugin/n2b/` (this README, CHANGELOG, STRUCTURE,
+  roadmap) + `docs/bun/` (330 official Bun `.mdx` files) and `docs/node/`
+  (Node API reference).
 
 The plugin is **project-agnostic** — reusable in any Node -> Bun codebase.
 
