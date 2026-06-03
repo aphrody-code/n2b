@@ -15,7 +15,7 @@
 // shell.ts — thin re-export of Bun.$ for code that n2b flags as
 // `api/child_process-exec`. `Bun.$` is Bun's shell template literal
 // (cross-platform, no /bin/sh required) — callers can import it as a
-// plain identifier via `import { sh } from "@n2b/core/shims"`.
+// plain identifier via `import { sh } from "@aphrody/n2b-shims"`.
 //
 // Rationale: in a migrating codebase, ad-hoc `import { $ } from "bun"`
 // lines are as noisy as `import { exec } from "child_process"`. A stable

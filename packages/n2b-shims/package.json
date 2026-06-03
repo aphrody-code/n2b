@@ -1,6 +1,6 @@
 {
-  "name": "@n2b/shims",
-  "version": "0.6.1",
+  "name": "@aphrody/n2b-shims",
+  "version": "0.6.2",
   "description": "Polyfills Bun-natifs pour les APIs Node détectées par n2b (env, fs, path, shell).",
   "type": "module",
   "main": "./src/index.ts",
@@ -24,6 +24,10 @@
   },
   "engines": {
     "bun": ">=1.3.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "sideEffects": false
 }

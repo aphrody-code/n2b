@@ -20,7 +20,7 @@
 // for automation scripts and for the Bun plugin (packages/n2b/src/plugin.ts).
 // No schema duplication: schema.ts is codegen'd from schema/v2.json.
 
-import type { N2BReport, Mode } from "@n2b/types";
+import type { N2BReport, Mode } from "@aphrody/n2b-types";
 
 export interface ScanOptions {
   /** Scan mode. "check" is dry-run, "fix" applies safe autofixes, "aggressive" also applies API migrations. */

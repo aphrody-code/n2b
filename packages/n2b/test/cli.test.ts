@@ -20,7 +20,7 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import { scan, binaryVersion } from "../src/cli";
-import type { N2BReport } from "@n2b/types";
+import type { N2BReport } from "@aphrody/n2b-types";
 
 const REPO_ROOT = join(import.meta.dir, "..", "..", "..");
 const FIXTURE = join(REPO_ROOT, "test", "fixture");

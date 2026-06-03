@@ -23,4 +23,4 @@
 export { scan, rules, promptMarkdown, binaryVersion } from "./cli";
 export type { ScanOptions, N2BError } from "./cli";
 
-export type { N2BReport, FileFix, Finding, Context, Mode, Severity } from "@n2b/types";
+export type { N2BReport, FileFix, Finding, Context, Mode, Severity } from "@aphrody/n2b-types";
