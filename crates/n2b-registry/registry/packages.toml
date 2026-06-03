@@ -2,7 +2,10 @@
 #
 # Phase 1 : transcription mécanique des entrées de
 #   crates/n2b-rules/src/node_imports.rs::BUN_REPLACEMENTS
-# Toutes partagent le Rule ID `imports/bun-native`. Le `package` est unique.
+# Deux catégories cohabitent : `imports/bun-native` (remplacement par une API
+# Bun native, consommé par le scanner d'imports TS) et `imports/rust-sdk-alt`
+# (équivalent crate Rust). L'unicité porte sur le couple (id, package) — un même
+# package npm peut donc apparaître dans les deux catégories (ex. `ws`, `axios`).
 # Ordre identique à la source Rust pour faciliter le diff.
 
 [[packages]]
