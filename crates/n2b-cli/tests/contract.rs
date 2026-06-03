@@ -50,8 +50,9 @@ fn run_n2b(args: &[&str]) -> (String, String, i32) {
     let output = Command::cargo_bin("n2b")
         .expect("n2b binary must be buildable")
         .args(args)
+        .timeout(std::time::Duration::from_secs(60))
         .output()
-        .expect("n2b invocation must succeed");
+        .expect("n2b invocation must succeed (or timed out after 60 s — binary may have hung)");
     let stdout = String::from_utf8(output.stdout).expect("stdout utf8");
     let stderr = String::from_utf8(output.stderr).expect("stderr utf8");
     let code = output.status.code().unwrap_or(-1);
