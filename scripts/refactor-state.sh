@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Vue d'ensemble de l'état du refactor : STATE.md + git log + git status + Status board.
 set -euo pipefail
-N2B_ROOT="${N2B_ROOT:-/home/ubuntu/n2b}"
+N2B_ROOT="${N2B_ROOT:-${CLAUDE_PLUGIN_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")/.." && pwd)}}"
 cd "$N2B_ROOT"
 
 echo "── plan/STATE.md ──"

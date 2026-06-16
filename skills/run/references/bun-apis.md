@@ -276,7 +276,7 @@ await Bun.sleep(1000); // ms
 
 ## Misc
 ```ts
-Bun.version;          // "1.3.12"
+Bun.version;          // "1.3.14"
 Bun.revision;         // git sha
 Bun.main;             // entrypoint path
 Bun.env.NODE_ENV;     // env access

@@ -13,7 +13,7 @@ mkdir -p "$REPORTS_DIR"
 
 Toujours utiliser ces variables, **jamais** de chemins absolus hardcodés.
 
-## n2b CLI — surface complète (v0.4.0, 313 règles)
+## n2b CLI — surface complète (v0.6.1, 351 règles)
 
 ```bash
 # Ignore globs canoniques (DRY — utiliser partout)
@@ -34,7 +34,7 @@ $N2B <path> --fix --aggressive                   # + api/* templateables + impor
 $N2B <path> --migrate                            # --fix --aggressive + side-effects
 
 # ── Subcommands (13 actifs) ──────────────────────────
-$N2B rules [--report md]                         # catalogue des 313 règles actives
+$N2B rules [--report md]                         # catalogue des 351 règles actives
 $N2B prompt <path> [--max-findings N] [--include-info]
 $N2B audit <path> [--state open|closed|all] [--limit N] [--term <kw>]   # GitHub issues/PRs
 $N2B analyze <path> [--top-k N] [--threshold F] [--apply fix|aggressive]
@@ -47,7 +47,6 @@ $N2B bin {plugin,mdx,wasm}                       # Bun.build native plugin
 $N2B patch <pkg> | --self                        # wrapper bun patch + n2b rules
 $N2B bunpp                                       # couverture bun++ gaps Node
 $N2B llmstxt <url>                               # génère llms.txt (siteone-crawler)
-$N2B mui-to-md3 <path> [--write] [--stage-atomic] [--only Component]
 
 # Exit codes : 0 = clean / fixed · 1 = dry-run findings · 2 = erreur
 ```
@@ -153,8 +152,6 @@ $N2B "$PROJECT_ROOT" --agent --report jsonl "${N2B_IGNORE[@]}" \
 jq -r '.file | split("/")[:2] | join("/")' "$REPORTS_DIR/n2b-monorepo.jsonl" \
   | sort | uniq -c | sort -rn | head
 ```
-
-Si `$PROJECT_ROOT/move.md` existe → déléguer la restructuration au `@move` agent plutôt que tenter un fix global.
 
 ## Hard rules — never break
 

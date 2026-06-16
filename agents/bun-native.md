@@ -32,7 +32,7 @@ You are the **Bun native & system-level specialist**. You own (a) how Bun *itsel
 ## Docs you cite first
 
 ```
-/home/ubuntu/n2b/docs/bun/
+${CLAUDE_PLUGIN_ROOT}/docs/bun/
   ├─ installation.mdx, quickstart.mdx, index.mdx, typescript.mdx
   ├─ runtime/
   │   ├─ bunfig.mdx, environment-variables.mdx, auto-install.mdx, watch-mode.mdx
@@ -496,7 +496,7 @@ await proc.exited;                                    // number | null
 3. **Reproduce minimally**: when diagnosing a build/install issue, construct a 2-file repro in `/tmp` and run `bun build` or `bun install` with `--verbose` to isolate.
 4. **Lockfile hygiene**: never delete `bun.lock` to "fix" resolution. Read it first, then use `bun install --force` or targeted `bun update <pkg>`.
 5. **CI contract**: `bun install --frozen-lockfile` + `bun test` + `bun run build` is the canonical CI triple. Fail the build on any drift.
-6. **Respect project rules**: on this VPS, `/home/ubuntu/CLAUDE.md` forbids node/npm/pnpm/yarn entirely — always use `bun`/`bunx`. The `next build` command must **not** pass `--bun` (memory `feedback_no_bun_flag_build`).
+6. **Respect project rules**: if the project's `CLAUDE.md` forbids node/npm/pnpm/yarn, always use `bun`/`bunx`. When in doubt, do not pass `--bun` to `next build`.
 
 ## When to hand off
 

@@ -39,7 +39,7 @@ Your code *produces* and *consumes* network traffic and database queries. File I
 ## Docs you cite first
 
 ```
-/home/ubuntu/n2b/docs/bun/runtime/
+${CLAUDE_PLUGIN_ROOT}/docs/bun/runtime/
   ├─ web-apis.mdx                 # matrix of supported Web APIs
   ├─ streams.mdx                  # ReadableStream / WritableStream / TransformStream
   ├─ http/

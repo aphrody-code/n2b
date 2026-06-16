@@ -1,6 +1,6 @@
 ---
 name: bun-wasm
-description: "Use when the task targets **native WebAssembly coverage in Bun** — implementing or migrating WASI preview1/preview2, WASI Component Model (`wasi:cli`, `wasi:http`, `wasi:filesystem`…), JSPI (JavaScript Promise Integration), SIMD/GC/threads/exception-handling proposals, the `.wasm` bundler loader, wasm module caching, `import.meta` resolution for wasm, `new WebAssembly.Module/Instance/Memory/Table` bindings, the C++ `Wasm::StreamingCompiler` glue, or any patch that touches `/home/ubuntu/n2b/upstream/bun/src/js/node/wasi.ts`, `src/bun.js/bindings/webcore/JSWasm*`, `src/main_wasm.zig`, `src/bundler/**` wasm loader paths, `packages/bun-wasm/`, or JSC `vendor/WebKit/Source/JavaScriptCore/wasm/`. Invoke for any bug fix referencing issues oven-sh/bun#20857 (wasi.poll_oneoff), #12755 (wasi.initialize), #28534 (WASI.start), #22026 (import inconsistency), #12434 (wasm import returns path), #20878 (JSPI), #24867 (Component Model / WIT), #26445 (OSR disable), #22551 (OOB memory access). Knows the full native coverage roadmap and which workstreams are deferred to JSC vs. patchable in Bun itself."
+description: "Use when the task targets **native WebAssembly coverage in Bun** — implementing or migrating WASI preview1/preview2, WASI Component Model (`wasi:cli`, `wasi:http`, `wasi:filesystem`…), JSPI (JavaScript Promise Integration), SIMD/GC/threads/exception-handling proposals, the `.wasm` bundler loader, wasm module caching, `import.meta` resolution for wasm, `new WebAssembly.Module/Instance/Memory/Table` bindings, the C++ `Wasm::StreamingCompiler` glue, or any patch that touches `$BUN_SRC/src/js/node/wasi.ts` (in a local oven-sh/bun checkout), `src/bun.js/bindings/webcore/JSWasm*`, `src/main_wasm.zig`, `src/bundler/**` wasm loader paths, `packages/bun-wasm/`, or JSC `vendor/WebKit/Source/JavaScriptCore/wasm/`. Invoke for any bug fix referencing issues oven-sh/bun#20857 (wasi.poll_oneoff), #12755 (wasi.initialize), #28534 (WASI.start), #22026 (import inconsistency), #12434 (wasm import returns path), #20878 (JSPI), #24867 (Component Model / WIT), #26445 (OSR disable), #22551 (OOB memory access). Knows the full native coverage roadmap and which workstreams are deferred to JSC vs. patchable in Bun itself."
 tools: [Read, Write, Edit, Bash, Glob]
 model: sonnet
 ---
@@ -147,14 +147,14 @@ export async function consumeStream(this: any, stream: ReadableStream) {
 
 | Quoi | Où |
 |---|---|
-| WebAssembly spec core | `/home/ubuntu/rsbun/wasm/spec/document/core/` (cloné local) |
+| WebAssembly spec core | a local WebAssembly spec checkout (`spec/document/core/`) |
 | WASI preview1 spec | https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md |
 | WASI preview2 (WIT) | https://github.com/WebAssembly/WASI/tree/main/preview2 |
 | Component Model | https://github.com/WebAssembly/component-model — `design/mvp/Explainer.md` |
 | Wasmtime C API | https://docs.wasmtime.dev/c-api/ — pattern référence pour embedding |
 | `wasmtime-wasi` crate | https://github.com/bytecodealliance/wasmtime/tree/main/crates/wasi |
-| wabt (inspection wasm) | `/home/ubuntu/rsbun/wasm/wabt/` (cloné local, + wrapper Bun dans `/home/ubuntu/rsbun/wasm/wabt-bun/`) |
-| binaryen (optimisation) | `/home/ubuntu/rsbun/wasm/binaryen/` + wrapper Bun dans `/home/ubuntu/rsbun/wasm/binaryen-bun/` |
+| wabt (inspection wasm) | a local `wabt/` checkout (+ optional Bun wrapper) |
+| binaryen (optimisation) | a local `binaryen/` checkout (+ optional Bun wrapper) |
 | JSPI spec | https://github.com/WebAssembly/js-promise-integration |
 | MDN — Rust → Wasm guide | https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Rust_to_Wasm |
 | MDN — JavaScript API surface | https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Using_the_JavaScript_API |
@@ -180,7 +180,7 @@ Source : https://bun.com/reference/bun/WebAssembly (page officielle)
 - JSPI, threads, SIMD details, GC, reference types, exception handling, Component Model
 - Caching, perf notes, target values
 
-**Donc** : toute amélioration native **doit** s'accompagner d'un ajout dans `docs/runtime/wasm.mdx` (ou équivalent — à vérifier si ce fichier existe dans `/home/ubuntu/n2b/docs/bun/`). Le manque de doc est aussi un bug.
+**Donc** : toute amélioration native **doit** s'accompagner d'un ajout dans `docs/runtime/wasm.mdx` (ou équivalent — à vérifier si ce fichier existe dans `${CLAUDE_PLUGIN_ROOT}/docs/bun/`). Le manque de doc est aussi un bug.
 
 ## MDN — surface API JavaScript canonique (référence rapide)
 

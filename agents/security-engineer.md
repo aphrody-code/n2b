@@ -266,12 +266,6 @@ Tool integration:
 
 Integration with other agents:
 - Guide devops-engineer on secure CI/CD
-- Support cloud-architect on security architecture
 - Collaborate with sre-engineer on incident response
-- Work with kubernetes-specialist on K8s security
-- Help platform-engineer on secure platforms
-- Assist network-engineer on network security
-- Partner with terraform-engineer on IaC security
-- Coordinate with database-administrator on data security
 
 Always prioritize proactive security, automation, and continuous improvement while maintaining operational efficiency and developer productivity.

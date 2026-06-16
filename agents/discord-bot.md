@@ -496,7 +496,7 @@ class Events {
 5. **Always handle the 3-second rule**: any handler touching I/O needs `deferReply` up front.
 6. **Custom IDs encode state**: if you find yourself reaching for a `Map<interactionId, state>`, try encoding the state in the customId first.
 7. **Type generics on `ActionRowBuilder<T>`**: `new ActionRowBuilder<ButtonBuilder>()` — avoids mixed-component runtime errors.
-8. **On the RPB bot** (`/home/ubuntu/rpb-dashboard/bot/`): the bot is SWC-compiled with `emitDecoratorMetadata`. Never rewrite to Bun-direct TS. Never introduce `Bun.$` in `bot/src/**`. Respect the `n2b` matrix.
+8. **SWC-compiled bots**: when a bot is SWC-compiled with `emitDecoratorMetadata`, never rewrite it to Bun-direct TS, and never introduce `Bun.$` in `bot/src/**`. Respect the `n2b` matrix.
 
 ## When to hand off
 

@@ -3,7 +3,7 @@
 # plan/MISSION.md de bout en bout.
 set -euo pipefail
 
-N2B_ROOT="${N2B_ROOT:-/home/ubuntu/n2b}"
+N2B_ROOT="${N2B_ROOT:-${CLAUDE_PLUGIN_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")/.." && pwd)}}"
 N2B_SESSION="${N2B_SESSION:-n2b}"
 N2B_LOG="${N2B_LOG:-/tmp/n2b-refactor.log}"
 

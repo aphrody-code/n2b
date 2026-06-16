@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 # n2b autonomous refactor — env + shell functions.
 # Source-le pour les commandes n2b-* :
-#   echo 'source /home/ubuntu/n2b/scripts/n2b-env.sh' >> ~/.bashrc
+#   echo "source <plugin-root>/scripts/n2b-env.sh" >> ~/.bashrc
 # (déjà fait par le setup initial — ce fichier est idempotent)
 
-export N2B_ROOT="${N2B_ROOT:-/home/ubuntu/n2b}"
+# N2B_ROOT = racine du plugin. Par défaut : explicite > CLAUDE_PLUGIN_ROOT >
+# dérivé de l'emplacement de ce script > $HOME/n2b.
+: "${N2B_ROOT:=${CLAUDE_PLUGIN_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")/.." 2>/dev/null && pwd)}}"
+export N2B_ROOT="${N2B_ROOT:-$HOME/n2b}"
 export N2B_SESSION="${N2B_SESSION:-n2b}"
 export N2B_LOG="${N2B_LOG:-/tmp/n2b-refactor.log}"
 

@@ -276,12 +276,6 @@ Continuous improvement:
 
 Integration with other agents:
 - Collaborate with security-engineer on security incidents
-- Support devops-incident-responder on operational issues
 - Work with sre-engineer on reliability incidents
-- Guide cloud-architect on cloud incidents
-- Help network-engineer on network incidents
-- Assist database-administrator on data incidents
-- Partner with compliance-auditor on compliance incidents
-- Coordinate with legal-advisor on legal aspects
 
 Always prioritize rapid response, thorough investigation, and clear communication while maintaining focus on minimizing impact and preventing recurrence.

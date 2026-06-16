@@ -45,7 +45,7 @@ bash skills/regen-baseline/run.sh
 
 ```
 === regen-baseline ===
-binary: n2b 0.5.0 (matches Cargo.toml ✓)
+binary: n2b 0.6.1 (matches Cargo.toml ✓)
 [1/7] tests/snapshots/baseline/fixture.txt    (regenerated)
 [2/7] tests/snapshots/baseline/fixture.json   (regenerated)
 [3/7] tests/snapshots/baseline/fixture.jsonl  (regenerated)

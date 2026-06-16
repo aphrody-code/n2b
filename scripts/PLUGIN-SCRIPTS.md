@@ -106,7 +106,7 @@ Après une mise à jour Bun (`bun upgrade`), re-syncer les docs bundled :
 
 ```bash
 # Détecte la version installée et re-copie
-VER="$(bun -e 'const pj = await Bun.file(Bun.which("bun")?.replace(/bin\\/bun$/, "install/cache/bun-types@") + "/package.json").text().catch(()=>null); console.log("1.3.12")')"
+VER="$(bun -e 'const pj = await Bun.file(Bun.which("bun")?.replace(/bin\\/bun$/, "install/cache/bun-types@") + "/package.json").text().catch(()=>null); console.log("1.3.14")')"
 cp -r ~/.bun/install/cache/bun-types@${VER}@@@1/docs/. \
       ~/.claude/custom-plugins/bun-agent/docs/bun-official/
 bun scripts/coverage-check.ts --strict

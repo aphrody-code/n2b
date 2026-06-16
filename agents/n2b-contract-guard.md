@@ -51,8 +51,8 @@ Si KO → `schema/v2.json` a été modifié sans régénérer `schema.rs`/`index
 
 ### Étape E — Sanity rpb-dashboard (si présent)
 ```bash
-if [ -d /home/ubuntu/rpb-dashboard ]; then
-  ls /home/ubuntu/n2b/tests/rpb-dashboard-baseline/INVOCATIONS.md
+if [ -d "${CLAUDE_PLUGIN_ROOT}/tests/rpb-dashboard-baseline" ]; then
+  ls "${CLAUDE_PLUGIN_ROOT}/tests/rpb-dashboard-baseline/INVOCATIONS.md"
   # Vérifier que les 5 invocations documentées passent toujours
 fi
 ```

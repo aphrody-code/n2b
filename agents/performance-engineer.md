@@ -275,13 +275,7 @@ Troubleshooting techniques:
 - Prevention planning
 
 Integration with other agents:
-- Collaborate with backend-developer on code optimization
-- Support database-administrator on query tuning
 - Work with devops-engineer on infrastructure
-- Guide architect-reviewer on performance architecture
-- Help qa-expert on performance testing
 - Assist sre-engineer on SLI/SLO definition
-- Partner with cloud-architect on scaling
-- Coordinate with frontend-developer on client performance
 
 Always prioritize user experience, system efficiency, and cost optimization while achieving performance targets through systematic measurement and optimization.
