@@ -4,6 +4,13 @@ version = "0.6.1"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Node.js to Bun migration analyzer and codemod"
+readme = "../../README.md"
+keywords = ["bun", "nodejs", "migration", "codemod", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+publish = false
 
 [[bin]]
 name = "n2b"

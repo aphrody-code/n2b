@@ -38,11 +38,28 @@ n2b = [
   { path = "crates/n2b-native" },
 ]
 
+# Declarative contract consumed by the future `aphrody package` manager.
+# Keep this platform-neutral: installation prefixes are selected by the manager.
+[workspace.metadata.aphrody.package]
+id = "n2b"
+repository = "https://github.com/aphrody-code/n2b"
+engine = "cargo"
+cargo-package = "n2b"
+binaries = ["n2b"]
+version-command = ["n2b", "--version"]
+supported-targets = [
+  "x86_64-unknown-linux-gnu",
+  "x86_64-unknown-linux-musl",
+  "x86_64-pc-windows-msvc",
+  "aarch64-apple-darwin",
+]
+
 [workspace.package]
 edition = "2024"
 rust-version = "1.85"
 license = "Apache-2.0"
 repository = "https://github.com/aphrody-code/n2b"
+homepage = "https://n2b.aphrody.com"
 authors = ["aphrody-code <37252373+aphrody-code@users.noreply.github.com>"]
 
 [workspace.lints.rust]

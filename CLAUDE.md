@@ -1,5 +1,10 @@
 # CLAUDE.md
 
+Lire également `AGENTS.md`. Pour le site public `n2b.aphrody.com`, appliquer le
+contrat Rust/Axum sur `127.0.0.1:8086` et la stratégie partagée décrite dans
+`../aphrody/docs/SITES-PLATFORM.md`. Le site ne doit contenir aucune
+donnée personnelle ni aucun secret.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Principe directeur

@@ -1,5 +1,9 @@
 # n2b — Node.js -> Bun codemod
 
+Site officiel prévu : `https://n2b.aphrody.com`. Son implémentation sera une
+vitrine Rust minimale et suivra le contrat multi-sites documenté dans
+`AGENTS.md`; le CLI reste le produit et la source de vérité de ce dépôt.
+
 `n2b` analyses a Node.js project and reports (or automatically fixes)
 incompatibilities with the Bun runtime. It covers:
 
@@ -44,13 +48,17 @@ n2b/
 
 ## Installation
 
+The supported installation, update, and removal procedures are documented in
+[`INSTALL.md`](INSTALL.md). Releases provide checksummed archives for Linux,
+macOS, and Windows; a locked Cargo source build is the portable fallback.
+
 ```bash
-# Rust CLI binary
-cargo build --release -p n2b
+# Reproducible source install from a checkout
+cargo build --release --locked -p n2b
 sudo install -m755 target/release/n2b /usr/local/bin/n2b
 
 # TypeScript facade
-bun install
+bun install --frozen-lockfile
 ```
 
 ## CLI usage
