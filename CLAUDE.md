@@ -180,3 +180,19 @@ Pour piloter la couverture des règles, le repo embarque la doc upstream :
 - **`n2b rules` retourne un tableau plat** (pas `{rules: [...]}`) — rpb-dashboard le parse ainsi.
 - **`--report=md` et `--report=markdown` doivent être équivalents** (test contract dédié).
 - Le flag `--aggressive` active les règles `api/*` (réécrit APIs Node en Bun) ; `--migrate` = `--fix --aggressive` + side-effects avec rollback.
+- **Chemins relatifs : toujours en `/`, jamais le séparateur natif** (`run.rs`).
+  `DEFAULT_IGNORE` est écrit en globs POSIX (`**/node_modules/**`). Un `rel`
+  laissé en `node_modules\x.ts` ne matche AUCUN motif : sous Windows le scan
+  descendait dans `node_modules`, `target` et `.git` sans lever la moindre
+  erreur — un filtre qui ne filtre plus ne produit pas de symptôme, il produit
+  juste trop de résultats. Le même `rel` alimente le champ `path` du rapport
+  JSON : sans normalisation, deux OS rendent deux rapports différents.
+- **Fixtures et baselines sont comparées à l'octet.** `test/fixture/**` et
+  `tests/snapshots/**` sont figés en LF par `.gitattributes` : un checkout CRLF
+  (défaut Windows) ajoute un octet par ligne et décale tous les
+  `start_byte`/`end_byte`, faisant échouer la comparaison sans qu'aucun code
+  soit en cause. Ne pas « corriger » ce décalage en régénérant la baseline
+  depuis une machine Windows.
+- **`turbo run` refuse de démarrer sur un cycle de dépendances**, et ne dit rien
+  de plus : aucun test ne s'exécute, le message parle du graphe. Vérifier
+  qu'une dépendance workspace déclarée est bien importée avant de la garder.
