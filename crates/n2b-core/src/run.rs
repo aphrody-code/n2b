@@ -144,11 +144,17 @@ pub fn run(opts: &RunOptions) -> Result<Vec<FileFix>> {
                 }
 
                 let abs = entry.into_path();
+                // Le chemin relatif est normalisé en séparateurs POSIX. Sans cela,
+                // sous Windows, `rel` vaut `node_modules\x.ts` alors que les motifs
+                // de DEFAULT_IGNORE sont écrits `**/node_modules/**` : AUCUNE
+                // exclusion ne s'applique, et le scan descend dans node_modules,
+                // target et .git sans que rien ne le signale. Le champ `path` du
+                // rapport JSON devient au passage identique sur les trois OS.
                 let rel = abs
                     .strip_prefix(root.as_ref())
                     .unwrap_or(&abs)
                     .to_string_lossy()
-                    .into_owned();
+                    .replace('\\', "/");
 
                 if ignore_set.is_match(&rel) {
                     return WalkState::Continue;

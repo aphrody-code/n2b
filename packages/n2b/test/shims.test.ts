@@ -15,6 +15,7 @@
 import { describe, expect, test } from "bun:test";
 import { env, fs, path, shell } from "@aphrody/n2b-shims";
 import { EnvError } from "@aphrody/n2b-shims/env";
+import { join, sep } from "node:path";
 
 describe("shims/env", () => {
   test("str respects default when absent", () => {
@@ -46,20 +47,23 @@ describe("shims/env", () => {
   });
 });
 
+// Ces trois fonctions renvoient un chemin NATIF : sous Windows le séparateur
+// est `\`, donc une attente écrite en dur avec `/` échoue sans que le shim ait
+// le moindre défaut. On compose les suffixes avec `sep`.
 describe("shims/path", () => {
   test("dirOf returns the importing module's directory", () => {
     const d = path.dirOf(import.meta);
-    expect(d.endsWith("/test")).toBe(true);
+    expect(d.endsWith(`${sep}test`)).toBe(true);
   });
 
   test("fileOf returns the importing module's path", () => {
     const f = path.fileOf(import.meta);
-    expect(f.endsWith("/shims.test.ts")).toBe(true);
+    expect(f.endsWith(`${sep}shims.test.ts`)).toBe(true);
   });
 
   test("relativeTo resolves relative segments", () => {
     const r = path.relativeTo(import.meta, "..", "src", "schema.ts");
-    expect(r.endsWith("/packages/n2b/src/schema.ts")).toBe(true);
+    expect(r.endsWith(join("packages", "n2b", "src", "schema.ts"))).toBe(true);
   });
 });
 

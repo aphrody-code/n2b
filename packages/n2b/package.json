@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@aphrody/n2b-types": "workspace:*",
-    "@aphrody/n2b-plugin": "workspace:*",
     "@aphrody/n2b-shims": "workspace:*"
   },
   "devDependencies": {

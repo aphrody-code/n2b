@@ -1,0 +1,8 @@
+# Les fichiers de `test/fixture/` sont mesurés au NIVEAU DE L'OCTET : le rapport
+# de scan porte des `start_byte`/`end_byte` et la baseline
+# `tests/snapshots/baseline/fixture.json` les fige. Un checkout en CRLF (le
+# défaut de Git sous Windows) ajoute un octet par ligne et décale tous ces
+# offsets, faisant échouer la comparaison sans qu'aucun code ne soit en cause.
+# On force donc des fins de ligne LF pour la fixture et sa baseline.
+test/fixture/** text eol=lf
+tests/snapshots/** text eol=lf

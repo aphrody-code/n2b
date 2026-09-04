@@ -222,7 +222,13 @@ pub struct Context {
 
 /// 3 lignes avant + ligne cible + 3 après. `line` est 1-based.
 pub fn context_lines(source: &str, line: u32) -> Context {
-    let lines: Vec<&str> = source.split('\n').collect();
+    // Le découpage retire un \r final : un fichier checkouté en CRLF (le
+    // défaut sous Windows) laisserait sinon un retour chariot à la fin de
+    // CHAQUE ligne de contexte, qui ressort tel quel dans le rapport JSON.
+    let lines: Vec<&str> = source
+        .split('\n')
+        .map(|l| l.strip_suffix('\r').unwrap_or(l))
+        .collect();
     let i = (line as usize)
         .saturating_sub(1)
         .min(lines.len().saturating_sub(1));
